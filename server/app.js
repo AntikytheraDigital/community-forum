@@ -11,7 +11,7 @@ const app = express();
 if (process.env.ATLAS_URI) {
     mongoose.connect(process.env.ATLAS_URI)
 } else {
-    console.log('configure ATLAS_URI in .env')
+    throw 'configure ATLAS_URI in .env'
 }
 const db = mongoose.connection
 db.on('error', err => {
