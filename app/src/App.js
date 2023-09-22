@@ -1,10 +1,24 @@
-import React from "react";
+import React, {useState} from 'react';
 import './App.css';
 
 function App() {
-    return (<div>
-        <h1>Hello World!</h1>
-    </div>);
+    const [count, setCount] = useState(0);
+
+    const increment = () => {
+        setCount(count + 1);
+    };
+
+    const decrement = () => {
+        setCount(count - 1);
+    };
+
+    return (
+        <>
+            <p>{count}</p>
+            <button onClick={increment}>Increment</button>
+            <button onClick={decrement}>Decrement</button>
+        </>
+    );
 }
 
 export default App;
