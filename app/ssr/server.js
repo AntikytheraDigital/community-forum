@@ -10,6 +10,12 @@ import App from "../src/App";
 const PORT = 3005;
 
 const app = express();
+fs.realpath('./build/index.html', (err, resolvedPath) => {
+    if (err) {
+        throw new Error('build/index.html does not exist, run `npm run build` before running ssr');
+    }
+    console.log(resolvedPath);
+});
 
 app.use("^/$", (req, res, next) => {
     fs.readFile(path.resolve("./build/index.html"), "utf-8", (err, data) => {
