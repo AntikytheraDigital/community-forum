@@ -13,11 +13,12 @@ function App() {
     };
 
     return (
-        <>
-            <p>{count}</p>
-            <button onClick={increment}>Increment</button>
-            <button onClick={decrement}>Decrement</button>
-        </>
+        <div className="App">
+            <div className="App-header"><p>{count}</p>
+                <button onClick={increment}>Increment</button>
+                <button onClick={decrement}>Decrement</button>
+            </div>
+        </div>
     );
 }
 
