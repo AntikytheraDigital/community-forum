@@ -20,8 +20,9 @@ exports.register = async (req, res, next) => {
             {check: () => validator.isAlpha(username.charAt(0)), message: "username must start with a letter a-z or A-Z"},
             {check: () => validator.isAlphanumeric(username), message: "username must only contain letters and numbers"},
             {check: () => validator.isStrongPassword(password), message: "password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 symbol"},
-            {check: () => !User.findOne({username: username}), message: "username already exists"}, 
-            {check: () => !User.findOne({email: email}), message: "email already exists"} 
+           // {check: () => !User.findOne({username: username}), message: "username already exists: " + username}, 
+           // {check: () => !User.findOne({email: email}), message: "email already exists"} 
+           
             // still need to implement check that the email user and password fields actually exist/recieved data i think? 
         ]
         
