@@ -5,11 +5,6 @@ const validator = require('validator');
 
 exports.register = async (req, res, next) => {
     try {
-        // for testing, print out contents of db (only gonna work if theres actually a user obv)
-        const users = await User.find({});
-        console.log("PRINGINGG")
-        console.log(users); 
-        
         // Extract user registration data from the request body
         let {username, email, password} = req.body;
 
@@ -20,10 +15,10 @@ exports.register = async (req, res, next) => {
             {check: () => validator.isAlpha(username.charAt(0)), message: "username must start with a letter a-z or A-Z"},
             {check: () => validator.isAlphanumeric(username), message: "username must only contain letters and numbers"},
             {check: () => validator.isStrongPassword(password), message: "password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 symbol"},
-           // {check: () => !User.findOne({username: username}), message: "username already exists: " + username}, 
-           // {check: () => !User.findOne({email: email}), message: "email already exists"} 
-           
-            // still need to implement check that the email user and password fields actually exist/recieved data i think? 
+
+            // TODO: check if username and email already exist in db
+            // {check: () => !User.findOne({username: username}), message: "username already exists: " + username}, 
+            // {check: () => !User.findOne({email: email}), message: "email already exists"} 
         ]
         
 
@@ -34,7 +29,6 @@ exports.register = async (req, res, next) => {
                 throw new Error(validation.message);
             }
         }
-
 
         let savedUser;
         //This should probably be its own function
@@ -51,7 +45,7 @@ exports.register = async (req, res, next) => {
             });
         });
 
-        // // possible alternative to the bcrpt code above 
+        // possible alternative to the bcrpt code above 
         // const salt = await bcrypt.genSalt(10);
         // const hash = await bcrypt.hash(password, salt);
         // const newUser = new User({username, email, password: hash});
