@@ -8,23 +8,20 @@ exports.register = async (req, res, next) => {
         // Extract user registration data from the request body
         let {username, email, password} = req.body;
 
-        const validations = [ 
+        const validations = [
             {check: () => validator.isEmail(email), message: "invalid email"},
-            {check: () => password.length >= 8 && password.length <=20, message: "password must be between 8-20 characters long"},
-            {check: () => username.length >= 3 && username.length <=20, message: "username must be between 3 and 20 characters long"}, 
             {check: () => validator.isAlpha(username.charAt(0)), message: "username must start with a letter a-z or A-Z"},
             {check: () => validator.isAlphanumeric(username), message: "username must only contain letters and numbers"},
+            {check: async () => !await User.exists({username: username}), message: "username already exists"},
+            {check: async () => !await User.exists({email: email}), message: "email already in use"},
             {check: () => validator.isStrongPassword(password), message: "password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 symbol"},
-
-            // TODO: check if username and email already exist in db
-            // {check: () => !User.findOne({username: username}), message: "username already exists: " + username}, 
-            // {check: () => !User.findOne({email: email}), message: "email already exists"} 
+            {check: () => password.length >= 8 && password.length <=20, message: "password must be between 8-20 characters long"},
+            {check: () => username.length >= 3 && username.length <=20, message: "username must be between 3 and 20 characters long"}
         ]
-        
 
         for(let validation of validations){
             // if check function returns false, throw error
-            if(!validation.check()){
+            if(!await validation.check()){
                 console.log(validation.message);
                 throw new Error(validation.message);
             }
@@ -38,18 +35,12 @@ exports.register = async (req, res, next) => {
                 console.log(hash);
                 password = hash;
                 const newUser = new User({username, email, password});
-                
+
                 // Save the user to the database using await to handle the promise returned by save()
                 savedUser = await newUser.save();
                 console.log("Registered new user:" + savedUser);
             });
         });
-
-        // possible alternative to the bcrpt code above 
-        // const salt = await bcrypt.genSalt(10);
-        // const hash = await bcrypt.hash(password, salt);
-        // const newUser = new User({username, email, password: hash});
-        // const savedUser = await newUser.save();
 
         // Registration successful
         return res.status(201).json({message: 'Registration successful', user: savedUser});
