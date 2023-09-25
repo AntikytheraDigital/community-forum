@@ -10,7 +10,7 @@ describe('User', () => {
             const user = {
                 email: 'user@example.com',
                 username: 'testUser',
-                password: 'testPassword'
+                password: 'testPassword@123'
             };
             chai.request(server)
                 .post('/auth/register')
