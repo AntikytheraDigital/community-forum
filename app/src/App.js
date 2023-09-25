@@ -21,12 +21,13 @@ const handleSubmit = (e) => {
             alert(`${username} registered to database.`);
             return res.json();
         } else {
-            alert(`Error registering user: ${res.status}`);
-            return res.json();
+            return res.json().then(data => {
+                alert(`Error: ${data.error}`);
+            });
         }
     }).catch(err => {
         console.log(err);
-        alert("Error registering user.");
+        alert("Server error.");
     });
 }
 
