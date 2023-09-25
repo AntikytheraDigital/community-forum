@@ -3,7 +3,8 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 
-exports.register = async (req, res, next) => {
+exports.register = async (req, res) => {
+    console.log("Registering new user");
     try {
         // Extract user registration data from the request body
         let {username, email, password} = req.body;
@@ -43,7 +44,7 @@ exports.register = async (req, res, next) => {
         });
 
         // Registration successful
-        return res.status(201).json({message: 'Registration successful', user: savedUser});
+        return res.status(201).json({message: 'Registration successful'});
     } catch (error) {
         // Registration failed
         return res.status(400).json({message: 'Registration failed', error: error.message});
@@ -51,7 +52,7 @@ exports.register = async (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('local', (err, user) => {
         if (err) {
             // Handle error, e.g., database error
             return res.status(500).json({message: 'Login failed', error: err});
