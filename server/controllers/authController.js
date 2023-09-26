@@ -15,8 +15,8 @@ exports.register = async (req, res) => {
             {check: () => validator.isAlphanumeric(username), message: "username must only contain letters and numbers"},
             {check: async () => !await User.exists({username: username}), message: "username already exists"},
             {check: async () => !await User.exists({email: email}), message: "email already in use"},
-            {check: () => validator.isStrongPassword(password), message: "password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 symbol"},
             {check: () => password.length >= 8 && password.length <=20, message: "password must be between 8-20 characters long"},
+            {check: () => validator.isStrongPassword(password), message: "password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 symbol"},
             {check: () => username.length >= 3 && username.length <=20, message: "username must be between 3 and 20 characters long"}
         ]
 

@@ -3,29 +3,30 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 let server = require('../app');
 chai.use(chaiHttp);
+const TEST_CASES = require('./test_cases/register_user.json')
 
 describe('User', () => {
     describe('/POST register', () => {
-        it('Register a valid user', (done) => {
-            const user = {
-                email: 'user@example.com',
-                username: 'testUser',
-                password: 'testPassword@123'
-            };
-            chai.request(server)
-                .post('/auth/register')
-                .send(user)
-                .end((err, res) => {
-                    if (err) {
-                        // Call done with the error to signal test completion with an error
-                        done(err);
-                    } else {
-                        res.should.have.status(201);
-                        res.body.should.have.property('message').eql('Registration successful');
-                        // Call done to signal test completion without errors
-                        done();
-                    }
-                });
-        });
+        TEST_CASES.forEach(userRegistrationTest);
     });
 });
+
+function userRegistrationTest(testCase) {
+    it(testCase.description, (done) => {
+        chai.request(server)
+            .post('/auth/register')
+            .send(testCase.user)
+            .end((err, res) => {
+                if (err) {
+                    done(err);
+                } else {
+                    res.should.have.status(testCase.expectedStatus);
+                    res.body.should.have.property('message').eql(testCase.expectedMessage);
+                    if (testCase.expectedError) {
+                        res.body.should.have.property('error').eql(testCase.expectedError);
+                    }
+                    done();
+                }
+            });
+    });
+}
