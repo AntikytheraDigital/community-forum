@@ -74,5 +74,16 @@
     "expectedStatus": 400,
     "expectedMessage": "Registration failed",
     "expectedError": "password must be between 8-20 characters long"
+  },
+  {
+    "description": "Test 7: duplicate user",
+    "user": {
+      "email": "user7@example.com",
+      "username": "testUser1",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "username already exists"
   }
 ]
