@@ -85,5 +85,16 @@
     "expectedStatus": 400,
     "expectedMessage": "Registration failed",
     "expectedError": "username already exists"
+  },
+  {
+    "description": "Test 8: duplicate email",
+    "user": {
+      "email": "user1@example.com",
+      "username": "testUser8",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "email already in use"
   }
 ]
