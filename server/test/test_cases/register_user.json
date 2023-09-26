@@ -1,0 +1,100 @@
+[
+  {
+    "description": "Test 1: Register a valid user",
+    "user": {
+      "email": "user1@example.com",
+      "username": "testUser1",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 201,
+    "expectedMessage": "Registration successful"
+  },
+  {
+    "description": "Test 2: email contains whitespace",
+    "user": {
+      "email": "invalid email",
+      "username": "testUser2",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "invalid email"
+  },
+  {
+    "description": "Test 3: username starts with number",
+    "user": {
+      "email": "user3@example.com",
+      "username": "1testUser3",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "username must start with a letter a-z or A-Z"
+  },
+  {
+    "description": "Test 4: username contains special character",
+    "user": {
+      "email": "user4@example.com",
+      "username": "test User4",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "username must only contain letters and numbers"
+  },
+  {
+    "description": "Test 5: password does not contain symbol",
+    "user": {
+      "email": "user5@example.com",
+      "username": "testUser5",
+      "password": "testPassword123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 symbol"
+  },
+  {
+    "description": "Test 6: password < 8 characters",
+    "user": {
+      "email": "user6@example.com",
+      "username": "testUser6",
+      "password": "tP@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "password must be between 8-20 characters long"
+  },
+  {
+    "description": "Test 6: password > 20 characters",
+    "user": {
+      "email": "user6@example.com",
+      "username": "testUser6",
+      "password": "testPassword@123456789"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "password must be between 8-20 characters long"
+  },
+  {
+    "description": "Test 7: duplicate user",
+    "user": {
+      "email": "user7@example.com",
+      "username": "testUser1",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "username already exists"
+  },
+  {
+    "description": "Test 8: duplicate email",
+    "user": {
+      "email": "user1@example.com",
+      "username": "testUser8",
+      "password": "testPassword@123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Registration failed",
+    "expectedError": "email already in use"
+  }
+]
