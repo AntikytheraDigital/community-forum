@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const passport = require('passport');
-const bcrypt = require('bcrypt');
 const validator = require('validator');
 
 exports.register = async (req, res) => {
@@ -27,21 +26,11 @@ exports.register = async (req, res) => {
                 throw new Error(validation.message);
             }
         }
-
-        let savedUser;
-        //This should probably be its own function
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(password, salt, async (err, hash) => {
-                if (err) throw err;
-                console.log(hash);
-                password = hash;
-                const newUser = new User({username, email, password});
+        const newUser = new User({username, email, password});
 
                 // Save the user to the database using await to handle the promise returned by save()
-                savedUser = await newUser.save();
-                console.log("Registered new user:" + savedUser);
-            });
-        });
+        let savedUser= await newUser.save();
+        console.log("Registered new user:" + savedUser);
 
         // Registration successful
         return res.status(201).json({message: 'Registration successful'});
