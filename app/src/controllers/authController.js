@@ -1,29 +1,29 @@
 const url = process.env.SERVER_URL || 'http://localhost:3000';
 
-exports.handleSubmit = (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    let {username, email, password} = Object.fromEntries(data.entries());
+async function handleSubmit(req) {
+    let {username, email, password} = req;
 
-    fetch(`${url}/auth/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({username, email, password})
-    }).then(res => {
-        console.log(`res.status: ${res.status}`)
-        if (res.status === 201) {
-            alert(`${username} registered to database.`);
-            return res.json();
-        } else {
-            return res.json().then(data => {
-                alert(`Error: ${data.error}`);
-            });
+    try {
+        const response = await fetch(`${url}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({username, email, password})
+        });
+
+        if (response.status === 201) {
+            return [201, JSON.stringify({message: `${username} registered to database.`})];
         }
-    }).catch(err => {
-        console.log(err);
-        alert("Server error.");
-    });
+
+        let json = await response.json();
+        return [response.status, json['error']];
+    } catch {
+        return [500, "Server error."];
+    }
+}
+
+module.exports = {
+    handleSubmit: handleSubmit
 };

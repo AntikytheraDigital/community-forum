@@ -1,12 +1,19 @@
-const authController = require('./controllers/authController');
-const router = express.Router();
+const authController = require('../controllers/authController');
 
-const appUrl = process.env.APP_URL || 'http://localhost:3005';
+module.exports = function (app) {
+    app.get('/register', (req, res) => {
+        res.render('registerView');
+    });
 
-router.use(cors({
-    origin: appUrl,
-}))
+    app.post('/register', async (req, res) => {
+        let result = await authController.handleSubmit(req.body);
 
-router.post('/register', authController.register);
-
-module.exports = router;
+        if (result[0] === 201) {
+            res.render('registerView', {success: "User registered."});
+        } else {
+            let data = result[1];
+            console.log(data);
+            res.render('registerView', {error: data});
+        }
+    });
+}
