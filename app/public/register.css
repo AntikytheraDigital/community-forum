@@ -1,13 +1,8 @@
-.App {
+.register {
     text-align: center;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
-
-.App-header {
+.register-header {
     background-color: #282c34;
     min-height: 100vh;
     display: flex;
@@ -16,6 +11,14 @@
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: white;
+}
+
+.error-message {
+    color: red;
+}
+
+.success-message {
+    color: green;
 }
 
 .input-button {
@@ -41,8 +44,4 @@
     font-size: 16px;
     color: white;
     background-color: rgba(255, 255, 255, 0);
-}
-
-.App-link {
-    color: #61dafb;
 }

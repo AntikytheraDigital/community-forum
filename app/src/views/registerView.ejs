@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="/public/app.css"/>
+    <link rel="stylesheet" href="/public/register.css"/>
+
+</head>
+<body>
+<div class="register">
+    <div class="register-header">
+        <form action="/register" method="post">
+            <h2>Register Account</h2>
+            <div>
+                <label>
+                    Username:
+                    <input class="input-field" type="text" name="username" required/>
+                </label>
+            </div>
+            <div>
+                <label>
+                    Email:
+                    <input class="input-field" type="email" name="email" required/>
+                </label>
+            </div>
+            <div>
+                <label>
+                    Password:
+                    <input class="input-field" type="password" name="password" required/>
+                </label>
+            </div>
+            <div class="error-message">
+                <% if (typeof error !== 'undefined') { %>
+                    <p>
+                        Error: <%= error %>
+                    </p>
+                <% } %>
+            </div>
+            <div class="success-message">
+                <% if (typeof success !== 'undefined') { %>
+                    <p>
+                        <%= success %>
+                    </p>
+                <% } %>
+            </div>
+
+            <div>
+                <input class="input-button" type="submit" value="Register"/>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
