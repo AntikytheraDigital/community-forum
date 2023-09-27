@@ -19,7 +19,7 @@
   "scripts": {
     "build": "react-scripts build",
     "ssr": "node ssr/index.js",
-    "start": "npm run build && npm run ssr"
+    "start": "node src/index.js"
   },
   "browserslist": {
     "production": [
