@@ -9,6 +9,11 @@ module.exports = function (app) {
         res.render('loginView');
     });
 
+    app.post('/login', async (req, res) => {
+        // TODO: Handle login
+        res.render('loginView', {error: "Login not implemented."});
+    });
+
     app.get('/register', (req, res) => {
         res.render('registerView');
     });
@@ -17,11 +22,9 @@ module.exports = function (app) {
         let result = await authController.handleSubmit(req.body);
 
         if (result[0] === 201) {
-            res.render('registerView', {success: "User registered."});
+            res.render('registerView', {success: result[1]});
         } else {
-            let data = result[1];
-            console.log(data);
-            res.render('registerView', {error: data});
+            res.render('registerView', {error: result[1]});
         }
     });
 }

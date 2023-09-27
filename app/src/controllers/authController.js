@@ -14,7 +14,7 @@ async function handleSubmit(req) {
         });
 
         if (response.status === 201) {
-            return [201, JSON.stringify({message: `${username} registered to database.`})];
+            return [201, `${username} registered to database.`];
         }
 
         let json = await response.json();
