@@ -1,6 +1,10 @@
 const authController = require('../controllers/authController');
 
 module.exports = function (app) {
+    app.get('/', (req, res) => {
+        res.render('homeView');
+    });
+
     app.get('/register', (req, res) => {
         res.render('registerView');
     });
