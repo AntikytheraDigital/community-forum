@@ -5,6 +5,10 @@ module.exports = function (app) {
         res.render('homeView');
     });
 
+    app.get('/login', (req, res) => {
+        res.render('loginView');
+    });
+
     app.get('/register', (req, res) => {
         res.render('registerView');
     });
