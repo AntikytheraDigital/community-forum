@@ -21,6 +21,7 @@ code {
     top: 0;
     width: 100%;
     -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+    z-index: 1;
 }
 
 
