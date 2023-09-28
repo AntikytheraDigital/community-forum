@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Register</title>
+    <title>Login</title>
     <link rel="stylesheet" href="/public/app.css"/>
     <link rel="stylesheet" href="/public/auth.css"/>
 </head>
@@ -9,18 +9,12 @@
 <%- include('partials/navbar') %>
 
 <div class="auth">
-    <form action="/register" method="post">
-        <h2>Register Account</h2>
+    <form action="/login" method="post">
+        <h2>Login to Account</h2>
         <div>
             <label>
-                Username:
+                Username or Email:
                 <input class="input-field" type="text" name="username" required/>
-            </label>
-        </div>
-        <div>
-            <label>
-                Email:
-                <input class="input-field" type="email" name="email" required/>
             </label>
         </div>
         <div>
@@ -45,7 +39,7 @@
         </div>
 
         <div>
-            <input class="input-button" type="submit" value="Register"/>
+            <input class="input-button" type="submit" value="Login"/>
         </div>
     </form>
 </div>
