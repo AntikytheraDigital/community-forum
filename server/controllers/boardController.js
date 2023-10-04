@@ -1,5 +1,5 @@
-const Board = require('../models/boardModel');
-const Post = require('../models/postModel');
+//const Board = require('../models/board');
+const Post = require('../models/post');
 
 exports.createPost = async (req, res) => {
     console.log("Creating new post.")
