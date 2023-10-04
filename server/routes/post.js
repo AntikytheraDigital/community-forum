@@ -13,8 +13,6 @@ router.use(cors({
 // Edit post
 router.patch('/edit/:postID', postController.editPost);
 
-// NOTE: will come back round to comment stuff in future, this is just a first pass 
-
 // add comment route   
 router.post('/addComment', postController.addComment);
 
@@ -23,4 +21,8 @@ router.patch('/editComment/:commentID', postController.editComment);
 
 // delete comment route 
 router.delete('/deleteComment/:commentID', postController.deleteComment);
+
+// get post route 
+router.get('/getPost/:postID', postController.getPost);
+
 module.exports = router;

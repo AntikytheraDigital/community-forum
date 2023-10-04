@@ -119,3 +119,24 @@ exports.deleteComment = async (req, res) => {
     }
 };
 
+// will return a post json from the post id in the request parameters
+exports.getPost = async (req, res) => {
+    console.log("getting post... ");
+
+    try{
+        const {postID} = req.params;
+
+        if(!postID){
+            throw new Error("postID is required");
+        }
+
+        const post = await Post.findById(postID);
+
+        if(!post){
+            throw new Error("post was not found");
+        }
+        return(res.status(200).json({message: "post retrieved successfully", post: post}));
+    }catch(error){
+        return res.status(404).json({message: "post retrieval failed", error: error.message})
+    }
+};

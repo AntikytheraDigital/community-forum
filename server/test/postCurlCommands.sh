@@ -19,3 +19,6 @@ curl -X PATCH http://localhost:3000/post/editComment/651cf108172b6f62bb8ddbde  -
 
 #delete comment 
 curl -X DELETE http://localhost:3000/post/deleteComment/651cf108172b6f62bb8ddbde
+
+#get post
+curl -X GET http://localhost:3000/post/getPost/651cbcff21a2f6befb5bba82
