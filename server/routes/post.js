@@ -11,7 +11,7 @@ router.use(cors({
 }))
 
 // Edit post
-router.post('/edit/:postID', postController.editPost);
+router.patch('/edit/:postID', postController.editPost);
 
 // NOTE: will come back round to comment stuff in future, this is just a first pass 
 

@@ -9,3 +9,5 @@ const commentSchema = new mongoose.Schema({
     timestamp: {type: String, required: true}, 
     content: {type: String, required: true}
 });
+
+module.exports = mongoose.model("Comment", commentSchema);
