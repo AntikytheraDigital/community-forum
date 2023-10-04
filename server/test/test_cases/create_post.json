@@ -1,0 +1,29 @@
+[
+  {
+    "description": "create valid post",
+    "uri": "/board/createpost",
+    "data": {
+      "boardID": "testBoard23",
+      "authorID": "testauthorhelloo",
+      "content": "contentTest 123",
+      "timestamp": "1696382112630",
+      "title": "titleTest 123"
+    },
+    "expectedStatus": 201,
+    "expectedMessage": "Post created successfully"
+  },
+  {
+    "description": "empty boardID",
+    "uri": "/board/createpost",
+    "data": {
+      "boardID": "",
+      "authorID": "testauthorhelloo",
+      "content": "contentTest 123",
+      "timestamp": "1696382112630",
+      "title": "titleTest 123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post creation failed",
+    "expectedError": "boardID is required"
+  }
+]
