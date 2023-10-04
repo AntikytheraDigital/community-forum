@@ -1,4 +1,3 @@
-//const Board = require('../models/board');
 const Post = require('../models/post');
 
 exports.createPost = async (req, res) => {
@@ -43,7 +42,6 @@ exports.deletePost = async (req, res) => {
             throw new Error("postID is required");
         } 
 
-        // post will = true if the post has been successfully deleted 
         const post = await Post.findByIdAndDelete(postID);
 
         if(!post){
@@ -71,15 +69,9 @@ exports.getPosts = async (req, res) => {
         const posts = await Post.find({boardID: boardID});
         
         // extract just the ids associated with a given board
-        const postIDs = [];
-        for(let post of posts){
-            postIDs.push(post._id);
-        }
+        const postIDs = posts.map(post => post._id);
 
-        console.log("POST IDS" + postIDs)
         return (res.status(200).json({message: 'Post retrieval successful', postIDs: postIDs}));
-
-
     }catch(error){
         return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
     }
