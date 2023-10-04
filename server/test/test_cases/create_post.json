@@ -6,7 +6,6 @@
       "boardID": "testBoard23",
       "authorID": "testauthorhelloo",
       "content": "contentTest 123",
-      "timestamp": "1696382112630",
       "title": "titleTest 123"
     },
     "expectedStatus": 201,
@@ -19,11 +18,36 @@
       "boardID": "",
       "authorID": "testauthorhelloo",
       "content": "contentTest 123",
-      "timestamp": "1696382112630",
       "title": "titleTest 123"
     },
     "expectedStatus": 400,
     "expectedMessage": "Post creation failed",
     "expectedError": "boardID is required"
+  },
+  {
+    "description": "empty authorID",
+    "uri": "/board/createpost",
+    "data": {
+      "boardID": "testBoard23",
+      "authorID": "",
+      "content": "contentTest 123",
+      "title": "titleTest 123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post creation failed",
+    "expectedError": "authorID is required"
+  },
+  {
+    "description": "empty content",
+    "uri": "/board/createpost",
+    "data": {
+      "boardID": "testBoard23",
+      "authorID": "testauthorhelloo",
+      "content": "",
+      "title": "titleTest 123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post creation failed",
+    "expectedError": "post must have content in the body"
   }
 ]

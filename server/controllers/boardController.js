@@ -4,13 +4,12 @@ exports.createPost = async (req, res) => {
     console.log("Creating new post.")
 
     try{
-        let {boardID, authorID, content, timestamp, title} = req.body;
-        
+        let {boardID, authorID, content, title} = req.body;
+
         const validations = [
-            {check: () => boardID, message: "boardID is required"}, //should never be seen by user, but a good internal check 
-            {check: () => authorID, message: "authorID is required"}, //should never be seen by user, but a good internal check 
+            {check: () => boardID, message: "boardID is required"}, //should never be seen by user, but a good internal check
+            {check: () => authorID, message: "authorID is required"}, //should never be seen by user, but a good internal check
             {check: () => content, message: "post must have content in the body"},
-            {check: () => timestamp, message: "timestamp is required"}, //should never be seen by user, but a good internal check 
             {check: () => title, message: "title is required"},
             {check: () => title.length >= 3 && title.length <=30, message: "title must be between 3 and 30 characters long"}
         ]
@@ -22,8 +21,8 @@ exports.createPost = async (req, res) => {
             }
         }
 
-        // if checks pass, create a new post 
-        const newPost = new Post({boardID, authorID, content, timestamp, title});
+        // if checks pass, create a new post
+        const newPost = new Post({boardID, authorID, content, title});
         let savedPost = await newPost.save();
 
         return(res.status(201).json({message: 'Post created successfully', post: savedPost}));
@@ -36,11 +35,11 @@ exports.deletePost = async (req, res) => {
     console.log("Deleting post.")
 
     try{
-        const {postID} = req.params; 
+        const {postID} = req.params;
 
         if(!postID){
             throw new Error("postID is required");
-        } 
+        }
 
         const post = await Post.findByIdAndDelete(postID);
 
@@ -67,7 +66,7 @@ exports.getPosts = async (req, res) => {
 
         // find all posts with the given boardID
         const posts = await Post.find({boardID: boardID});
-        
+
         // extract just the ids associated with a given board
         const postIDs = posts.map(post => post._id);
 
