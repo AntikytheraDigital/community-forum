@@ -13,6 +13,6 @@ router.use(cors({
 // create post
 router.post('/createpost', boardController.createPost);
 // delete post
-router.post('/deletepost', boardController.deletePost);
+router.delete('/deletepost', boardController.deletePost);
 
 module.exports = router;

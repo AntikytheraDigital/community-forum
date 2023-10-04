@@ -16,7 +16,7 @@ exports.createPost = async (req, res) => {
             {check: () => title.length >= 3 && title.length <=30, message: "title must be between 3 and 30 characters long"}
         ]
 
-        for(let valdation of validations){
+        for(let validation of validations){
             if(!await valdation.check()){
                 console.log(validation.message);
                 throw new Error(validation.message);
