@@ -1,6 +1,5 @@
-const Board = require('../models/boardModel');
-const Post = require('../models/postModel');
-const Comment = require('../models/commentModel');
+const Post = require('../models/post');
+const Comment = require('../models/comment');
 
 
 // expects the new posts content and title to be in the request body, and the postID to be in the parameters
@@ -39,7 +38,7 @@ exports.editPost = async (req, res) => {
     }
 };
 
-exports.addCommenet = async (req, res) => {
+exports.addComment = async (req, res) => {
     console.log("Adding comment...")
 
     try{
