@@ -12,7 +12,12 @@ router.use(cors({
 
 // create post
 router.post('/createpost', boardController.createPost);
+
 // delete post
 router.delete('/deletepost/:postID', boardController.deletePost);
+
+//get post ids 
+router.get('/getposts/:boardID', boardController.getPosts);
+
 
 module.exports = router;

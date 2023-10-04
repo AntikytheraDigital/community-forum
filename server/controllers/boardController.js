@@ -68,8 +68,15 @@ exports.getPosts = async (req, res) => {
         }
 
         // find all posts with the given boardID
-        const postIDs = await Post.find({boardID: boardID});
+        const posts = await Post.find({boardID: boardID});
+        
+        // extract just the ids associated with a given board
+        const postIDs = [];
+        for(let post of posts){
+            postIDs.push(post._id);
+        }
 
+        console.log("POST IDS" + postIDs)
         return (res.status(200).json({message: 'Post retrieval successful', postIDs: postIDs}));
 
 

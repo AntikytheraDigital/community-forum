@@ -13,3 +13,5 @@ curl -X POST http://localhost:3000/board/createPost -H "Content-Type: applicatio
 curl -X DELETE http://localhost:3000/board/deletepost/651cb72221a2f6befb5bba7e
 
 
+# get posts 
+curl -X GET http://localhost:3000/board/getPosts/testBoard23
