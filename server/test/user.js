@@ -7,23 +7,23 @@ const TEST_CASES = require('./test_cases/register_user.json')
 
 describe('User', () => {
     describe('/POST register', () => {
-        TEST_CASES.forEach(userRegistrationTest);
+        TEST_CASES.forEach(doTest);
     });
 });
 
-function userRegistrationTest(testCase) {
-    it(testCase.description, (done) => {
+function doTest({description, user, expectedStatus, expectedMessage, expectedError}) {
+    it(description, (done) => {
         chai.request(server)
             .post('/auth/register')
-            .send(testCase.user)
+            .send(user)
             .end((err, res) => {
                 if (err) {
                     done(err);
                 } else {
-                    res.should.have.status(testCase.expectedStatus);
-                    res.body.should.have.property('message').eql(testCase.expectedMessage);
-                    if (testCase.expectedError) {
-                        res.body.should.have.property('error').eql(testCase.expectedError);
+                    res.should.have.status(expectedStatus);
+                    res.body.should.have.property('message').eql(expectedMessage);
+                    if (expectedError) {
+                        res.body.should.have.property('error').eql(expectedError);
                     }
                     done();
                 }
