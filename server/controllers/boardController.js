@@ -17,7 +17,7 @@ exports.createPost = async (req, res) => {
         ]
 
         for(let validation of validations){
-            if(!await valdation.check()){
+            if(!await validation.check()){
                 console.log(validation.message);
                 throw new Error(validation.message);
             }
@@ -55,5 +55,29 @@ exports.deletePost = async (req, res) => {
         return(res.status(404).json({message: 'Post deletion failed', error: error.message}));
     }
 };
+
+// returns all postIDs for a given boardID
+exports.getPosts = async (req, res) => {
+    console.log("getting posts");
+
+    try{
+        const {boardID} = req.params;
+
+        if(!boardID){
+            throw new Error("boardID is required");
+        }
+
+        // find all posts with the given boardID
+        const postIDs = await Post.find({boardID: boardID});
+
+        return (res.status(200).json({message: 'Post retrieval successful', postIDs: postIDs}));
+
+
+    }catch(error){
+        return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
+    }
+};
+
+
 
 
