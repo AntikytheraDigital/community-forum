@@ -3,19 +3,26 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 let server = require('../app');
 chai.use(chaiHttp);
-const TEST_CASES = require('./test_cases/register_user.json')
+const POST_USER_CASES = require('./test_cases/register_user.json')
+const POST_POST_CASES = require('./test_cases/create_post.json')
 
 describe('User', () => {
     describe('/POST register', () => {
-        TEST_CASES.forEach(doTest);
+        POST_USER_CASES.forEach(doPost);
     });
 });
 
-function doTest({description, user, expectedStatus, expectedMessage, expectedError}) {
+describe('Post', () => {
+    describe('/POST createPost, this is not at all confusing', () => {
+        POST_POST_CASES.forEach(doPost);
+    });
+});
+
+function doPost({description, uri, data, expectedStatus, expectedMessage, expectedError}) {
     it(description, (done) => {
         chai.request(server)
-            .post('/auth/register')
-            .send(user)
+            .post(uri)
+            .send(data)
             .end((err, res) => {
                 if (err) {
                     done(err);
