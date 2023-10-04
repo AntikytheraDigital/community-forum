@@ -3,6 +3,7 @@ const passport = require('passport');
 const session = require('express-session');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/post');
+const boardRoutes = require('./routes/board');
 const {connectDatabase} = require("./models/database");
 require('dotenv').config();
 const app = express();
@@ -18,6 +19,7 @@ app.use(passport.session());
 
 app.use('/auth', authRoutes);
 app.use('/post', postRoutes);
+app.use('/board', boardRoutes);
 
 const PORT = process.env.PORT || 3000;
 
