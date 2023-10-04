@@ -49,5 +49,31 @@
     "expectedStatus": 400,
     "expectedMessage": "Post creation failed",
     "expectedError": "post must have content in the body"
+  },
+  {
+    "description": "empty title",
+    "uri": "/board/createpost",
+    "data": {
+      "boardID": "testBoard23",
+      "authorID": "testauthorhelloo",
+      "content": "contentTest 123",
+      "title": ""
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post creation failed",
+    "expectedError": "title is required"
+  },
+  {
+    "description": "title too short",
+    "uri": "/board/createpost",
+    "data": {
+      "boardID": "testBoard23",
+      "authorID": "testauthorhelloo",
+      "content": "contentTest 123",
+      "title": "T"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post creation failed",
+    "expectedError": "title must be between 3 and 30 characters long"
   }
 ]
