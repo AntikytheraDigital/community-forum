@@ -48,3 +48,36 @@ code {
     text-align: center;
     text-decoration: none;
 }
+
+.welcome {
+    text-align: center;
+    color: dodgerblue;
+}
+
+.post-card {
+    width: 50%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px auto;
+}
+
+.post-card-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.post-card-info {
+    font-size: 0.8em;
+    color: #999;
+    margin: 0;
+    float: right;
+    clear: both;
+}
+
+.post-card-board {
+    font-size: 0.8em;
+    color: cornflowerblue;
+    float: right;
+}
