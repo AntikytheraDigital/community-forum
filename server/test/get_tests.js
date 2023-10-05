@@ -1,25 +1,24 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
-let server = require('../app');
-chai.use(chaiHttp);
-const POST_USER_CASES = require('./test_cases/register_user.json')
-const POST_POST_CASES = require('./test_cases/create_post.json')
+const server = require('../app');
+const GET_POST_CASES = require('./test_cases/get_post.json');
 
-describe('/POST tests', () => {
-    describe('User registration', () => {
-        POST_USER_CASES.forEach(doPost);
-    });
-    describe('Create Post', () => {
-        POST_POST_CASES.forEach(doPost);
+chai.use(chaiHttp);
+
+describe('/GET tests', () => {
+    before(function () {
+        this.skip();
+    })
+    describe('Post', () => {
+        GET_POST_CASES.forEach(doGet);
     });
 });
 
-function doPost({description, uri, data, expectedStatus, expectedMessage, expectedError}) {
+function doGet({description, uri, expectedStatus, expectedMessage, expectedPost, expectedError}) {
     it(description, (done) => {
         chai.request(server)
-            .post(uri)
-            .send(data)
+            .get(uri)
             .end((err, res) => {
                 if (err) {
                     done(err);
@@ -28,6 +27,8 @@ function doPost({description, uri, data, expectedStatus, expectedMessage, expect
                     res.body.should.have.property('message').eql(expectedMessage);
                     if (expectedError) {
                         res.body.should.have.property('error').eql(expectedError);
+                    } else {
+                        res.body.should.have.property('post').eql(expectedPost);
                     }
                     done();
                 }

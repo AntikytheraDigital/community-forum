@@ -1,0 +1,14 @@
+[
+  {
+    "description": "Get valid post",
+    "uri": "TODO: INSERT URI HERE",
+    "expectedStatus": 200,
+    "expectedMessage": "post retrieved successfully",
+    "expectedPost": {
+      "boardID": "123456",
+      "authorID": "234567",
+      "content": "This is a post",
+      "title": "Post Title"
+    }
+  }
+]
