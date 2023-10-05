@@ -12,10 +12,18 @@
         Welcome to the Community Forum!
     </h1>
 </div>
+<div class="error-message">
+    <% if (typeof posts.error !== 'undefined') { %>
+        <p>
+            Error: <%= posts.error %>
+        </p>
+    <% } %>
+</div>
 <div class="post-list">
-    <% posts.forEach(function(post) { %>
-        <%- include('partials/postCard', post) %>
-    <% }); %>
+    <% if (typeof posts.error == 'undefined') { %>
+        <% posts.forEach(function(post) { %>
+            <%- include('partials/postCard', post) %>
+    <% }); } %>
 </div>
 </body>
 </html>

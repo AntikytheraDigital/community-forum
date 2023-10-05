@@ -67,14 +67,24 @@ exports.getPosts = async (req, res) => {
         // find all posts with the given boardID
         const posts = await Post.find({boardID: boardID});
 
-        // extract just the ids associated with a given board
-        const postIDs = posts.map(post => post._id);
-
-        return (res.status(200).json({message: 'Post retrieval successful', postIDs: postIDs}));
+        return (res.status(200).json({message: 'Post retrieval successful', posts: posts}));
     }catch(error){
         return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
     }
 };
+
+// returns all posts
+exports.getAllPosts = async (req, res) => {
+    console.log("getting all posts");
+
+    try{
+        const posts = await Post.find({}).sort({timestamp: -1});
+
+        return (res.status(200).json({message: 'Post retrieval successful', posts: posts}));
+    }catch(error){
+        return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
+    }
+}
 
 
 
