@@ -19,5 +19,7 @@ router.delete('/deletepost/:postID', boardController.deletePost);
 //get post ids 
 router.get('/getposts/:boardID', boardController.getPosts);
 
+router.get('/getallposts', boardController.getAllPosts);
+
 
 module.exports = router;

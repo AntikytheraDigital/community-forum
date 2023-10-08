@@ -8,9 +8,22 @@
 <body>
 <%- include('partials/navbar') %>
 <div>
-    <h1>
-        Welcome to the home page!
+    <h1 class="welcome">
+        Welcome to the Community Forum!
     </h1>
+</div>
+<div class="error-message">
+    <% if (typeof posts.error !== 'undefined') { %>
+        <p>
+            Error: <%= posts.error %>
+        </p>
+    <% } %>
+</div>
+<div class="post-list">
+    <% if (typeof posts.error == 'undefined') { %>
+        <% posts.forEach(function(post) { %>
+            <%- include('partials/postCard', post) %>
+    <% }); } %>
 </div>
 </body>
 </html>

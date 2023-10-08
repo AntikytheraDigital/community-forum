@@ -1,8 +1,10 @@
 const authController = require('../controllers/authController');
+const boardController = require('../controllers/boardController');
 
 module.exports = function (app) {
-    app.get('/', (req, res) => {
-        res.render('homeView');
+    app.get('/', async (req, res) => {
+        let result = await boardController.handleGetAllPosts();
+        res.render('homeView', {posts: result});
     });
 
     app.get('/login', (req, res) => {
