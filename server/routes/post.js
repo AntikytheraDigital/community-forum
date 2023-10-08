@@ -11,16 +11,16 @@ router.use(cors({
 }))
 
 // Edit post
-router.patch('/edit/:postID', postController.editPost);
+router.patch('/edit', postController.editPost);
 
 // add comment route   
 router.post('/addComment', postController.addComment);
 
 // edit comment route
-router.patch('/editComment/:commentID', postController.editComment);
+router.patch('/editComment', postController.editComment);
 
 // delete comment route 
-router.delete('/deleteComment/:commentID', postController.deleteComment);
+router.delete('/deleteComment', postController.deleteComment);
 
 // get post route 
 router.get('/getPost/:postID', postController.getPost);
