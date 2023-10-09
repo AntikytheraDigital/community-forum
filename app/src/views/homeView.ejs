@@ -19,6 +19,11 @@
         </p>
     <% } %>
 </div>
+<div class = "board-list">
+    <% if (typeof boards.error == 'undefined') { %>
+        <% boards.forEach(function(board) { %>
+            <%-include('partials/boardCard', board) %>
+    <% }); } %>
 <div class="post-list">
     <% if (typeof posts.error == 'undefined') { %>
         <% posts.forEach(function(post) { %>
