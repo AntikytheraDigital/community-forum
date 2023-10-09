@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Build App Dockerfile
-        run: docker build -t $DOCKERHUB_USER/app ./app
+        run: docker build -t ${{ vars.DOCKERHUB_USER }}/app ./app
       
       - name: Build Server Dockerfile
-        run: docker build -t $DOCKERHUB_USER/server ./server
+        run: docker build -t ${{ var.sDOCKERHUB_USER }}/server ./server
