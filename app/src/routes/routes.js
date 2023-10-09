@@ -11,6 +11,13 @@ module.exports = function (app) {
         res.render('loginView');
     });
 
+    app.get('/board/:boardName', async (req, res) => {
+        // just using all posts as a placeholder until later 
+        let result = await boardController.handleGetBoardPosts(req.params.boardName);
+        console.log("RESULTTTTT ", result);
+        res.render('boardView', {posts: result, boardName: req.params.boardName});
+    });
+
     app.post('/login', async (req, res) => {
         // TODO: Handle login
         res.render('loginView', {error: "Login not implemented."});
