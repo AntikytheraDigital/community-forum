@@ -1,7 +1,7 @@
 [
   {
     "description": "create valid post",
-    "uri": "/board/createpost",
+    "uri": "/posts",
     "data": {
       "boardID": "testBoard23",
       "authorID": "testauthorhelloo",
@@ -13,7 +13,7 @@
   },
   {
     "description": "empty boardID",
-    "uri": "/board/createpost",
+    "uri": "/posts",
     "data": {
       "boardID": "",
       "authorID": "testauthorhelloo",
@@ -26,7 +26,7 @@
   },
   {
     "description": "empty authorID",
-    "uri": "/board/createpost",
+    "uri": "/posts",
     "data": {
       "boardID": "testBoard23",
       "authorID": "",
@@ -39,7 +39,7 @@
   },
   {
     "description": "empty content",
-    "uri": "/board/createpost",
+    "uri": "/posts",
     "data": {
       "boardID": "testBoard23",
       "authorID": "testauthorhelloo",
@@ -52,7 +52,7 @@
   },
   {
     "description": "empty title",
-    "uri": "/board/createpost",
+    "uri": "/posts",
     "data": {
       "boardID": "testBoard23",
       "authorID": "testauthorhelloo",
@@ -65,7 +65,7 @@
   },
   {
     "description": "title too short",
-    "uri": "/board/createpost",
+    "uri": "/posts",
     "data": {
       "boardID": "testBoard23",
       "authorID": "testauthorhelloo",
