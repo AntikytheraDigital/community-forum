@@ -8,9 +8,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
       - name: Build App Dockerfile
       - run: docker build -t "$DOCKERHUB_USER"/app ./app
 
+      - uses: actions/checkout@v4
       - name: Build Server Dockerfile
       - run: docker build -t "$DOCKERHUB_USER"/server ./server
