@@ -35,9 +35,9 @@ exports.deletePost = async (req, res) => {
     console.log("Deleting post.")
 
     try{
-        const {postID} = req.params;
+        const postID = req.query.id;
 
-        if(!postID){
+        if (!postID) {
             throw new Error("postID is required");
         }
 
@@ -58,14 +58,14 @@ exports.getPosts = async (req, res) => {
     console.log("getting posts");
 
     try{
-        const {boardID} = req.params;
+        const boardID = req.query.id;
 
-        if(!boardID){
+        if (!boardID) {
             throw new Error("boardID is required");
         }
 
         // find all posts with the given boardID
-        const posts = await Post.find({boardID: boardID});
+        const posts = await Post.find({boardID: boardID}).sort({timestamp: -1});
 
         return (res.status(200).json({message: 'Post retrieval successful', posts: posts}));
     }catch(error){

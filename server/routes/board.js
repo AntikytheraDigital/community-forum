@@ -14,11 +14,12 @@ router.use(cors({
 router.post('/createpost', boardController.createPost);
 
 // delete post
-router.delete('/deletepost/:postID', boardController.deletePost);
+router.delete('/deletepost', boardController.deletePost);
 
-//get post ids 
-router.get('/getposts/:boardID', boardController.getPosts);
+//get board posts by id
+router.get('/getposts', boardController.getPosts);
 
+// get all posts
 router.get('/getallposts', boardController.getAllPosts);
 
 

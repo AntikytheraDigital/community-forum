@@ -9,7 +9,7 @@ exports.editPost = async (req, res) => {
     console.log("Editing post...")
 
     try{
-        const {postID} = req.params; 
+        const postID = req.query.id;
         const {content, title} = req.body;
 
         const validations = [
@@ -72,7 +72,7 @@ exports.editComment = async (req, res) => {
     console.log("editing comment ...");
 
     try{
-        const {commentID} = req.params;
+        const commentID = req.query.id;
         const {content} = req.body;
 
         const validations = [
@@ -102,7 +102,7 @@ exports.deleteComment = async (req, res) => {
     console.log("deleting comment... ");
 
     try{
-        const {commentID} = req.params;
+        const commentID = req.query.id;
 
         if(!commentID){
             throw new Error("commentID is required");
@@ -124,7 +124,7 @@ exports.getPost = async (req, res) => {
     console.log("getting post... ");
 
     try{
-        const {postID} = req.params;
+        const postID = req.query.id;
 
         if(!postID){
             throw new Error("postID is required");
