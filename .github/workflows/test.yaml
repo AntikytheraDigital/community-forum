@@ -13,8 +13,8 @@ jobs:
 
       - name: Install OpenSSL 1.1
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libssl-dev
+          wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
       
       - name: Use Node.js
         uses: actions/setup-node@v3
