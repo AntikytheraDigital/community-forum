@@ -13,4 +13,4 @@ jobs:
         run: docker build -t ${{ vars.DOCKERHUB_USER }}/app ./app
       
       - name: Build Server Dockerfile
-        run: docker build -t ${{ var.sDOCKERHUB_USER }}/server ./server
+        run: docker build -t ${{ vars.sDOCKERHUB_USER }}/server ./server
