@@ -15,7 +15,7 @@ paths:
             schema:
               $ref: '#/components/schemas/User'
       responses:
-        '200':
+        '201':
           description: OK
           content:
             application/json:
@@ -30,6 +30,7 @@ paths:
   /boards:
     get:
       summary: Get list of all boards
+      description: NOT IMPLEMENTED YET
       responses:
         '200':
           description: JSON array of boards
@@ -41,6 +42,7 @@ paths:
                   $ref: '#/components/schemas/Board'
     post:
       summary: Create a new Board (not implemented yet)
+      description: NOT IMPLEMENTED YET
       requestBody:
         required: true
         content:
@@ -48,7 +50,7 @@ paths:
             schema:
               $ref: '#/components/schemas/Board'
       responses:
-        '200':
+        '201':
           description: OK
           content:
             application/json:
@@ -63,6 +65,7 @@ paths:
   /boards/{boardName}:
     get:
       summary: Find board by boardName
+      description: NOT IMPLEMENTED YET
       parameters:
         - in: path
           name: boardName
@@ -85,6 +88,7 @@ paths:
                 $ref: '#/components/schemas/ServerResponse'
     delete:
       summary: Delete board by name
+      description: NOT IMPLEMENTED YET
       parameters:
         - in: path
           name: boardName
@@ -105,8 +109,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerResponse'
-
-  #post by id
   /posts/{id}:
     get:
       summary: Find post by UID
@@ -152,6 +154,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerResponse'
+    patch:
+      summary: Update post by UID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the post
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
   /comments:
     post:
       summary: Create a new Comment
@@ -179,6 +209,7 @@ paths:
   /comments/{id}:
     get:
       summary: Find comment by UID
+      description: NOT IMPLEMENTED YET
       parameters:
         - in: path
           name: id
@@ -335,11 +366,44 @@ paths:
   /comments/findByUser?:
     get:
       summary: Find comments by user
+      description: NOT IMPLEMENTED YET
       parameters:
         - in: query
           name: userID
           required: true
           description: id of the user
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          description: limit of comments to return
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: JSON array of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  /comments/findByPost?:
+    get:
+      summary: Find comments by post
+      description: NOT IMPLEMENTED YET
+      parameters:
+        - in: query
+          name: postID
+          required: true
+          description: id of the post
           schema:
             type: string
         - in: query
@@ -376,6 +440,27 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Post'
+    post:
+      summary: Create a new Post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
 
 components:
   schemas:
@@ -384,8 +469,10 @@ components:
       properties:
         message:
           type: string
+          example: Request successful
         error:
           type: string
+          example: Could not complete request because reasons
       required:
         - message
     Board:
@@ -395,12 +482,15 @@ components:
           type: string
           readOnly: true
           description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
         boardName:
           type: string
           description: Name of the board
+          example: FunnyStuff
         boardDescription:
           type: string
           description: Description of the board
+          example: Post only jokes that are funny
       required:
         - boardName
         - boardDescription
@@ -411,10 +501,13 @@ components:
           type: string
           readOnly: true
           description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
         username:
           type: string
+          example: JohnDoe
         email:
           type: string
+          example: user@domain.com
         password:
           type: string
           writeOnly: true
@@ -429,20 +522,26 @@ components:
           type: string
           readOnly: true
           description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
         boardName:
           type: string
           description: foreign key from Board
+          example: FunnyStuff
         authorID:
           type: string
           description: foreign key from User
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
         timestamp:
           type: string
           readOnly: true
           description: UTC timestamp
+          example: 2020-10-29T20:00:00.000Z
         title:
           type: string
+          example: Funny joke
         content:
           type: string
+          example: Why did the chicken cross the road?
       required:
         - boardName
         - authorID
@@ -456,18 +555,23 @@ components:
           type: string
           readOnly: true
           description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
         postID:
           type: string
           description: foreign key from Post
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
         authorID:
           type: string
           description: foreign key from User
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
         timestamp:
           type: string
           readOnly: true
           description: UTC timestamp
+          example: 2020-10-29T20:00:00.000Z
         content:
           type: string
+          example: Because it wanted to get to the other side
       required:
         - postID
         - authorID
