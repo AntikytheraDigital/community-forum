@@ -4,12 +4,17 @@ on: [pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     env: 
       working-directory: ./server
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install OpenSSL 1.1
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev
       
       - name: Use Node.js
         uses: actions/setup-node@v3
