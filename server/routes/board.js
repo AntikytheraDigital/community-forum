@@ -10,6 +10,8 @@ router.use(cors({
     origin: appUrl,
 }))
 
+router.get(':/boardName', boardController.getBoardByName);
+
 router.get('', boardController.getAllBoards);
 
 router.post('', boardController.createBoard);
