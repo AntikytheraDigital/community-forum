@@ -3,7 +3,7 @@ const url = process.env.SERVER_URL || 'http://localhost:3000';
 async function handleGetAllPosts() {
     let posts = []
     try {
-        const response = await fetch(`${url}/board/getallposts/`, {
+        const response = await fetch(`${url}/posts`, {
             method: 'GET'
         });
 
