@@ -54,8 +54,27 @@ async function handleGetBoardPosts(boardName) {
     return posts;
 }
 
+async function handleGetBoards(){
+    let boards = [];
+    try{
+        const response = await fetch(`${url}/boards`, {
+            method: 'GET'
+        });
+
+        let json = await response.json();
+        boards = json["boards"];
+
+    } catch(error){
+        console.log("Error getting boards: ", error);
+        return {"error": "Error getting boards."}
+    }
+    
+    return boards;
+}
+
 
 module.exports = {
-    handleGetAllPosts: handleGetAllPosts,
-    handleGetBoardPosts: handleGetBoardPosts
+    handleGetAllPosts: handleGetAllPosts, 
+    handleGetBoardPosts: handleGetBoardPosts, 
+    handleGetBoards: handleGetBoards
 };
