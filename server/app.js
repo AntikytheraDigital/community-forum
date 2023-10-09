@@ -18,8 +18,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRoutes);
-app.use('/post', postRoutes);
-app.use('/board', boardRoutes);
+app.use('/posts', postRoutes);
+app.use('/boards', boardRoutes);
 
 const PORT = process.env.PORT || 3000;
 

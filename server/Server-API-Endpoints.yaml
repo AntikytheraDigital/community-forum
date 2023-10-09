@@ -5,7 +5,7 @@ info:
   description: Server API for the Community Forum
 
 paths:
-  /register:
+  /auth/register:
     post:
       summary: Register a new user
       requestBody:
@@ -152,7 +152,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerResponse'
-  #comment by id
+  /comments:
+    post:
+      summary: Create a new Comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+
+
   /comments/{id}:
     get:
       summary: Find comment by UID
