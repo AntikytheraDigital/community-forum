@@ -10,16 +10,12 @@ router.use(cors({
     origin: appUrl,
 }))
 
-// create post
-router.post('/createpost', boardController.createPost);
+router.get(':/boardName', boardController.getBoardByName);
 
-// delete post
-router.delete('/deletepost/:postID', boardController.deletePost);
+router.get('', boardController.getAllBoards);
 
-//get post ids 
-router.get('/getposts/:boardID', boardController.getPosts);
+router.post('', boardController.createBoard);
 
-router.get('/getallposts', boardController.getAllPosts);
-
+router.delete('', boardController.deleteBoard);
 
 module.exports = router;

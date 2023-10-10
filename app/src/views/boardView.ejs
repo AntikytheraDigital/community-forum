@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Community Forum</title>
+    <link rel="stylesheet" href="/public/app.css"/>
+
+</head>
+<body>
+<%- include('partials/navbar') %>
+<div>
+    <h1 class="board-description">
+        <%= boardName %>
+    </h1>
+</div>
+<div class="error-message">
+    <% if (typeof posts.error !== 'undefined') { %>
+        <p>
+            Error: <%= posts.error %>
+        </p>
+    <% } %>
+</div>
+<div class="post-list">
+    <% if (typeof posts.error == 'undefined') { %>
+        <% posts.forEach(function(post) { %>
+            <%- include('partials/postCard', post) %>
+    <% }); } %>
+</div>
+</body>
+</html>

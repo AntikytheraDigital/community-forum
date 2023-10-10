@@ -1,0 +1,579 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Community Forum Server API
+  description: Server API for the Community Forum
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  /boards:
+    get:
+      summary: Get list of all boards
+      description: NOT IMPLEMENTED YET
+      responses:
+        '200':
+          description: JSON array of boards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Board'
+    post:
+      summary: Create a new Board (not implemented yet)
+      description: NOT IMPLEMENTED YET
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Board'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  /boards/{boardName}:
+    get:
+      summary: Find board by boardName
+      description: NOT IMPLEMENTED YET
+      parameters:
+        - in: path
+          name: boardName
+          required: true
+          description: name of the board
+          schema:
+            type: string
+      responses:
+        '200':
+          description: JSON object of board
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Board'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+    delete:
+      summary: Delete board by name
+      description: NOT IMPLEMENTED YET
+      parameters:
+        - in: path
+          name: boardName
+          required: true
+          description: name of the board
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  /posts/{id}:
+    get:
+      summary: Find post by UID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the post
+          schema:
+            type: string
+      responses:
+        '200':
+          description: JSON object of post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+    delete:
+      summary: Delete post by UID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the post
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+    patch:
+      summary: Update post by UID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the post
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  /comments:
+    post:
+      summary: Create a new Comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+
+
+  /comments/{id}:
+    get:
+      summary: Find comment by UID
+      description: NOT IMPLEMENTED YET
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the comment
+          schema:
+            type: string
+      responses:
+        '200':
+          description: JSON object of comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+    delete:
+      summary: Delete comment by UID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the comment
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  #user by id
+  /users/{id}:
+    get:
+      summary: Find user by UID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: JSON object of user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+    delete:
+      summary: Delete user by UID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  #posts by board
+  /posts/findByBoard?:
+    get:
+      summary: Find posts by board
+      parameters:
+        - in: query
+          name: boardName
+          required: true
+          description: name of the board
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          description: limit of posts to return
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: JSON array of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  #posts by user
+  /posts/findByUser?:
+    get:
+      summary: Find posts by user
+      parameters:
+        - in: query
+          name: userID
+          required: true
+          description: id of the user
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          description: limit of posts to return
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: JSON array of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  #comments by user
+  /comments/findByUser?:
+    get:
+      summary: Find comments by user
+      description: NOT IMPLEMENTED YET
+      parameters:
+        - in: query
+          name: userID
+          required: true
+          description: id of the user
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          description: limit of comments to return
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: JSON array of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  /comments/findByPost?:
+    get:
+      summary: Find comments by post
+      description: NOT IMPLEMENTED YET
+      parameters:
+        - in: query
+          name: postID
+          required: true
+          description: id of the post
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          description: limit of comments to return
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: JSON array of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  #all posts
+  /posts:
+    get:
+      summary: Get list of all posts
+      responses:
+        '200':
+          description: JSON array of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    post:
+      summary: Create a new Post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+
+components:
+  schemas:
+    ServerResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Request successful
+        error:
+          type: string
+          example: Could not complete request because reasons
+      required:
+        - message
+    Board:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+        boardName:
+          type: string
+          description: Name of the board
+          example: FunnyStuff
+        boardDescription:
+          type: string
+          description: Description of the board
+          example: Post only jokes that are funny
+      required:
+        - boardName
+        - boardDescription
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+        username:
+          type: string
+          example: JohnDoe
+        email:
+          type: string
+          example: user@domain.com
+        password:
+          type: string
+          writeOnly: true
+      required:
+        - username
+        - email
+        - password
+    Post:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+        boardName:
+          type: string
+          description: foreign key from Board
+          example: FunnyStuff
+        authorID:
+          type: string
+          description: foreign key from User
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+        timestamp:
+          type: string
+          readOnly: true
+          description: UTC timestamp
+          example: 2020-10-29T20:00:00.000Z
+        title:
+          type: string
+          example: Funny joke
+        content:
+          type: string
+          example: Why did the chicken cross the road?
+      required:
+        - boardName
+        - authorID
+        - timestamp
+        - title
+        - content
+    Comment:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+          description: UID generated by mongodb
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+        postID:
+          type: string
+          description: foreign key from Post
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+        authorID:
+          type: string
+          description: foreign key from User
+          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+        timestamp:
+          type: string
+          readOnly: true
+          description: UTC timestamp
+          example: 2020-10-29T20:00:00.000Z
+        content:
+          type: string
+          example: Because it wanted to get to the other side
+      required:
+        - postID
+        - authorID
+        - timestamp
+        - content

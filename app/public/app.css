@@ -59,6 +59,15 @@ code {
     color: dodgerblue;
 }
 
+.board-title {
+    text-align: center;
+    color: #061746;
+}
+
+.board-description {
+    text-align: center;
+    color: #061746;
+}
 .post-card {
     width: 50%;
     padding: 10px;

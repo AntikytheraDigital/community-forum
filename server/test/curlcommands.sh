@@ -10,8 +10,8 @@ curl -X POST http://localhost:3000/board/createPost -H "Content-Type: applicatio
 
 #delete post
 #note: should change out the number at the end of the url to the postID you want to delete
-curl -X DELETE http://localhost:3000/board/deletepost/651cb72221a2f6befb5bba7e
+curl -X DELETE http://localhost:3000/board/deletepost?id=651cb72221a2f6befb5bba7e
 
 
 # get posts 
-curl -X GET http://localhost:3000/board/getPosts/testBoard23
+curl -X GET http://localhost:3000/board/getPosts?id=testBoard23

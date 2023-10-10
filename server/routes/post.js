@@ -9,20 +9,20 @@ const appUrl = process.env.APP_URL || 'http://localhost:3005';
 router.use(cors({
     origin: appUrl,
 }))
+router.get('/findByBoard', postController.findByBoard);
 
-// Edit post
-router.patch('/edit/:postID', postController.editPost);
+router.get('/findByUser', postController.findByUser);
 
-// add comment route   
-router.post('/addComment', postController.addComment);
+router.patch('/:postID', postController.editPost);
 
-// edit comment route
-router.patch('/editComment/:commentID', postController.editComment);
+router.get('/:postID', postController.getPost);
 
-// delete comment route 
-router.delete('/deleteComment/:commentID', postController.deleteComment);
+router.delete('/:postID', postController.deletePost);
 
-// get post route 
-router.get('/getPost/:postID', postController.getPost);
+router.patch('/:postID', postController.editPost);
+
+router.get('', postController.getAllPosts);
+
+router.post('', postController.createPost);
 
 module.exports = router;
