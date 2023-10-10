@@ -3,7 +3,7 @@ name: Build and Deploy
 on: [pull_request]
 
 jobs:
-  build:
+  build_deploy_docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,12 +14,6 @@ jobs:
 
       - name: Build Server Dockerfile
         run: docker build -t ${{ vars.DOCKERHUB_USER }}/server ./server
-
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
 
       - name: Login to DockerHub
         run: docker login -u ${{ vars.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_KEY }}
