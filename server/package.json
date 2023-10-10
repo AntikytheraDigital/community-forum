@@ -10,18 +10,18 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "mongoose": "^7.5.2",
+    "mongoose": "^7.6.1",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
     "validator": "^13.11.0"
   },
   "devDependencies": {
-    "chai": "^4.3.8",
+    "chai": "^4.3.10",
     "chai-http": "^4.4.0",
     "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
-    "mongodb-memory-server": "^8.15.1",
+    "mongodb-memory-server": "^9.0.0",
     "nodemon": "^3.0.1"
   }
 }
