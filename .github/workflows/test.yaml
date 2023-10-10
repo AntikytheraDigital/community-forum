@@ -5,13 +5,22 @@ on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    container:
-      image: node:20-bullseye
+    env: 
+      working-directory: ./server
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install OpenSSL 1.1
+        run: |
+          wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          
       - run: npm ci
         working-directory: ./server
       - run: npm run build --if-present
