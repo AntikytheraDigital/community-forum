@@ -1,4 +1,4 @@
-name: Community Forum CI
+name: Test Server
 
 on: [pull_request]
 
@@ -14,7 +14,7 @@ jobs:
 
       - name: Download OpenSSL 1.1
         run: wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-        
+
       - name: Install OpenSSL 1.1
         run: sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 
@@ -25,14 +25,3 @@ jobs:
 
       - run: npm ci
       - run: npm test
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Build App Dockerfile
-        run: docker build -t ${{ vars.DOCKERHUB_USER }}/app ./app
-      
-      - name: Build Server Dockerfile
-        run: docker build -t ${{ vars.DOCKERHUB_USER }}/server ./server

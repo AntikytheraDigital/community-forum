@@ -1,0 +1,16 @@
+name: Build Docker Images
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build App Dockerfile
+        run: docker build -t ${{ vars.DOCKERHUB_USER }}/app ./app
+
+      - name: Build Server Dockerfile
+        run: docker build -t ${{ vars.DOCKERHUB_USER }}/server ./server
