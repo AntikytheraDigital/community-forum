@@ -6,6 +6,10 @@ let mockDatabase, dbUrl = null;
 const connectDatabase = async () => {
     try {
         if (process.env.NODE_ENV === 'test') {
+            if (!process.env.SESSION_KEY) {
+                process.env.SESSION_KEY = 'test';
+            }
+
             // Use in-memory database for testing
             // this can fail on UBUNTU 22.04, fix by adding environment variable: MONGOMS_VERSION=6.0.4
             mockDatabase = await MongoMemoryServer.create();
