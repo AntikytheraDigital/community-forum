@@ -21,7 +21,7 @@ function doPost({description, uri, data, expectedStatus, expectedMessage, expect
             .post(uri)
             .send(data)
             .end((err, res) => {
-                console.log(err)
+                console.log(res.body);
                 if (err) {
                     done(err);
                 } else {
