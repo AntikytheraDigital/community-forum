@@ -18,7 +18,10 @@ describe('/POST tests', () => {
 function doPost({description, uri, data, expectedStatus, expectedMessage, expectedError}) {
     // Make test request to server and log error
     try {
-        chai.request(server).post(uri).send(data);
+        chai.request(server).post(uri).send(data).end((err, res) => {
+            console.log("TEST: ", err);
+            console.log("TEST: ", res);
+        });
     } catch (err) {
         console.log("TEST: ", err);
     }
