@@ -1,5 +1,6 @@
 const authController = require('../controllers/authController');
 const boardController = require('../controllers/boardController');
+const postController = require('../controllers/postController');
 
 module.exports = function (app) {
     app.get('/', async (req, res) => {
@@ -35,5 +36,12 @@ module.exports = function (app) {
         } else {
             res.render('registerView', {error: result[1]});
         }
+    });
+
+    app.get('/board/:boardName/posts/:postID', async (req, res) => {
+        let result = await postController.handleGetPost(req.params.postID);
+        let title = result.title ? result.title : "Invalid Post";
+
+        res.render('postView', {post: result, title: title});
     });
 }
