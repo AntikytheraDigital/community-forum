@@ -3,27 +3,38 @@
 <head>
     <title><%= title %></title>
     <link rel="stylesheet" href="/public/app.css"/>
+    <link rel="stylesheet" href="/public/postPage.css"/>
 
 </head>
 <body>
 <%- include('partials/navbar') %>
-<div>
-    <h1 class="welcome">
-        Post ID: <%= title %>
-    </h1>
-</div>
 <div class="error-message">
-    <% if (typeof post.error !== 'undefined') { %>
+    <% if (post.error) { %>
         <p>
             Error: <%= post.error %>
         </p>
     <% } %>
 </div>
-<div class="comment-list">
-    <% if (typeof post.error == 'undefined') { %>
-        <% post.forEach(function(comment) { %>
-            <%- include('partials/commentCard', comment) %>
-    <% }); } %>
-</div>
+
+<% if (!post.error) { %>
+    <div class="post-card">
+        <a href="/board/<%= post.boardID %>" class="post-card-board">board/<%= post.boardID %></a>
+        <div class="post-card-info">
+            <span class="post-card-author">Posted by <%= post.authorID %></span>
+            <span class="post-card-date">at <%= post.timestamp %></span>
+        </div>
+        <h1 class="post-title"><%= post.title %></h1>
+        <p><%= post.content %></p>
+    </div>
+    <div>
+        <h2 class="comment-title">Comments</h2>
+    </div>
+    <div class="comment-list">
+        <% if (post.comments) { %>
+            <% post.comments.forEach(function(comment) { %>
+                <%- include('partials/commentCard', comment) %>
+        <% }); } %>
+    </div>
+<% } %>
 </body>
 </html>
