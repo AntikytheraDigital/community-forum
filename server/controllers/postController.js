@@ -143,5 +143,15 @@ exports.deletePost = async (req, res) => {
 
 exports.findByUser = async (req, res) => {
     console.log("getting posts by user, NOT IMPLEMENTED");
-    return (res.status(500).json({message: 'Post retrieval by user not implemented'}));
+    return (res.status(501).json({message: 'Post retrieval by user not implemented'}));
+}
+
+exports.addComment = async (req, res) => {
+    console.log("adding comment, NOT IMPLEMENTED");
+    return (res.status(501).json({message: 'Comment addition not implemented'}));
+}
+
+exports.deleteComment = async (req, res) => {
+    console.log("deleting comment, NOT IMPLEMENTED");
+    return (res.status(501).json({message: 'Comment deletion not implemented'}));
 }
