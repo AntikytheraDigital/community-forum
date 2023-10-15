@@ -3,7 +3,7 @@ const url = process.env.SERVER_URL || 'http://localhost:3000';
 async function handleGetPost(postID){
     try {
         // TODO: Update fetch to use the correct endpoint
-        const response = await fetch(`${url}/posts/x?id=${postID}`, {
+        const response = await fetch(`${url}/posts?id=${postID}`, {
             method: 'GET'
         });
 

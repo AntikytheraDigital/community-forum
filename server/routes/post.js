@@ -22,12 +22,12 @@ router.post('/comment', postController.addComment);
 
 router.delete('/comment', postController.deleteComment);
 
-router.patch('/:postID', postController.editPost);
+router.patch('', postController.editPost);
 
-router.get('/:postID', postController.getPost);
+router.get('', postController.getPost);
 
-router.delete('/:postID', postController.deletePost);
+router.delete('', postController.deletePost);
 
-router.patch('/:postID', postController.editPost);
+router.patch('', postController.editPost);
 
 module.exports = router;
