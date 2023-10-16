@@ -1,18 +1,22 @@
-const url = process.env.SERVER_URL || 'http://localhost:3000';
+const serverRequest = require('../middleware/serverRequest');
 
 async function handleGetAllPosts() {
     let posts = []
-    try {
-        const response = await fetch(`${url}/posts/all`, {
-            method: 'GET'
-        });
 
-        let json = await response.json();
-        posts = json["posts"];
-    } catch {
-        console.log("Error getting all posts.");
-        return {"error": "Error getting all posts."}
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    };
+
+    let json = await serverRequest.makeRequest('/posts/all', requestOptions);
+
+    if (json.error) {
+        return {"error": json.error}
     }
+
+    posts = json["posts"];
 
     // Change timestamp to readable format
     for (const post of posts) {
@@ -23,23 +27,25 @@ async function handleGetAllPosts() {
     return posts;
 }
 
-async function handleGetBoardPosts(boardName){
+async function handleGetBoardPosts(boardName) {
     let posts = [];
-    try{
-        const response = await fetch(`${url}/posts/findByBoard?boardName=${boardName}`, {
-            method: 'GET'
-        });
 
-        console.log("RESPONSE", response);
-        let json = await response.json();
-        console.log('JSONNNN', json);
-        posts = json["posts"];
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    };
 
-    } catch(error){
-        console.log("Error getting board posts: ", error);
-        return {"error": "Error getting board posts."}
+    let json = await serverRequest.makeRequest(`/posts/findByBoard?boardName=${boardName}`, requestOptions);
+
+    if (json.error) {
+        return {"error": json.error}
     }
-        // Change timestamp to readable format
+
+    posts = json["posts"];
+
+    // Change timestamp to readable format
     for (const post of posts) {
         let date = new Date(post["timestamp"]);
         post["timestamp"] = date.toLocaleString();

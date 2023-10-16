@@ -1,24 +1,24 @@
-const url = process.env.SERVER_URL || 'http://localhost:3000';
+const serverRequest = require('../middleware/serverRequest');
 
 async function handleSubmit(req) {
     let {username, email, password} = req;
 
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username, email, password})
+    };
+
     try {
-        const response = await fetch(`${url}/auth/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({username, email, password})
-        });
+        const response = await serverRequest.makeRequest('/auth/register', requestOptions);
 
         if (response.status === 201) {
             return [201, `${username} registered to database.`];
         }
 
-        let json = await response.json();
-        return [response.status, json['error']];
+        return [response.status, response['error']];
     } catch {
         return [500, "Server error."];
     }
