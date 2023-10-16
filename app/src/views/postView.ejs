@@ -31,10 +31,16 @@
     </div>
     <div class="comment-add">
         <h1 class="comment-title-card">Write Comment</h1>
-        <form action="/post/<%= post.postID %>/comment" method="post">
-            <textarea class="input-textarea" name="content" id="content" placeholder="Comment"></textarea>
-            <button class="input-button" type="submit">Add Comment</button>
-        </form>
+        <% if (loggedIn) { %>
+            <form method="post">
+                <input type="hidden" name="post" value="<%= JSON.stringify(post) %>">
+                <input type="hidden" name="title" value="<%= title %>">
+                <textarea class="input-textarea" name="comment" placeholder="Comment" required></textarea>
+                <button class="input-button" type="submit">Add Comment</button>
+            </form>
+        <% } else { %>
+            <p class="error-message">You must be logged in to comment</p>
+        <% } %>
     </div>
     <div class="comment-list">
         <% if (post.comments) { %>
