@@ -12,18 +12,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build App Dockerfile
-        run: docker build -t ${{ vars.DOCKERHUB_USER }}/app ./app
+      - name: Install GCloud CLI
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GOOGLE_PROJECT }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          export_default_credentials: true
 
-      - name: Build Server Dockerfile
-        run: docker build -t ${{ vars.DOCKERHUB_USER }}/server ./server
+      - name: Authorize Docker
+        env:
+          CLOUDSDK_CORE_DISABLE_PROMPTS: 1
+          GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+        run: gcloud auth configure-docker australia-southeast1-docker.pkg.dev
 
-      - name: Login to DockerHub
-        run: docker login -u ${{ vars.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_KEY }}
+      - name: Build and Push App Dockerfile
+        run: |
+          docker build -t ${{ vars.REPO }}/app:latest ./app
+          docker push ${{ vars.REPO }}/app:latest
 
-      - name: Deploy App Dockerfile
-        run: docker push ${{ vars.DOCKERHUB_USER }}/app
+      - name: Build and Push Server Dockerfile
+        run: |
+          docker build -t ${{ vars.REPO }}/server:latest ./server
+          docker push ${{ vars.REPO }}/server:latest
 
-      - name: Deploy Server Dockerfile
-        run: docker push ${{ vars.DOCKERHUB_USER }}/server
-        
+      - name: Deploy App to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: app
+          region: australia-southeast1
+          image: ${{ vars.REPO }}/app:latest
+
+      - name: Deploy Server to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: server
+          region: australia-southeast1
+          image: ${{ vars.REPO }}/server:latest

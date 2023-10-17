@@ -1,12 +1,20 @@
-const url = process.env.SERVER_URL || 'http://localhost:3000';
+const serverRequest = require('../middleware/serverRequest');
 
 async function handleGetPost(postID){
     try {
-        const response = await fetch(`${url}/posts?id=${postID}`, {
-            method: 'GET'
-        });
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
 
-        let json = await response.json();
+        let json = await serverRequest.makeRequest(`/posts?id=${postID}`, requestOptions);
+
+        if (json.error) {
+            return {"error": json.error}
+        }
+
         let post = json["post"];
         let date = new Date(post["timestamp"]);
         post["timestamp"] = date.toLocaleString();

@@ -13,9 +13,7 @@ module.exports = function (app) {
     });
 
     app.get('/board/:boardName', async (req, res) => {
-        // just using all posts as a placeholder until later 
         let result = await boardController.handleGetBoardPosts(req.params.boardName);
-        console.log("RESULTTTTT ", result);
         res.render('boardView', {posts: result, boardName: req.params.boardName});
     });
 
