@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const jwt = require("jsonwebtoken");
 
 // expects the new posts content and title to be in the request body, and the postID to be in the parameters
 // will not edit timestamp, authorID, or boardID
@@ -99,8 +100,17 @@ exports.findByUser = async (req, res) => {
 }
 
 exports.addComment = async (req, res) => {
-    console.log("adding comment, NOT IMPLEMENTED");
-    return (res.status(501).json({message: 'Comment addition not implemented'}));
+    try {
+        const {postID, username, content} = req.body;
+        const newComment = {username, content};
+        let savedPost = await Post.findByIdAndUpdate(postID, {$push: {comments: newComment}});
+        if (!savedPost) {
+            throw new Error("post not found")
+        }
+        return (res.status(201).json({message: 'Comment added successfully'}));
+    } catch (error) {
+        return (res.status(400).json({message: "Comment creation failed", error: error.message}));
+    }
 }
 
 exports.deleteComment = async (req, res) => {

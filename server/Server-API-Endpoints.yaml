@@ -272,7 +272,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerResponse'
-  /posts/comment?:
+  /posts/comments?:
     post:
       summary: Add a comment to a post
       parameters:

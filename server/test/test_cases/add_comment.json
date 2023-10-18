@@ -1,0 +1,25 @@
+[
+  {
+    "description": "add valid comment",
+    "uri": "/posts/comments",
+    "data": {
+      "postID": "5e1a0651741b255ddda996c4",
+      "username": "testauthor",
+      "content": "contentTest 123"
+    },
+    "expectedStatus": 201,
+    "expectedMessage": "Comment added successfully"
+  },
+  {
+    "description": "add comment to nonexisting post",
+    "uri": "/posts/comments",
+    "data": {
+      "postID": "5e1a0651741b255ddda996c5",
+      "username": "testauthor",
+      "content": "contentTest 123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Comment creation failed",
+    "expectedError": "Post not found"
+  }
+]
