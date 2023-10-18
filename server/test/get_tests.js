@@ -1,17 +1,22 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
+const Board = require('../models/board');
 const server = require('../app');
-const GET_POST_CASES = require('./test_cases/get_post.json');
-
+const GET_BOARD_CASES = require('./test_cases/get_board.json');
+const MODEL_DATA = require('./test_cases/model_data.json');
 chai.use(chaiHttp);
 
 describe('/GET tests', () => {
-    before(function () {
-        this.skip();
-    })
-    describe('Post', () => {
-        GET_POST_CASES.forEach(doGet);
+    beforeEach(async () => {
+        await Board.deleteMany({});
+        MODEL_DATA.forEach((model) => {
+            const newBoard = new Board(model);
+            newBoard.save();
+        });
+    });
+    describe('Boards', () => {
+        GET_BOARD_CASES.forEach(doGet);
     });
 });
 
@@ -24,12 +29,9 @@ function doGet({description, uri, expectedStatus, expectedMessage, expectedPost,
                     done(err);
                 } else {
                     res.should.have.status(expectedStatus);
-                    res.body.should.have.property('message').eql(expectedMessage);
-                    if (expectedError) {
-                        res.body.should.have.property('error').eql(expectedError);
-                    } else {
-                        res.body.should.have.property('post').eql(expectedPost);
-                    }
+                    res.body.should.have.property('boards');
+                    res.body.boards.should.be.a('array');
+                    console.log(res.body.boards);
                     done();
                 }
             });

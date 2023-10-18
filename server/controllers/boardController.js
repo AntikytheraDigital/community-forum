@@ -12,8 +12,9 @@ exports.createBoard = async (req, res) => {
 }
 
 exports.getAllBoards = async (req, res) => {
-    console.log("Getting all boards. NOT IMPLEMENTED")
-    return (res.status(501).json({message: 'Board retrieval not implemented'}));
+    console.log("Getting all boards...")
+    const boards = await Board.find({})
+    return (res.status(200).json({boards}));
 }
 
 exports.getBoardByName = async (req, res) => {
