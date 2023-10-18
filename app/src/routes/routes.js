@@ -42,7 +42,7 @@ module.exports = function (app) {
         let result = await postController.handleGetPost(req.params.postID);
         let title = result.title ? result.title : "Invalid Post";
 
-        res.render('postView', {post: result, title: title, loggedIn: false});
+        res.render('postView', {post: result, title: title, loggedIn: true});
     });
 
     app.post('/board/:boardName/posts/:postID', async (req, res) => {

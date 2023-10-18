@@ -1,4 +1,5 @@
 <!doctype html>
+<% let initialComments = post.comments; %>
 <html lang="en">
 <head>
     <title><%= title %></title>
@@ -32,22 +33,25 @@
     <div class="comment-add">
         <h1 class="comment-title-card">Write Comment</h1>
         <% if (loggedIn) { %>
-            <form method="post">
+            <form id = "comment-form" method="post">
                 <input type="hidden" name="post" value="<%= JSON.stringify(post) %>">
-                <input type="hidden" name="title" value="<%= title %>">
-                <textarea class="input-textarea" name="comment" placeholder="Comment" required></textarea>
+                <input type="hidden" name="title" value="<%= title %>"> 
+                <textarea class="input-textarea" id="comment-input" name="comment" placeholder="Comment" required></textarea>
                 <button class="input-button" type="submit">Add Comment</button>
             </form>
         <% } else { %>
             <p class="error-message">You must be logged in to comment</p>
         <% } %>
     </div>
-    <div class="comment-list">
+    <div class="comment-list" data-initial-comments='<%- JSON.stringify(post.comments) %>' >
         <% if (post.comments) { %>
             <% post.comments.forEach(function(comment) { %>
                 <%- include('partials/commentCard', comment) %>
         <% }); } %>
     </div>
 <% } %>
+
+<script src="/public/handlePostComment.js"></script>
 </body>
 </html>
+
