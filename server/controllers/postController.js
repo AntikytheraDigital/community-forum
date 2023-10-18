@@ -3,7 +3,6 @@ const Post = require('../models/post');
 // expects the new posts content and title to be in the request body, and the postID to be in the parameters
 // will not edit timestamp, authorID, or boardID
 exports.editPost = async (req, res) => {
-    console.log("Editing post...")
     try {
         //TODO check if user is the author of the post
         const postID = req.query.id;
@@ -12,22 +11,18 @@ exports.editPost = async (req, res) => {
         if (!savedPost) {
             throw new Error("post not found")
         }
-        return (res.status(200).json({message: 'Post edited successfully', post: savedPost}));
+        return (res.status(200).json({message: 'Post edited successfully'}));
     } catch (error) {
         return (res.status(400).json({message: 'Post creation failed', error: error.message}));
     }
 };
 exports.createPost = async (req, res) => {
-    console.log("Creating new post.")
-
     try {
         let {boardName, username, content, title} = req.body;
-
         // if checks pass, create a new post
         const newPost = new Post({boardName, username, content, title});
-        let savedPost = await newPost.save();
-
-        return (res.status(201).json({message: 'Post created successfully', post: savedPost}));
+        await newPost.save();
+        return (res.status(201).json({message: 'Post created successfully'}));
     } catch (error) {
         return (res.status(400).json({message: 'Post creation failed', error: error.message}));
     }
@@ -35,8 +30,6 @@ exports.createPost = async (req, res) => {
 
 // will return a post json from the post id in the request parameters
 exports.getPost = async (req, res) => {
-    console.log("getting post... ");
-
     try {
         const postID = req.query.id;
 
@@ -49,26 +42,21 @@ exports.getPost = async (req, res) => {
         if (!post) {
             throw new Error("post was not found");
         }
-        return (res.status(200).json({message: "post retrieved successfully", post: post}));
+        return (res.status(200).json({post}));
     } catch (error) {
         return res.status(404).json({message: "post retrieval failed", error: error.message})
     }
 };
 
 exports.getAllPosts = async (req, res) => {
-    console.log("getting all posts");
-
     try {
         const posts = await Post.find({}).sort({timestamp: -1});
-
-        return (res.status(200).json({message: 'Post retrieval successful', posts: posts}));
+        return (res.status(200).json({posts}));
     } catch (error) {
         return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
     }
 }
 exports.findByBoard = async (req, res) => {
-    console.log("getting posts");
-
     try {
         const boardName = req.query.boardName;
 
@@ -79,15 +67,13 @@ exports.findByBoard = async (req, res) => {
         // find all posts with the given boardID
         const posts = await Post.find({boardID: boardName}).sort({timestamp: -1});
 
-        return (res.status(200).json({message: 'Post retrieval successful', posts: posts}));
+        return (res.status(200).json({posts}));
     } catch (error) {
         return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
     }
 };
 
 exports.deletePost = async (req, res) => {
-    console.log("Deleting post.")
-
     try {
         const postID = req.query.id;
 
