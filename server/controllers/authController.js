@@ -1,6 +1,8 @@
 const User = require('../models/user');
-const passport = require('passport');
 const validator = require('validator');
+const jwt = require("jsonwebtoken");
+
+const jwtSecret = process.env.JWT_SECRET || 'secret';
 
 exports.register = async (req, res) => {
     console.log("Registering new user");
@@ -40,9 +42,44 @@ exports.register = async (req, res) => {
     }
 };
 
-exports.login = (req, res, next) => {
+exports.login = async (req, res) => {
+    let {username, password} = req.body;
 
+    // Authenticate user
+    const user = await User.findOne({username: username});
+
+    if (!user) {
+        return res.status(401).json({message: 'Incorrect username'});
+    }
+
+    if (!user.validPassword(password)) {
+        return res.status(401).json({message: 'Incorrect password'});
+    }
+
+    // Generate JWT token TODO: Set up refresh tokens
+    const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
+
+    console.log("Login successful for user: " + username);
+    return res.status(200).json({JWT: token});
 };
+
+exports.checkLoggedIn = async (req, res) => {
+    const token = req.headers.jwt;
+
+    if (!token) {
+        return res.status(401).json({message: 'User not logged in'});
+    }
+
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+        const username = decoded.username;
+
+        console.log("User logged in: " + username);
+        return res.status(200).json({username: username});
+    } catch (e) {
+        return res.status(401).json({message: 'User not logged in'});
+    }
+}
 
 exports.logout = (req, res) => {
     req.logout();
