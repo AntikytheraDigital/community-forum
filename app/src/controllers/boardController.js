@@ -23,7 +23,6 @@ async function handleGetAllPosts() {
         let date = new Date(post["timestamp"]);
         post["timestamp"] = date.toLocaleString();
     }
-
     return posts;
 }
 
@@ -56,18 +55,23 @@ async function handleGetBoardPosts(boardName) {
 
 async function handleGetBoards(){
     let boards = [];
-    try{
-        const response = await fetch(`${url}/boards/all`, {
-            method: 'GET'
-        });
 
-        let json = await response.json();
-        boards = json["boards"];
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    };
 
-    } catch(error){
-        console.log("Error getting boards: ", error);
-        return {"error": "Error getting boards."}
+    let json = await serverRequest.makeRequest(`/boards/all`, requestOptions);
+
+    if (json.error) {
+        console.log("Error getting boards: ", json.error);
+        return {"error": json.error};
     }
+
+    boards = json["boards"];
+    console.log("BOARDS: ", boards);
     
     return boards;
 }

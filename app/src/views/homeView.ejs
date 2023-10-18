@@ -1,5 +1,4 @@
 <!doctype html>
-<%- include('partials/boardButtonsCard') %>
 <html lang="en">
 <head>
     <title>Home</title>
@@ -8,6 +7,8 @@
 </head>
 <body>
 <%- include('partials/navbar') %>
+<%- include('partials/boardButtonsCard') %>
+
 <div>
     <h1 class="welcome">
         Welcome to the Community Forum!
@@ -20,11 +21,7 @@
         </p>
     <% } %>
 </div>
-<div class = "board-list">
-    <% if (typeof boards.error == 'undefined') { %>
-        <% boards.forEach(function(board) { %>
-            <%-include('partials/boardCard', board) %>
-    <% }); } %>
+
 <div class="post-list">
     <% if (typeof posts.error == 'undefined') { %>
         <% posts.forEach(function(post) { %>
