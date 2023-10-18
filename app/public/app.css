@@ -29,6 +29,46 @@ code {
     z-index: 1;
 }
 
+.boardButtonCard {
+    overflow: hidden;
+    position: fixed;
+    background-color: #F8F8F8;
+    -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75); 
+    width: 15%; 
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;  
+}
+
+.btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    width: 100%;
+    padding: 5px 0; 
+
+}
+
+.btn {
+    margin: 5px 0; 
+    width: 80%; 
+    border-radius: 5px; 
+    border: 1px solid #ccc; 
+    padding: 10px 15px; 
+    display: inline-block; 
+    text-align: center; 
+    transition: background-color 0.3s, transform 0.3s; 
+}
+
+.btn:hover {
+    background-color: #ddd; 
+    transform: scale(1.05); 
+}
+
+
 
 /* Links inside the navbar */
 .navbar a {

@@ -5,7 +5,9 @@ const postController = require('../controllers/postController');
 module.exports = function (app) {
     app.get('/', async (req, res) => {
         let result = await boardController.handleGetAllPosts();
-        res.render('homeView', {posts: result});
+        let boards = await boardController.handleGetBoards();
+        res.render('homeView', {posts: result, boards: boards});
+
     });
 
     app.get('/login', (req, res) => {
