@@ -16,13 +16,12 @@ module.exports = function (app) {
     });
 
     app.get('/login', (req, res) => {
-        // TODO: Log user out if already logged in
+        res.clearCookie('JWT');
         res.render('loginView');
     });
 
     app.get('/logout', (req, res) => {
         res.clearCookie('JWT');
-        // TODO: Deregister JWT from server
         res.redirect('/');
     });
 
@@ -47,11 +46,12 @@ module.exports = function (app) {
     });
 
     app.get('/register', (req, res) => {
-        // TODO: Log user out if already logged in
+        res.clearCookie('JWT');
         res.render('registerView');
     });
 
     app.post('/register', async (req, res) => {
+        res.clearCookie('JWT');
         let result = await authController.handleSubmit(req.body);
 
         if (result[0] === 201) {

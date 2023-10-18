@@ -19,7 +19,4 @@ router.post('/login', authController.login);
 // check logged in
 router.get('/check', authController.checkLoggedIn);
 
-// Logout
-router.get('/logout', authController.logout);
-
 module.exports = router;

@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
         return res.status(401).json({message: 'Incorrect password'});
     }
 
-    // Generate JWT token TODO: Set up refresh tokens
+    // Generate JWT token TODO: Set up refresh tokens with short rotations
     const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
 
     console.log("Login successful for user: " + username);
@@ -72,17 +72,9 @@ exports.checkLoggedIn = async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, jwtSecret);
-        const username = decoded.username;
 
-        console.log("User logged in: " + username);
-        return res.status(200).json({username: username});
+        return res.status(200).json({username: decoded.username});
     } catch (e) {
         return res.status(401).json({message: 'User not logged in'});
     }
 }
-
-exports.logout = (req, res) => {
-    req.logout();
-    // TODO: Redirect or respond as needed after logout
-    res.status(200).json({message: 'Logout successful'});
-};
