@@ -2,7 +2,7 @@
     <a href="/">Community Forum</a>
     <div class="navbarRight">
         <% if (typeof loggedIn !== 'undefined' && loggedIn && typeof username !== 'undefined') { %>
-            <a><%= username %></a>
+            <a id="currentUser"><%= username %></a>
             <a href="/logout">Logout</a>
         <% } else { %>
             <a href="/register">Register</a>

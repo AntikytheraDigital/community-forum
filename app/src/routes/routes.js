@@ -1,23 +1,18 @@
 const authController = require('../controllers/authController');
 const boardController = require('../controllers/boardController');
 const postController = require('../controllers/postController');
+const authentication = require('../middleware/authentication');
 
 module.exports = function (app) {
     app.get('/', async (req, res) => {
         let result = await boardController.handleGetAllPosts();
         let boards = await boardController.handleGetBoards();
 
-        // Check if cookie JWT exists
-        if (req.cookies.JWT) {
-            let loggedIn = await authController.checkLoggedIn(req.cookies.JWT, res);
+        let options = {posts: result, boards: boards};
 
-            if (loggedIn[0] === 200) {
-                res.render('homeView', {posts: result, boards: boards, loggedIn: true, username: loggedIn[1]});
-                return;
-            }
-        }
+        await authentication.checkLoggedIn(req, res, options);
 
-        res.render('homeView', {posts: result, boards: boards});
+        res.render('homeView', options);
     });
 
     app.get('/login', (req, res) => {
@@ -33,7 +28,12 @@ module.exports = function (app) {
 
     app.get('/board/:boardName', async (req, res) => {
         let result = await boardController.handleGetBoardPosts(req.params.boardName);
-        res.render('boardView', {posts: result, boardName: req.params.boardName});
+
+        let options = {posts: result, boardName: req.params.boardName};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('boardView', options);
     });
 
     app.post('/login', async (req, res) => {
@@ -65,12 +65,21 @@ module.exports = function (app) {
         let result = await postController.handleGetPost(req.params.postID);
         let title = result.title ? result.title : "Invalid Post";
 
-        res.render('postView', {post: result, title: title, loggedIn: true});
+        let options = {post: result, title: title};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('postView', options);
     });
 
     app.post('/board/:boardName/posts/:postID', async (req, res) => {
         let result = JSON.parse(req.body.post);
-        res.render('postView', {post: result, title: req.body.title, loggedIn: true});
+
+        let options = {post: result, title: result.title};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('postView', options);
 
         // TODO: Handle adding comment after rendering (process adding after page render)
         console.log("Adding comment to post: " + req.body.comment);

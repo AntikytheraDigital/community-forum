@@ -9,6 +9,7 @@ require('dotenv').config();
 const User = require('../models/user');
 
 const appUrl = process.env.APP_URL || 'http://localhost:3005';
+const jwtSecret = process.env.JWT_SECRET || 'secret';
 
 router.use(cors({
     origin: appUrl,
@@ -33,7 +34,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({username: username}, process.env.JWT_SECRET);
+    const token = jwt.sign({username: username}, jwtSecret);
 
     console.log("Login successful for user: " + username);
     return res.status(200).json({JWT: token});
@@ -48,7 +49,7 @@ router.get('/check', async (req, res) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, jwtSecret);
         const username = decoded.username;
 
         console.log("User logged in: " + username);
