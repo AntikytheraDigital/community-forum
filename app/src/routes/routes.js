@@ -7,6 +7,7 @@ module.exports = function (app) {
         let result = await boardController.handleGetAllPosts();
         let boards = await boardController.handleGetBoards();
         res.render('homeView', {posts: result, boards: boards});
+
     });
 
     app.get('/login', (req, res) => {

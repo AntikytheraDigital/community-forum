@@ -29,6 +29,23 @@ code {
     z-index: 1;
 }
 
+.boardButtonCard {
+    overflow: hidden;
+    position: fixed;
+    background-color: #F8F8F8;
+    -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75); /* Added for non-webkit browsers */
+    width: 15%; /* This will make the card take the full width of its parent container */
+    z-index: 1;
+}
+
+.button-card-title {
+    padding-left: 20px; /* Adjust the value as needed */
+}
+
+.button-card-body {
+    padding-left: 20px; /* Adjust the value as needed */
+}
 
 /* Links inside the navbar */
 .navbar a {

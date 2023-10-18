@@ -57,7 +57,7 @@ async function handleGetBoardPosts(boardName) {
 async function handleGetBoards(){
     let boards = [];
     try{
-        const response = await fetch(`${url}/boards`, {
+        const response = await fetch(`${url}/boards/all`, {
             method: 'GET'
         });
 
