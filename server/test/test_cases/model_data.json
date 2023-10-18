@@ -1,10 +1,15 @@
-[
-  {
-    "boardName": "board1",
-    "boardDescription": "board1 description"
-  },
-  {
-    "boardName": "board2",
-    "boardDescription": "board2 description"
-  }
-]
+{
+  "boards": [
+    {
+      "boardName": "testboard23",
+      "boardDescription": "board1 description"
+    }
+  ],
+  "users": [
+    {
+      "username": "testauthor",
+      "password": "testPassword@123",
+      "email": "user@example.com"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 describe('/GET tests', () => {
     beforeEach(async () => {
         await Board.deleteMany({});
-        MODEL_DATA.forEach((model) => {
+        MODEL_DATA.boards.forEach((model) => {
             const newBoard = new Board(model);
             newBoard.save();
         });

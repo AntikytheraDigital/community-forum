@@ -254,7 +254,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Post'
+              type: object
+              properties:
+                newContent:
+                  type: string
+                  example: New content
       responses:
         '200':
           description: OK
