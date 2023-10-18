@@ -15,7 +15,6 @@ app.use(express.urlencoded({extended: true}));
 app.use(session({secret: process.env.SESSION_KEY, resave: false, saveUninitialized: false}));
 
 app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/auth', authRoutes);
 app.use('/posts', postRoutes);

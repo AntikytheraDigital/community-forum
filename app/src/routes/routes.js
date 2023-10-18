@@ -5,11 +5,29 @@ const postController = require('../controllers/postController');
 module.exports = function (app) {
     app.get('/', async (req, res) => {
         let result = await boardController.handleGetAllPosts();
+
+        // Check if cookie JWT exists
+        if (req.cookies.JWT) {
+            let loggedIn = await authController.checkLoggedIn(req.cookies.JWT, res);
+
+            if (loggedIn[0] === 200) {
+                res.render('homeView', {posts: result, loggedIn: true, username: loggedIn[1]});
+                return;
+            }
+        }
+
         res.render('homeView', {posts: result});
     });
 
     app.get('/login', (req, res) => {
+        // TODO: Log user out if already logged in
         res.render('loginView');
+    });
+
+    app.get('/logout', (req, res) => {
+        res.clearCookie('JWT');
+        // TODO: Deregister JWT from server
+        res.redirect('/');
     });
 
     app.get('/board/:boardName', async (req, res) => {
@@ -18,12 +36,17 @@ module.exports = function (app) {
     });
 
     app.post('/login', async (req, res) => {
-        // TODO: Handle login
-        let result = await authController.handleLogin(req.body);
-        res.render('loginView', {error: "Login not implemented."});
+        let result = await authController.handleLogin(req.body, res);
+
+        if (result[0] === 200) {
+            res.redirect('/');
+        } else {
+            res.render('loginView', {error: result[1]});
+        }
     });
 
     app.get('/register', (req, res) => {
+        // TODO: Log user out if already logged in
         res.render('registerView');
     });
 

@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require("cookie-parser");
 const app = express();
 
 // Serve static files
@@ -10,6 +11,7 @@ app.set('views', './src/views');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(cookieParser());
 
 require('./routes/routes')(app);
 
