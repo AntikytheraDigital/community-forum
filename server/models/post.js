@@ -4,7 +4,8 @@ const Board = require('./board');
 
 const commentSchema = new mongoose.Schema({
     username: {type: String, required: true}, // username is a foreign key to the User model
-    timestamp: {type: String, required: true}, content: {type: String, required: true}
+    timestamp: {type: String, required: true},
+    content: {type: String, required: true}
 });
 
 commentSchema.pre('validate', async function (next) {

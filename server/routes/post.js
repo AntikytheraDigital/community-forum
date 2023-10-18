@@ -18,9 +18,9 @@ router.get('/findByBoard', postController.findByBoard);
 
 router.get('/findByUser', postController.findByUser);
 
-router.post('/comment', postController.addComment);
+router.post('/comments', postController.addComment);
 
-router.delete('/comment', postController.deleteComment);
+router.delete('/comments', postController.deleteComment);
 
 router.patch('', postController.editPost);
 

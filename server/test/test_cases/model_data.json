@@ -11,5 +11,14 @@
       "password": "testPassword@123",
       "email": "user@example.com"
     }
+  ],
+  "posts": [
+    {
+      "_id": "5e1a0651741b255ddda996c4",
+      "title": "testpost",
+      "content": "testpost content",
+      "username": "testauthor",
+      "boardName": "testboard23"
+    }
   ]
 }
