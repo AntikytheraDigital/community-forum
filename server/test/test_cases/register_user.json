@@ -87,7 +87,7 @@
     "uri": "/auth/register",
     "data": {
       "email": "user7@example.com",
-      "username": "testUser1",
+      "username": "testauthor",
       "password": "testPassword@123"
     },
     "expectedStatus": 400,
@@ -98,7 +98,7 @@
     "description": "Test 8: duplicate email",
     "uri": "/auth/register",
     "data": {
-      "email": "user1@example.com",
+      "email": "user@example.com",
       "username": "testUser8",
       "password": "testPassword@123"
     },
