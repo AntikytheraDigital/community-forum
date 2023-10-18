@@ -8,9 +8,9 @@ const MODEL_DATA = require('./test_cases/model_data.json');
 chai.use(chaiHttp);
 
 describe('/GET tests', () => {
-    beforeEach(async () => {
-        await Board.deleteMany({});
-        MODEL_DATA.forEach((model) => {
+    beforeEach(() => {
+        Board.deleteMany({});
+        MODEL_DATA.boards.forEach((model) => {
             const newBoard = new Board(model);
             newBoard.save();
         });

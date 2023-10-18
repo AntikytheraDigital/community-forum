@@ -3,65 +3,26 @@ const Post = require('../models/post');
 // expects the new posts content and title to be in the request body, and the postID to be in the parameters
 // will not edit timestamp, authorID, or boardID
 exports.editPost = async (req, res) => {
-    console.log("Editing post...")
-    try{
+    try {
+        //TODO check if user is the author of the post
         const postID = req.query.id;
-        const {content, title} = req.body;
-
-        const validations = [
-            {check: () => content, message: "post must have content in the body"},
-            {check: () => title, message: "title is required"},
-            {check: () => title.length >= 3 && title.length <=30, message: "title must be between 3 and 30 characters long"}
-        ]
-
-        for(let validation of validations){
-            if(!await validation.check()){
-                console.log(validation.message);
-                throw new Error(validation.message);
-            }
+        const newContent = req.body;
+        let savedPost = await Post.findByIdAndUpdate(postID, {content: newContent});
+        if (!savedPost) {
+            throw new Error("post not found")
         }
-
-        // if checks pass, edit the post
-        let savedPost = await Post.findByIdAndUpdate(postID, {content:content, title:title}, {new: true});
-
-        if(!savedPost){
-            throw new Error("post was not found and edited successfully");
-        }
-
-        return(res.status(200).json({message: 'Post edited successfully', post: savedPost}));
-    } catch(error){
-        return(res.status(404).json({message: 'Post creation failed', error: error.message}));
+        return (res.status(200).json({message: 'Post edited successfully'}));
+    } catch (error) {
+        return (res.status(400).json({message: 'Post creation failed', error: error.message}));
     }
 };
 exports.createPost = async (req, res) => {
-    console.log("Creating new post.")
-
     try {
-        let {boardID, authorID, content, title} = req.body;
-
-        const validations = [
-            {check: () => boardID, message: "boardID is required"}, //should never be seen by user, but a good internal check
-            {check: () => authorID, message: "authorID is required"}, //should never be seen by user, but a good internal check
-            {check: () => content, message: "post must have content in the body"},
-            {check: () => title, message: "title is required"},
-            {
-                check: () => title.length >= 3 && title.length <= 30,
-                message: "title must be between 3 and 30 characters long"
-            }
-        ]
-
-        for (let validation of validations) {
-            if (!await validation.check()) {
-                console.log(validation.message);
-                throw new Error(validation.message);
-            }
-        }
-
+        let {boardName, username, content, title} = req.body;
         // if checks pass, create a new post
-        const newPost = new Post({boardID, authorID, content, title});
-        let savedPost = await newPost.save();
-
-        return (res.status(201).json({message: 'Post created successfully', post: savedPost}));
+        const newPost = new Post({boardName, username, content, title});
+        await newPost.save();
+        return (res.status(201).json({message: 'Post created successfully'}));
     } catch (error) {
         return (res.status(400).json({message: 'Post creation failed', error: error.message}));
     }
@@ -69,40 +30,33 @@ exports.createPost = async (req, res) => {
 
 // will return a post json from the post id in the request parameters
 exports.getPost = async (req, res) => {
-    console.log("getting post... ");
-
-    try{
+    try {
         const postID = req.query.id;
 
-        if(!postID){
+        if (!postID) {
             throw new Error("postID is required");
         }
 
         const post = await Post.findById(postID);
 
-        if(!post){
+        if (!post) {
             throw new Error("post was not found");
         }
-        return(res.status(200).json({message: "post retrieved successfully", post: post}));
-    }catch(error){
+        return (res.status(200).json({post}));
+    } catch (error) {
         return res.status(404).json({message: "post retrieval failed", error: error.message})
     }
 };
 
 exports.getAllPosts = async (req, res) => {
-    console.log("getting all posts");
-
-    try{
+    try {
         const posts = await Post.find({}).sort({timestamp: -1});
-
-        return (res.status(200).json({message: 'Post retrieval successful', posts: posts}));
-    }catch(error){
+        return (res.status(200).json({posts}));
+    } catch (error) {
         return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
     }
 }
 exports.findByBoard = async (req, res) => {
-    console.log("getting posts");
-
     try {
         const boardName = req.query.boardName;
 
@@ -113,15 +67,13 @@ exports.findByBoard = async (req, res) => {
         // find all posts with the given boardID
         const posts = await Post.find({boardID: boardName}).sort({timestamp: -1});
 
-        return (res.status(200).json({message: 'Post retrieval successful', posts: posts}));
+        return (res.status(200).json({posts}));
     } catch (error) {
         return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
     }
 };
 
 exports.deletePost = async (req, res) => {
-    console.log("Deleting post.")
-
     try {
         const postID = req.query.id;
 

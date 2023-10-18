@@ -23,7 +23,6 @@ async function handleGetAllPosts() {
         let date = new Date(post["timestamp"]);
         post["timestamp"] = date.toLocaleString();
     }
-
     return posts;
 }
 
@@ -54,8 +53,32 @@ async function handleGetBoardPosts(boardName) {
     return posts;
 }
 
+async function handleGetBoards(){
+    let boards = [];
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    };
+
+    let json = await serverRequest.makeRequest(`/boards/all`, requestOptions);
+
+    if (json.error) {
+        console.log("Error getting boards: ", json.error);
+        return {"error": json.error};
+    }
+
+    boards = json["boards"];
+    console.log("BOARDS: ", boards);
+    
+    return boards;
+}
+
 
 module.exports = {
-    handleGetAllPosts: handleGetAllPosts,
-    handleGetBoardPosts: handleGetBoardPosts
+    handleGetAllPosts: handleGetAllPosts, 
+    handleGetBoardPosts: handleGetBoardPosts, 
+    handleGetBoards: handleGetBoards
 };

@@ -1,0 +1,17 @@
+<div class="card boardButtonCard">
+    <div class="card-header">
+        <h3 class="button-card-title">Boards</h3>
+    </div>
+    <div class="button-card-body">
+        <div class="btn-group-vertical">
+            <% if (boards && boards.length) { %>
+                <% boards.forEach(function(board) { %>
+                    <a href="/board/<%= board.boardName %>" class="btn btn-primary"><%= board.boardName %></a>
+                <% }); %>
+            <% } else { %>
+                <p>No boards available.</p>
+            <% } %>
+        </div>
+    </div>
+</div>
+

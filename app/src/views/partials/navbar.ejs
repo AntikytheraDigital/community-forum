@@ -1,8 +1,7 @@
 <div class="navbar">
     <a href="/">Community Forum</a>
     <div class="navbarRight">
-<!--        Check if loggedIn is defined -->
-        <% if (typeof loggedIn !== 'undefined' && loggedIn) { %>
+        <% if (typeof loggedIn !== 'undefined' && loggedIn && typeof username !== 'undefined') { %>
             <a><%= username %></a>
             <a href="/logout">Logout</a>
         <% } else { %>

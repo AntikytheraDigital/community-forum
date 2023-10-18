@@ -3,8 +3,8 @@
     "description": "create valid post",
     "uri": "/posts",
     "data": {
-      "boardID": "testBoard23",
-      "authorID": "testauthorhelloo",
+      "boardName": "testBoard23",
+      "username": "testauthor",
       "content": "contentTest 123",
       "title": "titleTest 123"
     },
@@ -12,37 +12,37 @@
     "expectedMessage": "Post created successfully"
   },
   {
-    "description": "empty boardID",
+    "description": "empty boardName",
     "uri": "/posts",
     "data": {
-      "boardID": "",
-      "authorID": "testauthorhelloo",
+      "boardName": "",
+      "username": "testauthor",
       "content": "contentTest 123",
       "title": "titleTest 123"
     },
     "expectedStatus": 400,
     "expectedMessage": "Post creation failed",
-    "expectedError": "boardID is required"
+    "expectedError": "boardName is required"
   },
   {
-    "description": "empty authorID",
+    "description": "empty username",
     "uri": "/posts",
     "data": {
-      "boardID": "testBoard23",
-      "authorID": "",
+      "boardName": "testBoard23",
+      "username": "",
       "content": "contentTest 123",
       "title": "titleTest 123"
     },
     "expectedStatus": 400,
     "expectedMessage": "Post creation failed",
-    "expectedError": "authorID is required"
+    "expectedError": "username is required"
   },
   {
     "description": "empty content",
     "uri": "/posts",
     "data": {
-      "boardID": "testBoard23",
-      "authorID": "testauthorhelloo",
+      "boardName": "testBoard23",
+      "username": "testauthor",
       "content": "",
       "title": "titleTest 123"
     },
@@ -54,8 +54,8 @@
     "description": "empty title",
     "uri": "/posts",
     "data": {
-      "boardID": "testBoard23",
-      "authorID": "testauthorhelloo",
+      "boardName": "testBoard23",
+      "username": "testauthor",
       "content": "contentTest 123",
       "title": ""
     },
@@ -67,8 +67,8 @@
     "description": "title too short",
     "uri": "/posts",
     "data": {
-      "boardID": "testBoard23",
-      "authorID": "testauthorhelloo",
+      "boardName": "testBoard23",
+      "username": "testauthor",
       "content": "contentTest 123",
       "title": "T"
     },
