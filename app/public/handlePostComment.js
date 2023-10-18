@@ -1,10 +1,17 @@
 // Assuming you have an array of comments and a function to render the comments on the page
-let comments = [];
+const commentList = document.querySelector('.comment-list');
+const initialComments = JSON.parse(commentList.getAttribute('data-initial-comments') || '[]');
+console.log("INITIAL COMMENTS: ", initialComments);
+let comments = initialComments || [];
 
 function renderComments() {
     const commentList = document.querySelector('.comment-list');
+    const newCommentsContainer = document.createElement('div');
+
     commentList.innerHTML = ''; // Clear existing comments
     comments.forEach(comment => {
+
+
         const commentElement = document.createElement('div');
         commentElement.className = 'post-card';
 
@@ -27,13 +34,19 @@ function renderComments() {
         contentDiv.className = 'post-card-content';
 
         const contentP = document.createElement('p');
-        contentP.textContent = comment.text;
+        contentP.textContent = comment.content;
         contentDiv.appendChild(contentP);
 
         commentElement.appendChild(contentDiv);
 
         commentList.appendChild(commentElement);
+
+        newCommentsContainer.appendChild(commentElement);
+
     });
+
+    commentList.appendChild(newCommentsContainer);
+
 }
 
 
@@ -47,10 +60,10 @@ commentForm.addEventListener('submit', (event) => {
 
     // Get the comment input field inside the event listener function
     const commentText = commentInput.value;
-    
+
     // Create a new comment object with the text and any other relevant data
     const newComment = {
-        text: commentText,
+        content: commentText,
         authorID: "fakeUsername - test",
         timestamp: new Date().toISOString()
         // Add any other relevant data here
