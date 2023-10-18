@@ -24,6 +24,31 @@ async function handleSubmit(req) {
     }
 }
 
+async function handleLogin(req) {
+    let {username, password} = req;
+
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username, password})
+    };
+
+try {
+        const response = await serverRequest.makeRequest('/auth/login', requestOptions);
+
+        if (response.status === 200) {
+            return [200, `${username} logged in.`];
+        }
+
+        return [response.status, response['error']];
+    } catch {
+        return [500, "Server error."];
+    }
+}
+
 module.exports = {
-    handleSubmit: handleSubmit
+    handleSubmit: handleSubmit,
+    handleLogin: handleLogin
 };

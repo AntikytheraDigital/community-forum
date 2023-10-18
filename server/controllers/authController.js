@@ -41,28 +41,7 @@ exports.register = async (req, res) => {
 };
 
 exports.login = (req, res, next) => {
-    passport.authenticate('local', (err, user) => {
-        if (err) {
-            // Handle error, e.g., database error
-            return res.status(500).json({message: 'Login failed', error: err});
-        }
 
-        if (!user) {
-            // Handle invalid login credentials
-            return res.status(401).json({message: 'Invalid email or password'});
-        }
-
-        // Manually establish a session for the user
-        req.login(user, (loginErr) => {
-            if (loginErr) {
-                // Handle session establishment error
-                return res.status(500).json({message: 'Login failed', error: loginErr});
-            }
-
-            // Login successful
-            return res.status(200).json({message: 'Login successful', user: user});
-        });
-    })(req, res, next); // Passport authentication middleware
 };
 
 exports.logout = (req, res) => {

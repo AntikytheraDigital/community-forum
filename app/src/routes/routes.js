@@ -19,6 +19,7 @@ module.exports = function (app) {
 
     app.post('/login', async (req, res) => {
         // TODO: Handle login
+        let result = await authController.handleLogin(req.body);
         res.render('loginView', {error: "Login not implemented."});
     });
 
