@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET || 'secret';
 
 // expects the new posts content and title to be in the request body, and the postID to be in the parameters
 // will not edit timestamp, authorID, or boardID
@@ -102,8 +103,9 @@ exports.findByUser = async (req, res) => {
 exports.addComment = async (req, res) => {
     try {
         const {postID, username, content} = req.body;
-        const newComment = {username, content};
-        let savedPost = await Post.findByIdAndUpdate(postID, {$push: {comments: newComment}});
+        let token = req.headers.jwt;
+        validateRequest(token, username);
+        let savedPost = await Post.findByIdAndUpdate(postID, {$push: {comments: {username, content}}});
         if (!savedPost) {
             throw new Error("post not found")
         }
@@ -116,4 +118,19 @@ exports.addComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
     console.log("deleting comment, NOT IMPLEMENTED");
     return (res.status(501).json({message: 'Comment deletion not implemented'}));
+}
+
+function validateRequest(token, username) {
+    if (!token) {
+        throw new Error("token is required")
+    }
+    let decoded
+    if (process.env.NODE_ENV === 'test') {
+        decoded = JSON.parse(token)
+    } else {
+        decoded = jwt.verify(token, jwtSecret);
+    }
+    if (username !== decoded.username) {
+        throw new Error("username does not match token: " + decoded.username)
+    }
 }

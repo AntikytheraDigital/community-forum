@@ -44,10 +44,11 @@ describe('/POST tests', () => {
     });
 });
 
-function doPost({description, uri, data, expectedStatus, expectedMessage, expectedError}) {
+function doPost({description, uri, jwt, data, expectedStatus, expectedMessage, expectedError}) {
     it(description, (done) => {
         chai.request(server)
             .post(uri)
+            .set('jwt', jwt ? jwt : '')
             .send(data)
             .end((err, res) => {
                 if (err) {
