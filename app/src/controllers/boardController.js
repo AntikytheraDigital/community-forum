@@ -69,11 +69,8 @@ async function handleGetBoards(){
         console.log("Error getting boards: ", json.error);
         return {"error": json.error};
     }
-
-    boards = json["boards"];
-    console.log("BOARDS: ", boards);
     
-    return boards;
+    return json["boards"];
 }
 
 

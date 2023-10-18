@@ -1,6 +1,8 @@
 const User = require('../models/user');
-const passport = require('passport');
 const validator = require('validator');
+const jwt = require("jsonwebtoken");
+
+const jwtSecret = process.env.JWT_SECRET || 'secret';
 
 exports.register = async (req, res) => {
     console.log("Registering new user");
@@ -40,33 +42,39 @@ exports.register = async (req, res) => {
     }
 };
 
-exports.login = (req, res, next) => {
-    passport.authenticate('local', (err, user) => {
-        if (err) {
-            // Handle error, e.g., database error
-            return res.status(500).json({message: 'Login failed', error: err});
-        }
+exports.login = async (req, res) => {
+    let {username, password} = req.body;
 
-        if (!user) {
-            // Handle invalid login credentials
-            return res.status(401).json({message: 'Invalid email or password'});
-        }
+    // Authenticate user
+    const user = await User.findOne({username: username});
 
-        // Manually establish a session for the user
-        req.login(user, (loginErr) => {
-            if (loginErr) {
-                // Handle session establishment error
-                return res.status(500).json({message: 'Login failed', error: loginErr});
-            }
+    if (!user) {
+        return res.status(401).json({message: 'Incorrect username'});
+    }
 
-            // Login successful
-            return res.status(200).json({message: 'Login successful', user: user});
-        });
-    })(req, res, next); // Passport authentication middleware
+    if (!user.validPassword(password)) {
+        return res.status(401).json({message: 'Incorrect password'});
+    }
+
+    // Generate JWT token TODO: Set up refresh tokens with short rotations
+    const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
+
+    console.log("Login successful for user: " + username);
+    return res.status(200).json({JWT: token});
 };
 
-exports.logout = (req, res) => {
-    req.logout();
-    // TODO: Redirect or respond as needed after logout
-    res.status(200).json({message: 'Logout successful'});
-};
+exports.checkLoggedIn = async (req, res) => {
+    const token = req.headers.jwt;
+
+    if (!token) {
+        return res.status(401).json({message: 'User not logged in'});
+    }
+
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+
+        return res.status(200).json({username: decoded.username});
+    } catch (e) {
+        return res.status(401).json({message: 'User not logged in'});
+    }
+}

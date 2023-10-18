@@ -10,8 +10,6 @@ function renderComments() {
 
     commentList.innerHTML = ''; // Clear existing comments
     comments.forEach(comment => {
-
-
         const commentElement = document.createElement('div');
         commentElement.className = 'post-card';
 
@@ -25,7 +23,7 @@ function renderComments() {
 
         const dateSpan = document.createElement('span');
         dateSpan.className = 'post-card-date';
-        dateSpan.textContent = `at ${new Date(comment.timestamp).toLocaleString()}`;
+        dateSpan.textContent = ` at ${new Date(comment.timestamp).toLocaleString()}`;
         infoDiv.appendChild(dateSpan);
 
         commentElement.appendChild(infoDiv);
@@ -64,7 +62,7 @@ commentForm.addEventListener('submit', (event) => {
     // Create a new comment object with the text and any other relevant data
     const newComment = {
         content: commentText,
-        authorID: "fakeUsername - test",
+        authorID: document.getElementById("currentUser").textContent,
         timestamp: new Date().toISOString()
         // Add any other relevant data here
     };

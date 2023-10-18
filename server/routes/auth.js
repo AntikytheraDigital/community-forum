@@ -1,5 +1,4 @@
 const express = require('express');
-const passport = require('passport');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const cors = require('cors');
@@ -15,9 +14,9 @@ router.use(cors({
 router.post('/register', authController.register);
 
 // Login
-router.get('/login', passport.authenticate('local'), authController.login);
+router.post('/login', authController.login);
 
-// Logout
-router.get('/logout', authController.logout);
+// check logged in
+router.get('/check', authController.checkLoggedIn);
 
 module.exports = router;
