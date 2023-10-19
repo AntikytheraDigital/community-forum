@@ -105,6 +105,18 @@ exports.addComment = async (req, res) => {
 }
 
 exports.deleteComment = async (req, res) => {
+    try{
+        const {postID, commentID} = req.query;
+        let comment = await Post.findById(postID).select({comments: {$elemMatch: {_id: commentID}}});
+        let username = comment.comments[0].username;
+        validateRequest(req.headers.jwt, username);
+        if (!comment) {
+            throw new Error("comment not found");
+        }
+        return (res.status(200).json({message: 'Comment deleted successfully'}));
+    }catch(error){
+        return (res.status(400).json({message: "Comment deletion failed", error: error.message}));
+    }
     console.log("deleting comment, NOT IMPLEMENTED");
     return (res.status(501).json({message: 'Comment deletion not implemented'}));
 }
