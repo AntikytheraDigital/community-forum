@@ -69,7 +69,9 @@ router.get('/oauth', (req, res) => {
                 return res.status(400).json({message: 'Error retrieving user info'});
             }
 
-            const {email, name} = response.data;
+            // TODO: Remove profile from consent oauth
+            console.log(response.data)
+            const {email} = response.data;
             console.log("test: ", email);
 
             // print access token

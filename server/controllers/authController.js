@@ -30,7 +30,7 @@ exports.register = async (req, res) => {
         }
         const newUser = new User({username, email, password});
 
-                // Save the user to the database using await to handle the promise returned by save()
+        // Save the user to the database using await to handle the promise returned by save()
         let savedUser= await newUser.save();
         console.log("Registered new user:" + savedUser);
 
@@ -41,6 +41,31 @@ exports.register = async (req, res) => {
         return res.status(400).json({message: 'Registration failed', error: error.message});
     }
 };
+
+exports.addOAuthUser = async (req, res) => {
+    try {
+        // if email already exists, return error
+        if (await User.exists({email: req.body.email})) {
+            return res.status(400).json({message: 'Email already in use'});
+        }
+
+        // Create username from email
+        let username = req.body.email.split('@')[0];
+
+        // if username already exists, append random number to username
+        if (await User.exists({username: username})) {
+            username = username + Math.floor(Math.random() * 10000);
+        }
+
+        // Create new user
+        const newUser = new User({username: username, email: req.body.email});
+        let savedUser = await newUser.save();
+        console.log("Registered new user:" + savedUser);
+        return res.status(201).json({message: 'Registration successful'});
+    } catch (error) {
+        return res.status(400).json({message: 'Registration failed', error: error.message});
+    }
+}
 
 exports.login = async (req, res) => {
     let {username, password} = req.body;
