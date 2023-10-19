@@ -6,13 +6,16 @@ const jwtSecret = process.env.JWT_SECRET || 'secret';
 // will not edit timestamp, authorID, or boardID
 exports.editPost = async (req, res) => {
     try {
-        //TODO check if user is the author of the post
+        let token = req.headers.jwt;
         const postID = req.query.id;
         const newContent = req.body;
-        let savedPost = await Post.findByIdAndUpdate(postID, {content: newContent});
-        if (!savedPost) {
+        let post = await Post.findById(postID);
+        if (!post) {
             throw new Error("post not found")
         }
+        validateRequest(token, post.username);
+        post.content = newContent;
+        await post.save();
         return (res.status(200).json({message: 'Post edited successfully'}));
     } catch (error) {
         return (res.status(400).json({message: 'Post creation failed', error: error.message}));

@@ -3,9 +3,9 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 let server = require('../app');
 chai.use(chaiHttp);
-const POST_USER_CASES = require('./test_cases/register_user.json')
-const POST_POST_CASES = require('./test_cases/create_post.json')
-const POST_COMMENT_CASES = require('./test_cases/add_comment.json')
+const POST_USER_CASES = require('./test_cases/register_user.json');
+const POST_POST_CASES = require('./test_cases/create_post.json');
+const POST_COMMENT_CASES = require('./test_cases/add_comment.json');
 const Board = require("../models/board");
 const User = require("../models/user");
 const Post = require("../models/post");
