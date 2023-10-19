@@ -1,32 +1,30 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../app');
-const GET_BOARD_CASES = require('./test_cases/get_board.json');
+const DELETE_POSTS_CASES = require('./test_cases/delete_post.json');
 chai.use(chaiHttp);
 const utils = require('./utils');
 
-describe('/GET tests', () => {
+describe('/DELETE tests', () => {
     beforeEach(() => {
         utils.resetDB();
     });
-    describe('Boards', () => {
-        GET_BOARD_CASES.forEach(doGet);
+    describe('Posts', () => {
+        DELETE_POSTS_CASES.forEach(doDelete);
     });
 });
 
-function doGet({description, uri, expectedStatus, expectedMessage, expectedPost, expectedError}) {
+function doDelete({description, uri, jwt, expectedStatus}) {
     it(description, (done) => {
         chai.request(server)
-            .get(uri)
+            .delete(uri)
+            .set('jwt', jwt ? jwt : '')
             .end((err, res) => {
                 if(expectedStatus!==res.status) console.log(res.body);
                 if (err) {
                     done(err);
                 } else {
                     res.should.have.status(expectedStatus);
-                    res.body.should.have.property('boards');
-                    res.body.boards.should.be.a('array');
-                    console.log(res.body.boards);
                     done();
                 }
             });

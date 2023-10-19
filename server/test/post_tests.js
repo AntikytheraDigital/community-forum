@@ -33,7 +33,7 @@ function doPost({description, uri, jwt, data, expectedStatus, expectedMessage, e
                 if (err) {
                     done(err);
                 } else {
-                    if (expectedStatus === 201 && res.status !== 201) console.log(res.body)
+                    if(expectedStatus!==res.status) console.log(res.body);
                     res.should.have.status(expectedStatus);
                     res.body.should.have.property('message').eql(expectedMessage);
                     if (expectedError) {

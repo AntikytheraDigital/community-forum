@@ -26,7 +26,7 @@ router.patch('/:postID', postController.editPost);
 
 router.get('', postController.getPost);
 
-router.delete('', postController.deletePost);
+router.delete('/:postID', postController.deletePost);
 
 router.patch('', postController.editPost);
 

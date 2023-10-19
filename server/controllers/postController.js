@@ -6,7 +6,8 @@ const jwtSecret = process.env.JWT_SECRET || 'secret';
 // will not edit timestamp, authorID, or boardID
 exports.editPost = async (req, res) => {
     try {
-        let post = await Post.findById(req.params["postID"]);
+        const postID = req.params["postID"];
+        let post = await Post.findById(postID);
         if (!post) {
             throw new Error("post not found");
         }
@@ -74,21 +75,20 @@ exports.findByBoard = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
     try {
-        const postID = req.query.id;
-
+        const postID = req.params["postID"];
         if (!postID) {
             throw new Error("postID is required");
         }
-
-        const post = await Post.findByIdAndDelete(postID);
-
+        let post = Post.findById(postID);
+        validateRequest(req.headers.jwt, post.username);
+        await post.delete();
         if (!post) {
             throw new Error("post was not found and deleted successfully");
         }
 
         return (res.status(200).json({message: 'Post deleted successfully'}));
     } catch (error) {
-        return (res.status(404).json({message: 'Post deletion failed', error: error.message}));
+        return (res.status(400).json({message: 'Post deletion failed', error: error.message}));
     }
 };
 

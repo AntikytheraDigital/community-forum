@@ -25,7 +25,7 @@ function doPatch({description, uri, jwt, data, expectedStatus, expectedMessage, 
                 if (err) {
                     done(err);
                 } else {
-                    if (expectedStatus === 200 && res.status !== 200) console.log(res.body)
+                    if(expectedStatus!==res.status) console.log(res.body);
                     res.should.have.status(expectedStatus);
                     res.body.should.have.property('message').eql(expectedMessage);
                     if (expectedError) {
