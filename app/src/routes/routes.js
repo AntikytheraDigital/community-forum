@@ -70,18 +70,42 @@ module.exports = function (app) {
         await authentication.checkLoggedIn(req, res, options);
 
         res.render('postView', options);
+        // clear local storage when you hit the get endpoint 
     });
 
+    // this happens when you add a comment (you make a post request on a post page)
     app.post('/board/:boardName/posts/:postID', async (req, res) => {
-        let result = JSON.parse(req.body.post);
-
+        console.log("Post request recieved to make a comment");
+        let result;
+        if (typeof req.body.post === 'string') {
+            result = JSON.parse(req.body.post);
+        } else {
+            result = req.body.post;
+        }
         let options = {post: result, title: result.title};
 
         await authentication.checkLoggedIn(req, res, options);
+        //add comment to local storage, so its rendered below, running the client side script and adding the comment to the page to be shown 
 
         res.render('postView', options);
 
-        // TODO: Handle adding comment after rendering (process adding after page render)
+        console.log("LINE 88 GOT TO");
+
+        console.log("REQUEST BODY: ", req.body);
+
+        // if (!req.cookies.JWT) {
+        //     return res.json({ error: "Not authenticated" });
+        // }
+    
         console.log("Adding comment to post: " + req.body.comment);
+        let commentResult = await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
+    
+        // if (commentResult.error) {
+        //     return res.json({ error: commentResult.error });
+        // } else {
+        //     return res.json({ success: true });
+        // }
     });
+
+    
 }
