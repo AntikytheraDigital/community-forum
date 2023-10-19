@@ -7,8 +7,8 @@ const jwtSecret = process.env.JWT_SECRET || 'secret';
 exports.editPost = async (req, res) => {
     try {
         let token = req.headers.jwt;
-        const postID = req.query.id;
-        const newContent = req.body;
+        const postID = req.params.postID;
+        const newContent = req.body.content;
         let post = await Post.findById(postID);
         if (!post) {
             throw new Error("post not found")
@@ -18,7 +18,7 @@ exports.editPost = async (req, res) => {
         await post.save();
         return (res.status(200).json({message: 'Post edited successfully'}));
     } catch (error) {
-        return (res.status(400).json({message: 'Post creation failed', error: error.message}));
+        return (res.status(400).json({message: 'Post edit failed', error: error.message}));
     }
 };
 exports.createPost = async (req, res) => {

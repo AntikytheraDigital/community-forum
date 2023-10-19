@@ -22,7 +22,7 @@ router.post('/comments', postController.addComment);
 
 router.delete('/comments', postController.deleteComment);
 
-router.patch('', postController.editPost);
+router.patch('/:postID', postController.editPost);
 
 router.get('', postController.getPost);
 
