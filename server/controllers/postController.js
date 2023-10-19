@@ -6,15 +6,12 @@ const jwtSecret = process.env.JWT_SECRET || 'secret';
 // will not edit timestamp, authorID, or boardID
 exports.editPost = async (req, res) => {
     try {
-        let token = req.headers.jwt;
-        const postID = req.params.postID;
-        const newContent = req.body.content;
-        let post = await Post.findById(postID);
+        let post = await Post.findById(req.params["postID"]);
         if (!post) {
-            throw new Error("post not found")
+            throw new Error("post not found");
         }
-        validateRequest(token, post.username);
-        post.content = newContent;
+        validateRequest(req.headers.jwt, post.username);
+        post.content = req.body.content;
         await post.save();
         return (res.status(200).json({message: 'Post edited successfully'}));
     } catch (error) {
@@ -24,7 +21,7 @@ exports.editPost = async (req, res) => {
 exports.createPost = async (req, res) => {
     try {
         let {boardName, username, content, title} = req.body;
-        // if checks pass, create a new post
+        validateRequest(req.headers.jwt, username);
         const newPost = new Post({boardName, username, content, title});
         await newPost.save();
         return (res.status(201).json({message: 'Post created successfully'}));
@@ -37,13 +34,10 @@ exports.createPost = async (req, res) => {
 exports.getPost = async (req, res) => {
     try {
         const postID = req.query.id;
-
         if (!postID) {
             throw new Error("postID is required");
         }
-
         const post = await Post.findById(postID);
-
         if (!post) {
             throw new Error("post was not found");
         }
