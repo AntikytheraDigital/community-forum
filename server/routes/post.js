@@ -28,6 +28,4 @@ router.get('/:postID', postController.getPost);
 
 router.delete('/:postID', postController.deletePost);
 
-router.patch('', postController.editPost);
-
 module.exports = router;
