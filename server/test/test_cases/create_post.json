@@ -13,6 +13,19 @@
     "expectedMessage": "Post created successfully"
   },
   {
+    "description": "invalid jwt",
+    "uri": "/posts",
+    "jwt": "{\"username\": \"author\"}",
+    "data": {
+      "boardName": "testBoard23",
+      "username": "testauthor",
+      "content": "contentTest 123",
+      "title": "titleTest 123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post creation failed"
+  },
+  {
     "description": "empty boardName",
     "uri": "/posts",
     "jwt": "{\"username\": \"testauthor\"}",
