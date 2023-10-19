@@ -1,19 +1,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const should = chai.should();
-const Board = require('../models/board');
 const server = require('../app');
 const GET_BOARD_CASES = require('./test_cases/get_board.json');
-const MODEL_DATA = require('./test_cases/model_data.json');
 chai.use(chaiHttp);
+const utils = require('./utils');
 
 describe('/GET tests', () => {
     beforeEach(() => {
-        Board.deleteMany({});
-        MODEL_DATA.boards.forEach((model) => {
-            const newBoard = new Board(model);
-            newBoard.save();
-        });
+        utils.resetDB();
     });
     describe('Boards', () => {
         GET_BOARD_CASES.forEach(doGet);
@@ -25,6 +19,7 @@ function doGet({description, uri, expectedStatus, expectedMessage, expectedPost,
         chai.request(server)
             .get(uri)
             .end((err, res) => {
+                if(expectedStatus!==res.status) console.log(res.body);
                 if (err) {
                     done(err);
                 } else {

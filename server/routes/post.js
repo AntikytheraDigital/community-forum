@@ -22,11 +22,11 @@ router.post('/comments', postController.addComment);
 
 router.delete('/comments', postController.deleteComment);
 
-router.patch('', postController.editPost);
+router.patch('/:postID', postController.editPost);
 
-router.get('', postController.getPost);
+router.get('/:postID', postController.getPost);
 
-router.delete('', postController.deletePost);
+router.delete('/:postID', postController.deletePost);
 
 router.patch('', postController.editPost);
 

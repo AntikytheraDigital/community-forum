@@ -2,6 +2,7 @@
   {
     "description": "create valid post",
     "uri": "/posts",
+    "jwt": "{\"username\": \"testauthor\"}",
     "data": {
       "boardName": "testBoard23",
       "username": "testauthor",
@@ -12,8 +13,22 @@
     "expectedMessage": "Post created successfully"
   },
   {
+    "description": "invalid jwt",
+    "uri": "/posts",
+    "jwt": "{\"username\": \"author\"}",
+    "data": {
+      "boardName": "testBoard23",
+      "username": "testauthor",
+      "content": "contentTest 123",
+      "title": "titleTest 123"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post creation failed"
+  },
+  {
     "description": "empty boardName",
     "uri": "/posts",
+    "jwt": "{\"username\": \"testauthor\"}",
     "data": {
       "boardName": "",
       "username": "testauthor",
@@ -27,6 +42,7 @@
   {
     "description": "empty username",
     "uri": "/posts",
+    "jwt": "{\"username\": \"testauthor\"}",
     "data": {
       "boardName": "testBoard23",
       "username": "",
@@ -40,6 +56,7 @@
   {
     "description": "empty content",
     "uri": "/posts",
+    "jwt": "{\"username\": \"testauthor\"}",
     "data": {
       "boardName": "testBoard23",
       "username": "testauthor",
@@ -53,6 +70,7 @@
   {
     "description": "empty title",
     "uri": "/posts",
+    "jwt": "{\"username\": \"testauthor\"}",
     "data": {
       "boardName": "testBoard23",
       "username": "testauthor",
@@ -66,6 +84,7 @@
   {
     "description": "title too short",
     "uri": "/posts",
+    "jwt": "{\"username\": \"testauthor\"}",
     "data": {
       "boardName": "testBoard23",
       "username": "testauthor",
