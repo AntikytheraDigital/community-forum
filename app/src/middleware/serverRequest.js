@@ -28,7 +28,13 @@ async function makeRequest(route, requestOptions) {
         return {"error": "Server error making request.", "status": 500};
     }
 
+
+    if (!response.headers.get('Content-Type').includes('application/json')) {
+        console.error("Expected JSON response but received:", response.headers.get('Content-Type'));
+        return {"error": "Unexpected response format.", "status": response.status};
+    }
     let json = await response.json();
+    
     if (response.ok) {
         json["status"] = response.status;
         return json;

@@ -1,0 +1,22 @@
+[
+  {
+    "description": "edit valid post",
+    "uri": "/posts/5e1a0651741b255ddda996c4",
+    "jwt": "{\"username\": \"testauthor\"}",
+    "data": {
+      "content": "edited post"
+    },
+    "expectedStatus": 200,
+    "expectedMessage": "Post edited successfully"
+  },
+  {
+    "description": "edit non-existing post",
+    "uri": "/posts/5e1a0651741b255ddda996c5",
+    "jwt": "{\"username\": \"testauthor\"}",
+    "data": {
+      "content": "edited post"
+    },
+    "expectedStatus": 400,
+    "expectedMessage": "Post edit failed"
+  }
+]

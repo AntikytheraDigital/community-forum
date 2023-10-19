@@ -33,7 +33,7 @@
     <div class="comment-add">
         <h1 class="comment-title-card">Write Comment</h1>
         <% if (loggedIn) { %>
-            <form id = "comment-form" method="post">
+            <form id="comment-form" method="post" data-board-name="<%= post.boardID %>" data-post-id="<%= post._id %>" data-post='<%= JSON.stringify(post) %>'>
                 <input type="hidden" name="post" value="<%= JSON.stringify(post) %>">
                 <input type="hidden" name="title" value="<%= title %>"> 
                 <textarea class="input-textarea" id="comment-input" name="comment" placeholder="Comment" required></textarea>

@@ -3,6 +3,7 @@ const commentList = document.querySelector('.comment-list');
 const initialComments = JSON.parse(commentList.getAttribute('data-initial-comments') || '[]');
 console.log("INITIAL COMMENTS: ", initialComments);
 let comments = initialComments || [];
+// check local storage for comments and add them to the DOM (only pre-existing comments), save post id too
 
 function renderComments() {
     const commentList = document.querySelector('.comment-list');
@@ -51,28 +52,44 @@ function renderComments() {
 // Assuming you have a form with an input field for the comment text and a submit button
 const commentForm = document.querySelector('#comment-form');
 const commentInput = document.querySelector('#comment-input');
+const boardName = commentForm.getAttribute('data-board-name');
+const postID = commentForm.getAttribute('data-post-id');
+const postData = JSON.parse(commentForm.getAttribute('data-post'));
 
-
-commentForm.addEventListener('submit', (event) => {
+commentForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    // Get the comment input field inside the event listener function
     const commentText = commentInput.value;
 
-    // Create a new comment object with the text and any other relevant data
     const newComment = {
         content: commentText,
         authorID: document.getElementById("currentUser").textContent,
         timestamp: new Date().toISOString()
-        // Add any other relevant data here
     };
 
-    // Add the new comment to the array of comments
-    comments.push(newComment);
+    try {
+        const response = await fetch(`/board/${boardName}/posts/${postID}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                post: postData,
+                title: postData.title, 
+                comment: commentText
+            })
+        });
 
-    // Clear the input field
-    commentInput.value = '';
+        if (!response.ok) {
+            const responseData = await response.json();
+            console.error('Server responded with an error:', responseData);
+        } else {
+            comments.push(newComment);
+            renderComments();
+        }
 
-    // Render the updated comments on the page
-    renderComments();
+    } catch (error) {
+        console.error('Fetch Error:', error);
+    }
 });
+

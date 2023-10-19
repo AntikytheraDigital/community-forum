@@ -9,7 +9,7 @@ async function handleGetPost(postID){
             }
         };
 
-        let json = await serverRequest.makeRequest(`/posts?id=${postID}`, requestOptions);
+        let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
 
         if (json.error) {
             return {"error": json.error}
@@ -26,6 +26,69 @@ async function handleGetPost(postID){
     }
 }
 
+
+// async function handleWriteComment(postID, comment, username, jwt){
+//     try {
+//         const requestOptions = {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'JWT': jwt
+//             },
+//             body: JSON.stringify({"postID": postID, "username": username, "content": comment, "timestamp": new Date()})
+//         };
+
+//         let json = await serverRequest.makeRequest(`/posts/comments`, requestOptions);
+//         console.log("Raw server response:", json);
+     
+//         console.log("GOT TO LINE 42");
+
+//         if (json.error) {
+//             return {"error": json.error}
+//         }
+        
+//         console.log("GOT TO LINE 46");
+
+//         //let post = json["post"];
+//         // let date = new Date(post["timestamp"]);
+//         // post["timestamp"] = date.toLocaleString();
+//         // console.log("POST BEING RETURNED: ", post);
+//         //return post;
+
+//     } catch(error) {
+//         console.log("Error writing comment.", error);
+//         return {error: "Error writing comment."}
+//     }
+// }
+
+async function handleWriteComment(postID, comment, username, jwt){
+    try {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': jwt
+            },
+            body: JSON.stringify({"postID": postID, "username": username, "content": comment, "timestamp": new Date()})
+        };
+
+        let json = await serverRequest.makeRequest(`/posts/comments`, requestOptions);
+
+        if (json.error) {
+            return {"error": json.error};
+        }
+
+        return { success: true };
+
+    } catch(error) {
+        console.log("Error writing comment.", error);
+        return {error: "Error writing comment."};
+    }
+}
+
+
+
 module.exports = {
-    handleGetPost: handleGetPost
+    handleGetPost: handleGetPost,
+    handleWriteComment: handleWriteComment
 }
