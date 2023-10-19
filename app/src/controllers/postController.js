@@ -9,7 +9,7 @@ async function handleGetPost(postID){
             }
         };
 
-        let json = await serverRequest.makeRequest(`/posts?id=${postID}`, requestOptions);
+        let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
 
         if (json.error) {
             return {"error": json.error}
