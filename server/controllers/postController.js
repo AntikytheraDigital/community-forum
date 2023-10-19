@@ -34,17 +34,15 @@ exports.createPost = async (req, res) => {
 // will return a post json from the post id in the request parameters
 exports.getPost = async (req, res) => {
     try {
-        const postID = req.query.id;
+        const postID = req.params["postID"];
         if (!postID) {
             throw new Error("postID is required");
         }
         const post = await Post.findById(postID);
-        if (!post) {
-            throw new Error("post was not found");
-        }
-        return (res.status(200).json({post}));
+        if (post) return (res.status(200).json({post}));
+        else throw new Error("post not found");
     } catch (error) {
-        return res.status(404).json({message: "post retrieval failed", error: error.message})
+        return res.status(400).json({message: "post retrieval failed", error: error.message})
     }
 };
 
@@ -76,16 +74,10 @@ exports.findByBoard = async (req, res) => {
 exports.deletePost = async (req, res) => {
     try {
         const postID = req.params["postID"];
-        if (!postID) {
-            throw new Error("postID is required");
-        }
-        let post = Post.findById(postID);
+        let post = await Post.findById(postID);
+        if (!post) throw new Error("post not found");
         validateRequest(req.headers.jwt, post.username);
-        await post.delete();
-        if (!post) {
-            throw new Error("post was not found and deleted successfully");
-        }
-
+        await Post.findByIdAndDelete(postID);
         return (res.status(200).json({message: 'Post deleted successfully'}));
     } catch (error) {
         return (res.status(400).json({message: 'Post deletion failed', error: error.message}));

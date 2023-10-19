@@ -17,9 +17,6 @@ exports.resetDB = () => {
     });
     MODEL_DATA.posts.forEach((model) => {
         const newPost = new Post(model);
-        newPost.save()
-            .then((post) => {
-                console.log("model post:" + post)
-            });
+        newPost.save();
     });
 }

@@ -24,7 +24,7 @@ router.delete('/comments', postController.deleteComment);
 
 router.patch('/:postID', postController.editPost);
 
-router.get('', postController.getPost);
+router.get('/:postID', postController.getPost);
 
 router.delete('/:postID', postController.deletePost);
 
