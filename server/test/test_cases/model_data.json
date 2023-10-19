@@ -18,7 +18,14 @@
       "title": "testpost",
       "content": "testpost content",
       "username": "testauthor",
-      "boardName": "testboard23"
+      "boardName": "testboard23",
+      "comments": [
+        {
+          "_id": "5e1a0651741b255ddda996c5",
+          "username": "testauthor",
+          "content": "testcomment"
+        }
+      ]
     }
   ]
 }
