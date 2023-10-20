@@ -27,77 +27,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerResponse'
-  /users/{id}:
-    get:
-      summary: Find user by UID
-      description: NOT IMPLEMENTED YET
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: id of the user
-          schema:
-            type: string
-      responses:
-        '200':
-          description: JSON object of user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServerResponse'
-    delete:
-      summary: Delete user by UID
-      description: NOT IMPLEMENTED YET
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: id of the user
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServerResponse'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServerResponse'
-  #BOARDS
-  /boards:
+  /auth/login:
     post:
-      summary: Create a new Board (not implemented yet)
-      description: NOT IMPLEMENTED YET
+      summary: Login a user
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Board'
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: JohnDoe
+                password:
+                  type: string
+                  example: password123
       responses:
-        '201':
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServerResponse'
-        '400':
-          description: Bad request
+                type: object
+                properties:
+                  JWT:
+                    type: string
+                    required: true
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerResponse'
+  /auth/check:
+    get:
+      summary: Check if user has valid JWT
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    required: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+  #BOARDS
   /boards/all:
     get:
       summary: Get list of all boards
@@ -113,53 +96,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Board'
-  /boards/{boardName}:
-    get:
-      summary: Find board by boardName
-      description: NOT IMPLEMENTED YET
-      parameters:
-        - in: path
-          name: boardName
-          required: true
-          description: name of the board
-          schema:
-            type: string
-      responses:
-        '200':
-          description: JSON object of board
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Board'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServerResponse'
-    delete:
-      summary: Delete board by name
-      description: NOT IMPLEMENTED YET
-      parameters:
-        - in: path
-          name: boardName
-          required: true
-          description: name of the board
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServerResponse'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServerResponse'
   #POSTS
   /posts:
     post:
@@ -185,7 +121,8 @@ paths:
                 $ref: '#/components/schemas/ServerResponse'
   /posts/all:
     get:
-      summary: Get list of all posts
+      summary: Get all posts
+      description: Sorted by timestamp
       responses:
         '200':
           description: JSON array of posts
@@ -195,12 +132,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Post'
-  /posts/{id}:
+  /posts/{postID}:
     get:
       summary: Find post by UID
       parameters:
         - in: path
-          name: id
+          name: postID
           required: true
           description: id of the post
           schema:
@@ -332,12 +269,6 @@ paths:
           description: name of the board
           schema:
             type: string
-        - in: query
-          name: limit
-          required: false
-          description: limit of posts to return
-          schema:
-            type: integer
       responses:
         '200':
           description: JSON array of posts
@@ -402,18 +333,6 @@ components:
         password:
           type: string
           writeOnly: true
-        postsAuthored:
-          type: array
-          items:
-            type: string
-          description: List of posts the user has written
-          example: [ postid1, postid2 ]
-        postsCommented:
-          type: array
-          items:
-            type: string
-          description: List of posts the user has commented on
-          example: [ postid3, postid4 ]
       required:
         - username
         - email
@@ -433,18 +352,23 @@ components:
         username:
           type: string
           description: foreign key from User
-          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+          example: johnDoe
         timestamp:
           type: string
           readOnly: true
           description: UTC timestamp
           example: 2020-10-29T20:00:00.000Z
-        title:
-          type: string
-          example: Funny joke
         content:
           type: string
           example: Why did the chicken cross the road?
+        title:
+          type: string
+          example: Funny joke
+        comments:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Comment'
       required:
         - boardName
         - authorID
@@ -459,14 +383,10 @@ components:
           readOnly: true
           description: UID generated by mongodb
           example: 5f9b0a5b9b0a9f9b0a9f9b0a
-        postID:
-          type: string
-          description: foreign key from Post
-          writeOnly: true
         username:
           type: string
           description: foreign key from User
-          example: 5f9b0a5b9b0a9f9b0a9f9b0a
+          example: johnDoe
         timestamp:
           type: string
           readOnly: true

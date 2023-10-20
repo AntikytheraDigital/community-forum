@@ -26,40 +26,32 @@ async function handleGetPost(postID){
     }
 }
 
+async function handleWritePost(boardName, title, content, username, jwt){
+    try {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': jwt
+            },
+            body: JSON.stringify({"boardName": boardName, "username": username, "title": title, "content": content})
+        };
 
-// async function handleWriteComment(postID, comment, username, jwt){
-//     try {
-//         const requestOptions = {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'JWT': jwt
-//             },
-//             body: JSON.stringify({"postID": postID, "username": username, "content": comment, "timestamp": new Date()})
-//         };
+        let json = await serverRequest.makeRequest(`/posts`, requestOptions);
 
-//         let json = await serverRequest.makeRequest(`/posts/comments`, requestOptions);
-//         console.log("Raw server response:", json);
-     
-//         console.log("GOT TO LINE 42");
+        if (json.error) {
+            return {"error": json.error};
+        }
 
-//         if (json.error) {
-//             return {"error": json.error}
-//         }
-        
-//         console.log("GOT TO LINE 46");
+        console.log("post successfully made: ", boardName);
+        return { success: true };
 
-//         //let post = json["post"];
-//         // let date = new Date(post["timestamp"]);
-//         // post["timestamp"] = date.toLocaleString();
-//         // console.log("POST BEING RETURNED: ", post);
-//         //return post;
+    } catch(error) {
+        console.log("Error writing post.", error);
+        return {error: "Error writing post."};
+    }
+}
 
-//     } catch(error) {
-//         console.log("Error writing comment.", error);
-//         return {error: "Error writing comment."}
-//     }
-// }
 
 async function handleWriteComment(postID, comment, username, jwt){
     try {
@@ -90,5 +82,6 @@ async function handleWriteComment(postID, comment, username, jwt){
 
 module.exports = {
     handleGetPost: handleGetPost,
-    handleWriteComment: handleWriteComment
+    handleWriteComment: handleWriteComment,
+    handleWritePost: handleWritePost
 }

@@ -16,8 +16,6 @@ router.get('/all', postController.getAllPosts);
 
 router.get('/findByBoard', postController.findByBoard);
 
-router.get('/findByUser', postController.findByUser);
-
 router.post('/comments', postController.addComment);
 
 router.delete('/comments', postController.deleteComment);
@@ -27,7 +25,5 @@ router.patch('/:postID', postController.editPost);
 router.get('/:postID', postController.getPost);
 
 router.delete('/:postID', postController.deletePost);
-
-router.patch('', postController.editPost);
 
 module.exports = router;

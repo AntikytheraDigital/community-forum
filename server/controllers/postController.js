@@ -51,7 +51,7 @@ exports.getAllPosts = async (req, res) => {
         const posts = await Post.find({}).sort({timestamp: -1});
         return (res.status(200).json({posts}));
     } catch (error) {
-        return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
+        return (res.status(500).json({message: 'Post retrieval failed', error: error.message}));
     }
 }
 exports.findByBoard = async (req, res) => {
@@ -63,7 +63,7 @@ exports.findByBoard = async (req, res) => {
         }
 
         // find all posts with the given boardID
-        const posts = await Post.find({boardID: boardName}).sort({timestamp: -1});
+        const posts = await Post.find({boardName: boardName}).sort({timestamp: -1});
 
         return (res.status(200).json({posts}));
     } catch (error) {
@@ -84,11 +84,6 @@ exports.deletePost = async (req, res) => {
     }
 };
 
-exports.findByUser = async (req, res) => {
-    console.log("getting posts by user, NOT IMPLEMENTED");
-    return (res.status(501).json({message: 'Post retrieval by user not implemented'}));
-}
-
 exports.addComment = async (req, res) => {
     try {
         const {postID, username, content} = req.body;
@@ -105,8 +100,18 @@ exports.addComment = async (req, res) => {
 }
 
 exports.deleteComment = async (req, res) => {
-    console.log("deleting comment, NOT IMPLEMENTED");
-    return (res.status(501).json({message: 'Comment deletion not implemented'}));
+    try{
+        const {postID, commentID} = req.query;
+        let comment = await Post.findById(postID).select({comments: {$elemMatch: {_id: commentID}}});
+        let username = comment.comments[0].username;
+        validateRequest(req.headers.jwt, username);
+        if (!comment) {
+            throw new Error("comment not found");
+        }
+        return (res.status(200).json({message: 'Comment deleted successfully'}));
+    }catch(error){
+        return (res.status(400).json({message: "Comment deletion failed", error: error.message}));
+    }
 }
 
 function validateRequest(token, username) {
