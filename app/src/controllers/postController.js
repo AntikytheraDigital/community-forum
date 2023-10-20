@@ -61,10 +61,12 @@ async function handleWriteComment(postID, comment, username, jwt){
                 'Content-Type': 'application/json',
                 'JWT': jwt
             },
-            body: JSON.stringify({"postID": postID, "username": username, "content": comment, "timestamp": new Date()})
+            body: JSON.stringify({"postID": postID, "username": username, "content": comment})
         };
 
         let json = await serverRequest.makeRequest(`/posts/comments`, requestOptions);
+
+        console.log("server response from handleWriteComment: ", json);
 
         if (json.error) {
             return {"error": json.error};

@@ -19,7 +19,7 @@ function renderComments() {
 
         const authorSpan = document.createElement('span');
         authorSpan.className = 'post-card-author';
-        authorSpan.textContent = `Posted by ${comment.authorID}`;
+        authorSpan.textContent = `Posted by ${comment.username}`;
         infoDiv.appendChild(authorSpan);
 
         const dateSpan = document.createElement('span');
