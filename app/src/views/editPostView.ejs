@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Edit Post</title>
+    <link rel="stylesheet" href="/public/app.css"/>
+</head>
+<body>
+<%- include('partials/navbar') %>
+<div class="edit-post-container">
+    <h1>Edit Post</h1>
+    <form action="/board/<%= post.boardName %>/posts/<%= post._id %>/edit" method="post">
+        <h2 class="post-title-display">Post Title: <%= post.title %></h2>
+        <textarea name="content" required><%= post.content %></textarea>
+        <button type="submit">Save</button>
+    </form>
+</div>
+</body>
+</html>

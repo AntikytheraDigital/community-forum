@@ -104,12 +104,35 @@ async function handleWriteComment(postID, comment, username, jwt){
         return {error: "Error writing comment."};
     }
 }
+async function handleEditPost(postID, title, content, jwt){
+    try {
+        const requestOptions = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': jwt
+            },
+            body: JSON.stringify({"content": content})
+        };
 
+        let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
+        if (json.error) {
+            return {"error": json.error, "post": json.post};
+        }
+
+        return { success: true };
+
+    } catch(error) {
+        console.log("Error editing post.", error);
+        return {error: "Error editing post."};
+    }
+}
 
 
 module.exports = {
     handleGetPost: handleGetPost,
     handleWriteComment: handleWriteComment,
     handleWritePost: handleWritePost,
-    handleDeletePost: handleDeletePost
+    handleDeletePost: handleDeletePost, 
+    handleEditPost: handleEditPost
 }

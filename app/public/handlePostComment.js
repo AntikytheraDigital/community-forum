@@ -94,4 +94,3 @@ commentForm.addEventListener('submit', async (event) => {
         console.error('Fetch Error:', error);
     }
 });
-

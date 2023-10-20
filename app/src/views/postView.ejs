@@ -27,7 +27,10 @@
         <h1 class="post-title"><%= post.title %></h1>
         <p><%= post.content %></p>
         <% if (loggedIn && username === post.username) { %>
-            <form action="/board/<%= post.boardName %>/posts/<%= post._id %>/delete" method="post" id="delete-post-form">
+            <form action="/board/<%= post.boardName %>/posts/<%= post._id %>/edit" method="get" style="display:inline;" id = "delete-post-form">
+                <button type="submit" class="edit-button">Edit Post</button>
+            </form>
+            <form action="/board/<%= post.boardName %>/posts/<%= post._id %>/delete" method="post" style = "display:inline">
                 <button type="submit" class="delete-button">Delete Post</button>
             </form>
         <% } %>
