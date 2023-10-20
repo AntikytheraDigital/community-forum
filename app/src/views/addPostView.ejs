@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Add Post</title>
+    <link rel="stylesheet" href="/public/app.css"/>
+    <link rel="stylesheet" href="/public/auth.css"/>
+</head>
+<body>
+<%- include('partials/navbar') %>
+
+<div class="auth">
+    <form action="/board/<%= boardName %>/addPost" method="post">
+        <h2>Create Post</h2>
+        <div>
+            <label>
+                Title:
+                <input class="input-field" type="text" name="title" required/>
+            </label>
+        </div>
+        <div>
+            <label>
+                Content:
+                <input class="input-field" type="text" name="content" required/>
+            </label>
+        </div>
+        <div class="error-message">
+            <% if (typeof error !== 'undefined') { %>
+                <p>
+                    Error: <%= error %>
+                </p>
+            <% } %>
+        </div>
+        <div class="success-message">
+            <% if (typeof success !== 'undefined') { %>
+                <p>
+                    <%= success %>
+                </p>
+            <% } %>
+        </div>
+
+        <div>
+            <input class="input-button" type="submit" value="Create Post"/>
+        </div>
+    </form>
+</div>
+</body>
+</html>

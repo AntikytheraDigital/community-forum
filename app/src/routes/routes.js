@@ -27,6 +27,7 @@ module.exports = function (app) {
 
     app.get('/board/:boardName', async (req, res) => {
         let result = await boardController.handleGetBoardPosts(req.params.boardName);
+        console.log("board posts: ", result);
 
         let options = {posts: result, boardName: req.params.boardName};
 
@@ -48,6 +49,30 @@ module.exports = function (app) {
     app.get('/register', (req, res) => {
         res.clearCookie('JWT');
         res.render('registerView');
+    });
+
+    app.get('/board/:boardName/addPost', async (req, res) => {
+        res.render('addPostView', {boardName: req.params.boardName})
+    });
+
+
+    app.post('/board/:boardName/addPost', async (req, res) => {
+        let options = {boardName: req.params.boardName};
+
+        await authentication.checkLoggedIn(req, res, options);
+    
+        let result = await postController.handleWritePost(req.params.boardName, req.body.title, req.body.content, options.username, req.cookies.JWT);
+    
+        if (result.success) {
+            res.redirect(`/board/${req.params.boardName}`);
+        }
+        if(result.error= "jwt malformed"){
+            res.render('addPostView', { error: "you must be logged in to post", boardName: req.params.boardName });
+
+        }
+         else {
+            res.render('addPostView', { error: result.error, boardName: req.params.boardName });
+        }
     });
 
     app.post('/register', async (req, res) => {
@@ -74,7 +99,7 @@ module.exports = function (app) {
     });
 
     // this happens when you add a comment (you make a post request on a post page)
-    app.post('/board/:boardName/posts/:postID', async (req, res) => {
+    app.post('/board/:boardName/posts/:postID/addComment', async (req, res) => {
         console.log("Post request recieved to make a comment");
         let result;
         if (typeof req.body.post === 'string') {
@@ -89,23 +114,10 @@ module.exports = function (app) {
 
         res.render('postView', options);
 
-        console.log("LINE 88 GOT TO");
-
-        console.log("REQUEST BODY: ", req.body);
-
-        // if (!req.cookies.JWT) {
-        //     return res.json({ error: "Not authenticated" });
-        // }
-    
         console.log("Adding comment to post: " + req.body.comment);
         let commentResult = await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
     
-        // if (commentResult.error) {
-        //     return res.json({ error: commentResult.error });
-        // } else {
-        //     return res.json({ success: true });
-        // }
     });
 
-    
+
 }

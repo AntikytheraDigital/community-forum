@@ -11,6 +11,7 @@
     <h1 class="board-description">
         <%= boardName %>
     </h1>
+    <a href="/board/<%= boardName %>/addPost" class="add-post-button">Create New Post</a>
 </div>
 <div class="error-message">
     <% if (typeof posts.error !== 'undefined') { %>
