@@ -73,6 +73,22 @@ module.exports = function (app) {
         }
     });
 
+    //delete post route 
+    app.post('/board/:boardName/posts/:postID/delete', async (req, res) => {
+        options = {};
+        await authentication.checkLoggedIn(req, res, options);
+        
+        let result = await postController.handleDeletePost(req.params.postID, req.cookies.JWT);
+    
+        if (result.success) {
+            res.redirect(`/board/${req.params.boardName}`);
+        } else {
+            // Handle error (e.g., render an error page or redirect with an error message)
+            res.redirect(`/board/${req.params.boardName}/posts/${req.params.postID}`);
+        }
+    });
+    
+
     app.post('/register', async (req, res) => {
         res.clearCookie('JWT');
         let result = await authController.handleSubmit(req.body);
@@ -115,6 +131,4 @@ module.exports = function (app) {
         let commentResult = await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
     
     });
-
-
 }

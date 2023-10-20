@@ -63,7 +63,7 @@ commentForm.addEventListener('submit', async (event) => {
 
     const newComment = {
         content: commentText,
-        authorID: document.getElementById("currentUser").textContent,
+        username : document.getElementById("currentUser").textContent,
         timestamp: new Date().toISOString()
     };
 
@@ -86,6 +86,8 @@ commentForm.addEventListener('submit', async (event) => {
         } else {
             comments.push(newComment);
             renderComments();
+            commentInput.value = '';  
+
         }
 
     } catch (error) {

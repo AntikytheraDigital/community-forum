@@ -68,7 +68,15 @@ code {
     transform: scale(1.05); 
 }
 
-
+.delete-button {
+    background-color: rgb(235, 103, 66);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px; 
+}
 
 /* Links inside the navbar */
 .navbar a {
