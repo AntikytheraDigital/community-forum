@@ -76,6 +76,7 @@ module.exports = function (app) {
     //delete post route 
     app.post('/board/:boardName/posts/:postID/delete', async (req, res) => {
         options = {};
+        
         await authentication.checkLoggedIn(req, res, options);
         
         let result = await postController.handleDeletePost(req.params.postID, req.cookies.JWT);
@@ -130,5 +131,32 @@ module.exports = function (app) {
         console.log("Adding comment to post: " + req.body.comment);
         let commentResult = await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
     
+    });
+
+        // Route to show the edit post view
+    app.get('/board/:boardName/posts/:postID/edit', async (req, res) => {
+        let result = await postController.handleGetPost(req.params.postID);
+        let title = result.title ? result.title : "Invalid Post";
+
+        let options = {post: result, title: title};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('editPostView', options);
+    });
+
+    // Route to handle the edit post submission
+    app.post('/board/:boardName/posts/:postID/edit', async (req, res) => {
+        let options = {boardName: req.params.boardName};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, req.cookies.JWT);
+
+        if (result.success) {
+            res.redirect(`/board/${req.params.boardName}`);
+        } else {
+            res.render('editPostView', { error: result.error, post: result.post });
+        }
     });
 }
