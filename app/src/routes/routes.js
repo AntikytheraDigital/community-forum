@@ -27,7 +27,6 @@ module.exports = function (app) {
 
     app.get('/board/:boardName', async (req, res) => {
         let result = await boardController.handleGetBoardPosts(req.params.boardName);
-        console.log("board posts: ", result);
 
         let options = {posts: result, boardName: req.params.boardName};
 
@@ -68,9 +67,8 @@ module.exports = function (app) {
         }
         if(result.error= "jwt malformed"){
             res.render('addPostView', { error: "you must be logged in to post", boardName: req.params.boardName });
-
         }
-         else {
+        else {
             res.render('addPostView', { error: result.error, boardName: req.params.boardName });
         }
     });
@@ -95,7 +93,6 @@ module.exports = function (app) {
         await authentication.checkLoggedIn(req, res, options);
 
         res.render('postView', options);
-        // clear local storage when you hit the get endpoint 
     });
 
     // this happens when you add a comment (you make a post request on a post page)
