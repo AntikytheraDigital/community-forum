@@ -9,8 +9,16 @@
 <%- include('partials/navbar') %>
 
 <div class="auth">
+    <h2>Register Account</h2>
+    <div>
+        <a href="/oauth/register" class="auth-google">Register with Google</a>
+    </div>
+    <div class="auth-or">
+        <hr class="auth-bar"/>
+        <span><b>OR</b></span>
+        <hr class="auth-bar"/>
+    </div>
     <form action="/register" method="post">
-        <h2>Register Account</h2>
         <div>
             <label>
                 Username:
