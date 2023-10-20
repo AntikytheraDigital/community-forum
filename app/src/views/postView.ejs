@@ -26,6 +26,11 @@
         </div>
         <h1 class="post-title"><%= post.title %></h1>
         <p><%= post.content %></p>
+        <% if (loggedIn && username === post.username) { %>
+            <form action="/board/<%= post.boardName %>/posts/<%= post._id %>/delete" method="post" id="delete-post-form">
+                <button type="submit" class="delete-button">Delete Post</button>
+            </form>
+        <% } %>
     </div>
     <div>
         <h2 class="comment-title">Comments</h2>

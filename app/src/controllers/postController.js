@@ -26,6 +26,31 @@ async function handleGetPost(postID){
     }
 }
 
+async function handleDeletePost(postID, jwt){
+    try {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': jwt
+            }
+        };
+
+        let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
+
+        if (json.error) {
+            return {"error": json.error};
+        }
+
+        return { success: true };
+
+    } catch(error) {
+        console.log("Error deleting post.", error);
+        return {error: "Error deleting post."};
+    }
+}
+
+
 async function handleWritePost(boardName, title, content, username, jwt){
     try {
         const requestOptions = {
@@ -85,5 +110,6 @@ async function handleWriteComment(postID, comment, username, jwt){
 module.exports = {
     handleGetPost: handleGetPost,
     handleWriteComment: handleWriteComment,
-    handleWritePost: handleWritePost
+    handleWritePost: handleWritePost,
+    handleDeletePost: handleDeletePost
 }
