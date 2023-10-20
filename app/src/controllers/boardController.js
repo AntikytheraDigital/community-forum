@@ -35,7 +35,7 @@ async function handleGetBoardPosts(boardName) {
             'Content-Type': 'application/json',
         }
     };
-
+    console.log("board name:", boardName);
     let json = await serverRequest.makeRequest(`/posts/findByBoard?boardName=${boardName}`, requestOptions);
 
     if (json.error) {

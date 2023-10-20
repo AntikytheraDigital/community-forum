@@ -27,6 +27,7 @@ module.exports = function (app) {
 
     app.get('/board/:boardName', async (req, res) => {
         let result = await boardController.handleGetBoardPosts(req.params.boardName);
+        console.log("board posts: ", result);
 
         let options = {posts: result, boardName: req.params.boardName};
 
@@ -48,6 +49,25 @@ module.exports = function (app) {
     app.get('/register', (req, res) => {
         res.clearCookie('JWT');
         res.render('registerView');
+    });
+
+    app.get('/board/:boardName/addPost', async (req, res) => {
+        res.render('addPostView', {boardName: req.params.boardName})
+    });
+
+
+    app.post('/board/:boardName/addPost', async (req, res) => {
+        let options = {boardName: req.params.boardName};
+
+        await authentication.checkLoggedIn(req, res, options);
+    
+        let result = await postController.handleWritePost(req.params.boardName, req.body.title, req.body.content, options.username, req.cookies.JWT);
+    
+        if (result.success) {
+            res.redirect(`/board/${req.params.boardName}`);
+        } else {
+            res.render('addPostView', { error: result.error, boardName: req.params.boardName });
+        }
     });
 
     app.post('/register', async (req, res) => {
@@ -94,18 +114,5 @@ module.exports = function (app) {
     
     });
 
-    app.post('/board/:boardName/addPost', async (req, res) => {
-        let result = await postController.handleNewPost(req.params.boardName);
-        let options = {posts: result, boardName: req.params.boardName, loggedIn : true};
-        
-        await authentication.checkLoggedIn(req, res, options);
 
-        res.render('boardView', options);
-    });
-    app.get('/board/:boardName/addPost', async (req, res) => {
-        await authentication.checkLoggedIn(req, res);
-
-        let options = { boardName: req.params.boardName };
-        res.render('addPostView', options);
-    });
 }

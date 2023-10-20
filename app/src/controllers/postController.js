@@ -26,6 +26,32 @@ async function handleGetPost(postID){
     }
 }
 
+async function handleWritePost(boardName, title, content, username, jwt){
+    try {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': jwt
+            },
+            body: JSON.stringify({"boardName": boardName, "username": username, "title": title, "content": content})
+        };
+
+        let json = await serverRequest.makeRequest(`/posts`, requestOptions);
+
+        if (json.error) {
+            return {"error": json.error};
+        }
+
+        console.log("post successfully made: ", boardName);
+        return { success: true };
+
+    } catch(error) {
+        console.log("Error writing post.", error);
+        return {error: "Error writing post."};
+    }
+}
+
 
 async function handleWriteComment(postID, comment, username, jwt){
     try {
@@ -56,5 +82,6 @@ async function handleWriteComment(postID, comment, username, jwt){
 
 module.exports = {
     handleGetPost: handleGetPost,
-    handleWriteComment: handleWriteComment
+    handleWriteComment: handleWriteComment,
+    handleWritePost: handleWritePost
 }
