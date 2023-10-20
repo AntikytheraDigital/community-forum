@@ -51,7 +51,7 @@ exports.getAllPosts = async (req, res) => {
         const posts = await Post.find({}).sort({timestamp: -1});
         return (res.status(200).json({posts}));
     } catch (error) {
-        return (res.status(400).json({message: 'Post retrieval failed', error: error.message}));
+        return (res.status(500).json({message: 'Post retrieval failed', error: error.message}));
     }
 }
 exports.findByBoard = async (req, res) => {
@@ -117,8 +117,6 @@ exports.deleteComment = async (req, res) => {
     }catch(error){
         return (res.status(400).json({message: "Comment deletion failed", error: error.message}));
     }
-    console.log("deleting comment, NOT IMPLEMENTED");
-    return (res.status(501).json({message: 'Comment deletion not implemented'}));
 }
 
 function validateRequest(token, username) {
