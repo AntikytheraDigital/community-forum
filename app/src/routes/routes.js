@@ -159,4 +159,22 @@ module.exports = function (app) {
             res.render('editPostView', { error: result.error, post: result.post });
         }
     });
+
+    app.get('/oauth/login', async (req, res) => {
+        let result = await authController.getOAuthURL(req, res);
+
+        if (result.error) {
+            res.render('loginView', {error: result.error});
+            return;
+        }
+
+        res.redirect(result.url);
+    });
+
+    app.get('/oauth/callback', async (req, res) => {
+        console.log("Callback received");
+        console.log("Code: " + req.query.code);
+
+        res.redirect('/');
+    });
 }

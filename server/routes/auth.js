@@ -29,7 +29,6 @@ function getGoogleAuthURL() {
         response_type: 'code',
         prompt: 'consent',
         scope: [
-            'https://www.googleapis.com/auth/userinfo.profile',
             'https://www.googleapis.com/auth/userinfo.email',
         ].join(' '),
     };
@@ -38,7 +37,13 @@ function getGoogleAuthURL() {
 }
 
 router.get('/google/url', (req, res) => {
-    res.redirect(getGoogleAuthURL())
+    // if any env vars are missing, return error
+    if (!process.env.OAUTH_CLIENT_ID || !process.env.OAUTH_CLIENT_SECRET || !process.env.OAUTH_REDIRECT) {
+        return res.status(400).json({error: 'OAuth env vars not set'});
+    }
+
+    const url = getGoogleAuthURL();
+    return res.status(200).json({url: url});
 });
 
 router.get('/oauth', (req, res) => {

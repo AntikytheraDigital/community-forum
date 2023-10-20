@@ -76,8 +76,26 @@ async function checkLoggedIn(token, res) {
     }
 }
 
+async function getOAuthURL() {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    const response = await serverRequest.makeRequest('/auth/google/url', requestOptions);
+    // check response status
+    if (response.status === 200) {
+        return {url: response.url};
+    } else {
+        return {error: "Error retrieving OAuth URL"};
+    }
+}
+
 module.exports = {
     handleSubmit: handleSubmit,
     handleLogin: handleLogin,
-    checkLoggedIn: checkLoggedIn
+    checkLoggedIn: checkLoggedIn,
+    getOAuthURL: getOAuthURL
 };
