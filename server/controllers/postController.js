@@ -63,7 +63,7 @@ exports.findByBoard = async (req, res) => {
         }
 
         // find all posts with the given boardID
-        const posts = await Post.find({boardID: boardName}).sort({timestamp: -1});
+        const posts = await Post.find({boardName: boardName}).sort({timestamp: -1});
 
         return (res.status(200).json({posts}));
     } catch (error) {
