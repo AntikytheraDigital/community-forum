@@ -19,7 +19,7 @@ function renderComments() {
 
         const authorSpan = document.createElement('span');
         authorSpan.className = 'post-card-author';
-        authorSpan.textContent = `Posted by ${comment.authorID}`;
+        authorSpan.textContent = `Posted by ${comment.username}`;
         infoDiv.appendChild(authorSpan);
 
         const dateSpan = document.createElement('span');
@@ -63,7 +63,7 @@ commentForm.addEventListener('submit', async (event) => {
 
     const newComment = {
         content: commentText,
-        authorID: document.getElementById("currentUser").textContent,
+        username : document.getElementById("currentUser").textContent,
         timestamp: new Date().toISOString()
     };
 
@@ -86,10 +86,11 @@ commentForm.addEventListener('submit', async (event) => {
         } else {
             comments.push(newComment);
             renderComments();
+            commentInput.value = '';  
+
         }
 
     } catch (error) {
         console.error('Fetch Error:', error);
     }
 });
-

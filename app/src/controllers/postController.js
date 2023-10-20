@@ -26,6 +26,31 @@ async function handleGetPost(postID){
     }
 }
 
+async function handleDeletePost(postID, jwt){
+    try {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': jwt
+            }
+        };
+
+        let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
+
+        if (json.error) {
+            return {"error": json.error};
+        }
+
+        return { success: true };
+
+    } catch(error) {
+        console.log("Error deleting post.", error);
+        return {error: "Error deleting post."};
+    }
+}
+
+
 async function handleWritePost(boardName, title, content, username, jwt){
     try {
         const requestOptions = {
@@ -61,10 +86,12 @@ async function handleWriteComment(postID, comment, username, jwt){
                 'Content-Type': 'application/json',
                 'JWT': jwt
             },
-            body: JSON.stringify({"postID": postID, "username": username, "content": comment, "timestamp": new Date()})
+            body: JSON.stringify({"postID": postID, "username": username, "content": comment})
         };
 
         let json = await serverRequest.makeRequest(`/posts/comments`, requestOptions);
+
+        console.log("server response from handleWriteComment: ", json);
 
         if (json.error) {
             return {"error": json.error};
@@ -77,11 +104,35 @@ async function handleWriteComment(postID, comment, username, jwt){
         return {error: "Error writing comment."};
     }
 }
+async function handleEditPost(postID, title, content, jwt){
+    try {
+        const requestOptions = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': jwt
+            },
+            body: JSON.stringify({"content": content})
+        };
 
+        let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
+        if (json.error) {
+            return {"error": json.error, "post": json.post};
+        }
+
+        return { success: true };
+
+    } catch(error) {
+        console.log("Error editing post.", error);
+        return {error: "Error editing post."};
+    }
+}
 
 
 module.exports = {
     handleGetPost: handleGetPost,
     handleWriteComment: handleWriteComment,
-    handleWritePost: handleWritePost
+    handleWritePost: handleWritePost,
+    handleDeletePost: handleDeletePost, 
+    handleEditPost: handleEditPost
 }

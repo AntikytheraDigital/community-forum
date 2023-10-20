@@ -27,7 +27,6 @@ module.exports = function (app) {
 
     app.get('/board/:boardName', async (req, res) => {
         let result = await boardController.handleGetBoardPosts(req.params.boardName);
-        console.log("board posts: ", result);
 
         let options = {posts: result, boardName: req.params.boardName};
 
@@ -68,12 +67,28 @@ module.exports = function (app) {
         }
         if(result.error= "jwt malformed"){
             res.render('addPostView', { error: "you must be logged in to post", boardName: req.params.boardName });
-
         }
-         else {
+        else {
             res.render('addPostView', { error: result.error, boardName: req.params.boardName });
         }
     });
+
+    //delete post route 
+    app.post('/board/:boardName/posts/:postID/delete', async (req, res) => {
+        options = {};
+        
+        await authentication.checkLoggedIn(req, res, options);
+        
+        let result = await postController.handleDeletePost(req.params.postID, req.cookies.JWT);
+    
+        if (result.success) {
+            res.redirect(`/board/${req.params.boardName}`);
+        } else {
+            // Handle error (e.g., render an error page or redirect with an error message)
+            res.redirect(`/board/${req.params.boardName}/posts/${req.params.postID}`);
+        }
+    });
+    
 
     app.post('/register', async (req, res) => {
         res.clearCookie('JWT');
@@ -95,7 +110,6 @@ module.exports = function (app) {
         await authentication.checkLoggedIn(req, res, options);
 
         res.render('postView', options);
-        // clear local storage when you hit the get endpoint 
     });
 
     // this happens when you add a comment (you make a post request on a post page)
@@ -119,5 +133,30 @@ module.exports = function (app) {
     
     });
 
+        // Route to show the edit post view
+    app.get('/board/:boardName/posts/:postID/edit', async (req, res) => {
+        let result = await postController.handleGetPost(req.params.postID);
+        let title = result.title ? result.title : "Invalid Post";
 
+        let options = {post: result, title: title};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('editPostView', options);
+    });
+
+    // Route to handle the edit post submission
+    app.post('/board/:boardName/posts/:postID/edit', async (req, res) => {
+        let options = {boardName: req.params.boardName};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, req.cookies.JWT);
+
+        if (result.success) {
+            res.redirect(`/board/${req.params.boardName}`);
+        } else {
+            res.render('editPostView', { error: result.error, post: result.post });
+        }
+    });
 }

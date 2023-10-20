@@ -68,7 +68,24 @@ code {
     transform: scale(1.05); 
 }
 
-
+.delete-button {
+    background-color: rgb(235, 103, 66);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px; 
+}
+.edit-button {
+    background-color: rgb(101, 178, 85);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px; 
+}
 
 /* Links inside the navbar */
 .navbar a {
@@ -151,4 +168,55 @@ code {
 
 .add-post-button:hover {
     background-color: #0056b3;
+}
+
+.edit-post-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.edit-post-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.edit-post-container input[type="text"],
+
+.edit-post-container textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 16px;
+    resize: none; 
+}
+
+.edit-post-container button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.edit-post-container button:hover {
+    background-color: #0056b3;
+}
+
+.post-title-display {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
