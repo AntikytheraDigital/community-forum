@@ -68,7 +68,7 @@ commentForm.addEventListener('submit', async (event) => {
     };
 
     try {
-        const response = await fetch(`/board/${boardName}/posts/${postID}`, {
+        const response = await fetch(`/board/${boardName}/posts/${postID}/addComment`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

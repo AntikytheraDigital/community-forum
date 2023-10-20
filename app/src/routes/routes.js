@@ -74,7 +74,7 @@ module.exports = function (app) {
     });
 
     // this happens when you add a comment (you make a post request on a post page)
-    app.post('/board/:boardName/posts/:postID', async (req, res) => {
+    app.post('/board/:boardName/posts/:postID/addComment', async (req, res) => {
         console.log("Post request recieved to make a comment");
         let result;
         if (typeof req.body.post === 'string') {
@@ -89,23 +89,23 @@ module.exports = function (app) {
 
         res.render('postView', options);
 
-        console.log("LINE 88 GOT TO");
-
-        console.log("REQUEST BODY: ", req.body);
-
-        // if (!req.cookies.JWT) {
-        //     return res.json({ error: "Not authenticated" });
-        // }
-    
         console.log("Adding comment to post: " + req.body.comment);
         let commentResult = await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
     
-        // if (commentResult.error) {
-        //     return res.json({ error: commentResult.error });
-        // } else {
-        //     return res.json({ success: true });
-        // }
     });
 
-    
+    app.post('/board/:boardName/addPost', async (req, res) => {
+        let result = await postController.handleNewPost(req.params.boardName);
+        let options = {posts: result, boardName: req.params.boardName, loggedIn : true};
+        
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('boardView', options);
+    });
+    app.get('/board/:boardName/addPost', async (req, res) => {
+        await authentication.checkLoggedIn(req, res);
+
+        let options = { boardName: req.params.boardName };
+        res.render('addPostView', options);
+    });
 }
