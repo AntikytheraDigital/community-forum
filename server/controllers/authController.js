@@ -103,3 +103,25 @@ exports.checkLoggedIn = async (req, res) => {
         return res.status(401).json({message: 'User not logged in'});
     }
 }
+
+exports.getGoogleAuthURL = async (req, res) => {
+    // if any env vars are missing, return error
+    if (!process.env.OAUTH_CLIENT_ID || !process.env.OAUTH_CLIENT_SECRET || !process.env.OAUTH_REDIRECT) {
+        return res.status(400).json({error: 'OAuth env vars not set'});
+    }
+
+    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+    const options = {
+        redirect_uri: `${process.env.OAUTH_REDIRECT}`,
+        client_id: process.env.OAUTH_CLIENT_ID,
+        access_type: 'offline',
+        response_type: 'code',
+        prompt: 'consent',
+        scope: [
+            'https://www.googleapis.com/auth/userinfo.email',
+        ].join(' '),
+    };
+
+    const url = `${rootUrl}?${new URLSearchParams(options)}`;
+    return res.status(200).json({url: url});
+}

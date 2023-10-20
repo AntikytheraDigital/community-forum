@@ -20,31 +20,8 @@ router.post('/login', authController.login);
 // check logged in
 router.get('/check', authController.checkLoggedIn);
 
-function getGoogleAuthURL() {
-    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
-    const options = {
-        redirect_uri: `${process.env.OAUTH_REDIRECT}`,
-        client_id: process.env.OAUTH_CLIENT_ID,
-        access_type: 'offline',
-        response_type: 'code',
-        prompt: 'consent',
-        scope: [
-            'https://www.googleapis.com/auth/userinfo.email',
-        ].join(' '),
-    };
-
-    return `${rootUrl}?${new URLSearchParams(options)}`;
-}
-
-router.get('/google/url', (req, res) => {
-    // if any env vars are missing, return error
-    if (!process.env.OAUTH_CLIENT_ID || !process.env.OAUTH_CLIENT_SECRET || !process.env.OAUTH_REDIRECT) {
-        return res.status(400).json({error: 'OAuth env vars not set'});
-    }
-
-    const url = getGoogleAuthURL();
-    return res.status(200).json({url: url});
-});
+// Get the Google OAuth URL
+router.get('/google/url', authController.getGoogleAuthURL);
 
 router.get('/oauth', (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
