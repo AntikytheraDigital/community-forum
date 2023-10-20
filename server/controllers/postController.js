@@ -87,12 +87,15 @@ exports.deletePost = async (req, res) => {
 exports.addComment = async (req, res) => {
     try {
         const {postID, username, content} = req.body;
+        console.log("adding comment")
         let token = req.headers.jwt;
         validateRequest(token, username);
-        let savedPost = await Post.findByIdAndUpdate(postID, {$push: {comments: {username, content}}});
-        if (!savedPost) {
+        let post = await Post.findById(postID).exec();
+        if (!post) {
             throw new Error("post not found")
         }
+        post.comments.push({username, content});
+        await post.save();
         return (res.status(201).json({message: 'Comment added successfully'}));
     } catch (error) {
         return (res.status(400).json({message: "Comment creation failed", error: error.message}));
@@ -100,7 +103,7 @@ exports.addComment = async (req, res) => {
 }
 
 exports.deleteComment = async (req, res) => {
-    try{
+    try {
         const {postID, commentID} = req.query;
         let comment = await Post.findById(postID).select({comments: {$elemMatch: {_id: commentID}}});
         let username = comment.comments[0].username;
@@ -109,7 +112,7 @@ exports.deleteComment = async (req, res) => {
             throw new Error("comment not found");
         }
         return (res.status(200).json({message: 'Comment deleted successfully'}));
-    }catch(error){
+    } catch (error) {
         return (res.status(400).json({message: "Comment deletion failed", error: error.message}));
     }
 }
