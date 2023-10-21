@@ -2,6 +2,7 @@ const authController = require('../controllers/authController');
 const boardController = require('../controllers/boardController');
 const postController = require('../controllers/postController');
 const authentication = require('../middleware/authentication');
+const {addUsername} = require("../controllers/authController");
 
 module.exports = function (app) {
     app.get('/', async (req, res) => {
@@ -119,32 +120,21 @@ module.exports = function (app) {
     // this happens when you add a comment (you make a post request on a post page)
     app.post('/board/:boardName/posts/:postID/addComment', async (req, res) => {
         try {
-            let result;
-
-            if (!req.body || !req.body.post) {
+            if (!req.body || !req.body.postID) {
                 throw new Error("Post not found.");
             }
 
-            if (typeof req.body.post === 'string') {
-                result = JSON.parse(req.body.post);
-            } else {
-                result = req.body.post;
-            }
+            let options = {postID: req.body.postID, comment: req.body.comment};
 
-            if (!result || !result.title) {
-                throw new Error("Post not found.");
-            }
-
-            let options = {post: result, title: result.title};
-
-            await authentication.checkLoggedIn(req, res, options);
-
-            res.render('postView', options);
+            authController.addUsername(req, res, options);
 
             console.log("Adding comment to post: " + req.body.comment);
-            await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
+
+            res.status(201).send({success: true});
+
+            await postController.handleWriteComment(options);
         } catch (error) {
-            res.render('postView', {error: "Error adding comment."});
+            res.status(500).send({error: "Error adding comment."});
         }
     });
 

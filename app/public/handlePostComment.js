@@ -74,8 +74,7 @@ commentForm.addEventListener('submit', async (event) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                post: postData,
-                title: postData.title, 
+                postID: postID,
                 comment: commentText
             })
         });

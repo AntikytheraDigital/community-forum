@@ -90,8 +90,14 @@ async function handleWritePost(title, content, options){
 }
 
 
-async function handleWriteComment(postID, comment, username, jwt){
+async function handleWriteComment(options){
     try {
+        if (!options.jwt || !options.username || !options.comment || !options.postID) {
+            return {error: "You must be logged in to comment."};
+        }
+
+        let {username, jwt, comment, postID} = options;
+
         const requestOptions = {
             method: 'POST',
             headers: {
