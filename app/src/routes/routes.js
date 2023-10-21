@@ -10,11 +10,7 @@ module.exports = function (app) {
 
         let options = {posts: result, boards: boards};
 
-        let username = authController.getUsername(req, res);
-        if(username) {
-            options.loggedIn = true;
-            options.username = username;
-        }
+        authController.addUsername(req, res, options);
 
         res.render('homeView', options);
     });
@@ -36,7 +32,7 @@ module.exports = function (app) {
 
         let options = {posts: result, boardName: req.params.boardName};
 
-        await authentication.checkLoggedIn(req, res, options);
+        authController.addUsername(req, res, options);
 
         res.render('boardView', options);
     });
@@ -60,7 +56,7 @@ module.exports = function (app) {
     app.get('/board/:boardName/addPost', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
-        await authentication.checkLoggedIn(req, res, options);
+        authController.addUsername(req, res, options);
 
         res.render('addPostView', options)
     });
@@ -105,6 +101,7 @@ module.exports = function (app) {
 
     app.post('/register', async (req, res) => {
         res.clearCookie('JWT');
+        res.clearCookie('username');
         let result = await authController.handleSubmit(req.body);
 
         if (result[0] === 201) {
@@ -120,7 +117,7 @@ module.exports = function (app) {
 
         let options = {post: result, title: title};
 
-        await authentication.checkLoggedIn(req, res, options);
+        authController.addUsername(req, res, options);
 
         res.render('postView', options);
     });
@@ -164,7 +161,7 @@ module.exports = function (app) {
 
         let options = {post: result, title: title};
 
-        await authentication.checkLoggedIn(req, res, options);
+        authController.addUsername(req, res, options);
 
         res.render('editPostView', options);
     });

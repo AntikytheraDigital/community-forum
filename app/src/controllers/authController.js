@@ -1,13 +1,15 @@
 const serverRequest = require('../middleware/serverRequest');
 
-function getUsername(req, res) {
+// Add username to the options object
+function addUsername(req, res, options) {
     if (!req.cookies.JWT || !req.cookies.username) {
         res.clearCookie('JWT');
         res.clearCookie('username');
-        return null;
+        return;
     }
 
-    return req.cookies.username;
+    options.loggedIn = true;
+    options.username = req.cookies.username;
 }
 
 async function handleSubmit(req) {
@@ -133,5 +135,5 @@ module.exports = {
     checkLoggedIn: checkLoggedIn,
     getOAuthURL: getOAuthURL,
     handleOAuthLogin: handleOAuthLogin,
-    getUsername: getUsername
+    addUsername: addUsername
 };
