@@ -1,5 +1,6 @@
 const {GoogleAuth} = require('google-auth-library');
 const auth = new GoogleAuth();
+const authentication = require('./authentication');
 
 const url = process.env.SERVER_URL || 'http://localhost:3000/';
 let client;

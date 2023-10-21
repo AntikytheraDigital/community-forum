@@ -2,7 +2,6 @@ const authController = require('../controllers/authController');
 const boardController = require('../controllers/boardController');
 const postController = require('../controllers/postController');
 const authentication = require('../middleware/authentication');
-const {addUsername} = require("../controllers/authController");
 
 module.exports = function (app) {
     app.get('/', async (req, res) => {
@@ -72,6 +71,10 @@ module.exports = function (app) {
             return;
         }
 
+        if (result.status === 401) {
+            authentication.logoutUser(res);
+        }
+
         if (result.error && result.error === "jwt malformed") {
             res.render('addPostView', {error: "you must be logged in to post", boardName: req.params.boardName});
         } else {
@@ -89,10 +92,15 @@ module.exports = function (app) {
 
         if (result.success) {
             res.redirect(`/board/${req.params.boardName}`);
-        } else {
-            // Handle error (e.g., render an error page or redirect with an error message)
-            res.redirect(`/board/${req.params.boardName}/posts/${req.params.postID}`);
+            return;
         }
+
+        if (result.status === 401) {
+            authentication.logoutUser(res);
+        }
+
+        // Handle error (e.g., render an error page or redirect with an error message)
+        res.redirect(`/board/${req.params.boardName}/posts/${req.params.postID}`);
     });
 
     app.post('/register', async (req, res) => {
@@ -132,7 +140,12 @@ module.exports = function (app) {
 
             res.status(201).send({success: true});
 
-            await postController.handleWriteComment(options);
+            let result = await postController.handleWriteComment(options);
+
+            if (result.status === 401) {
+                authentication.logoutUser(res);
+            }
+
         } catch (error) {
             res.status(500).send({error: "Error adding comment."});
         }
@@ -157,6 +170,10 @@ module.exports = function (app) {
         authController.addUsername(req, res, options);
 
         let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, options);
+
+        if (result.status === 401) {
+            authentication.logoutUser(res);
+        }
 
         if (result.success) {
             res.redirect(`/board/${req.params.boardName}`);

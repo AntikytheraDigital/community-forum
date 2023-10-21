@@ -11,7 +11,13 @@ exports.editPost = async (req, res) => {
         if (!post) {
             throw new Error("post not found");
         }
-        validateRequest(req.headers.jwt, post.username);
+
+        let validation = validateRequest(req.headers.jwt, post.username);
+
+        if (validation.status !== 200) {
+            return (res.status(validation.status).json({message: validation.error}));
+        }
+
         post.content = req.body.content;
         await post.save();
         return (res.status(200).json({message: 'Post edited successfully'}));
@@ -22,7 +28,13 @@ exports.editPost = async (req, res) => {
 exports.createPost = async (req, res) => {
     try {
         let {boardName, username, content, title} = req.body;
-        validateRequest(req.headers.jwt, username);
+
+        let validation = validateRequest(req.headers.jwt, username);
+
+        if (validation.status !== 200) {
+            return (res.status(validation.status).json({message: validation.error}));
+        }
+
         const newPost = new Post({boardName, username, content, title});
         await newPost.save();
         return (res.status(201).json({message: 'Post created successfully'}));
@@ -39,8 +51,7 @@ exports.getPost = async (req, res) => {
             throw new Error("postID is required");
         }
         const post = await Post.findById(postID);
-        if (post) return (res.status(200).json({post}));
-        else throw new Error("post not found");
+        if (post) return (res.status(200).json({post})); else throw new Error("post not found");
     } catch (error) {
         return res.status(400).json({message: "post retrieval failed", error: error.message})
     }
@@ -76,7 +87,12 @@ exports.deletePost = async (req, res) => {
         const postID = req.params["postID"];
         let post = await Post.findById(postID);
         if (!post) throw new Error("post not found");
-        validateRequest(req.headers.jwt, post.username);
+        let validation = validateRequest(req.headers.jwt, post.username);
+
+        if (validation.status !== 200) {
+            return (res.status(validation.status).json({message: validation.error}));
+        }
+
         await Post.findByIdAndDelete(postID);
         return (res.status(200).json({message: 'Post deleted successfully'}));
     } catch (error) {
@@ -94,7 +110,12 @@ exports.addComment = async (req, res) => {
 
         console.log("adding comment")
         let token = req.headers.jwt;
-        validateRequest(token, username);
+        let validation = validateRequest(token, username);
+
+        if (validation.status !== 200) {
+            return (res.status(validation.status).json({message: validation.error}));
+        }
+
         let post = await Post.findById(postID).exec();
         if (!post) {
             throw new Error("post not found")
@@ -112,10 +133,17 @@ exports.deleteComment = async (req, res) => {
         const {postID, commentID} = req.query;
         let comment = await Post.findById(postID).select({comments: {$elemMatch: {_id: commentID}}});
         let username = comment.comments[0].username;
-        validateRequest(req.headers.jwt, username);
+
         if (!comment) {
             throw new Error("comment not found");
         }
+
+        let validation = validateRequest(req.headers.jwt, username);
+
+        if (validation.status !== 200) {
+            return (res.status(validation.status).json({message: validation.error}));
+        }
+
         return (res.status(200).json({message: 'Comment deleted successfully'}));
     } catch (error) {
         return (res.status(400).json({message: "Comment deletion failed", error: error.message}));
@@ -124,7 +152,7 @@ exports.deleteComment = async (req, res) => {
 
 function validateRequest(token, username) {
     if (!token) {
-        throw new Error("token is required")
+        return {error: "token is required", status: 401}
     }
     let decoded
     if (process.env.NODE_ENV === 'test') {
@@ -133,6 +161,8 @@ function validateRequest(token, username) {
         decoded = jwt.verify(token, jwtSecret);
     }
     if (username !== decoded.username) {
-        throw new Error("username does not match token: " + decoded.username)
+        return {error: "username does not match token: " + decoded.username, status: 401}
     }
+
+    return {status: 200}
 }

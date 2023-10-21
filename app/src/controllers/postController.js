@@ -12,7 +12,7 @@ async function handleGetPost(postID){
         let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
 
         if (json.error) {
-            return {"error": json.error}
+            return {"error": json.error, "status": json.status};
         }
 
         let post = json["post"];
@@ -22,14 +22,14 @@ async function handleGetPost(postID){
         return post;
     } catch {
         console.log("Error getting post.");
-        return {error: "Error getting post."}
+        return {error: "Error getting post.", "status": 500};
     }
 }
 
 async function handleDeletePost(options){
     try {
-        if (!options.jwt || !options.username || !options.postID) {
-            return {error: "You must be logged in to delete a post."};
+        if (!options.jwt || !options.username) {
+            return {error: "You must be logged in to delete a post.", "status": 401};
         }
 
         let {postID, jwt} = options;
@@ -45,22 +45,22 @@ async function handleDeletePost(options){
         let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
 
         if (json.error) {
-            return {"error": json.error};
+            return {"error": json.error, "status": json.status};
         }
 
-        return { success: true };
+        return { success: true, "status": 200 };
 
     } catch(error) {
         console.log("Error deleting post.", error);
-        return {error: "Error deleting post."};
+        return {error: "Error deleting post.", "status": 500};
     }
 }
 
 
 async function handleWritePost(title, content, options){
     try {
-        if (!options.jwt || !options.username || !options.boardName) {
-            return {error: "You must be logged in to post."};
+        if (!options.jwt || !options.username) {
+            return {error: "You must be logged in to post.", "status": 401};
         }
 
         let {boardName, username, jwt} = options;
@@ -76,16 +76,18 @@ async function handleWritePost(title, content, options){
 
         let json = await serverRequest.makeRequest(`/posts`, requestOptions);
 
+        console.log("status from handleWritePost: ", json.status)
+
         if (json.error) {
-            return {"error": json.error};
+            return {"error": json.error, "status": json.status};
         }
 
         console.log("post successfully made: ", boardName);
-        return { success: true };
+        return { success: true, "status": 200 };
 
     } catch(error) {
         console.log("Error writing post.", error);
-        return {error: "Error writing post."};
+        return {error: "Error writing post.", status: 500};
     }
 }
 
@@ -93,7 +95,7 @@ async function handleWritePost(title, content, options){
 async function handleWriteComment(options){
     try {
         if (!options.jwt || !options.username || !options.comment || !options.postID) {
-            return {error: "You must be logged in to comment."};
+            return {error: "You must be logged in to comment.", "status": 401};
         }
 
         let {username, jwt, comment, postID} = options;
@@ -112,20 +114,20 @@ async function handleWriteComment(options){
         console.log("server response from handleWriteComment: ", json);
 
         if (json.error) {
-            return {"error": json.error};
+            return {"error": json.error, "status": json.status};
         }
 
-        return { success: true };
+        return { success: true , "status": 200};
 
     } catch(error) {
         console.log("Error writing comment.", error);
-        return {error: "Error writing comment."};
+        return {error: "Error writing comment.", "status": 500};
     }
 }
 async function handleEditPost(postID, title, content, options){
     try {
         if (!options.jwt || !options.username) {
-            return {error: "You must be logged in to edit a post."};
+            return {error: "You must be logged in to edit a post.", "status": 401};
         }
 
         let {jwt} = options;
@@ -141,14 +143,14 @@ async function handleEditPost(postID, title, content, options){
 
         let json = await serverRequest.makeRequest(`/posts/${postID}`, requestOptions);
         if (json.error) {
-            return {"error": json.error, "post": json.post};
+            return {"error": json.error, "post": json.post, "status": json.status};
         }
 
         return { success: true };
 
     } catch(error) {
         console.log("Error editing post.", error);
-        return {error: "Error editing post."};
+        return {error: "Error editing post.", "status": 500};
     }
 }
 
