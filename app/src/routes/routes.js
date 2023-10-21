@@ -51,7 +51,11 @@ module.exports = function (app) {
     });
 
     app.get('/board/:boardName/addPost', async (req, res) => {
-        res.render('addPostView', {boardName: req.params.boardName})
+        let options = {boardName: req.params.boardName};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('addPostView', options)
     });
 
 
