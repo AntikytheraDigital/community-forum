@@ -2,6 +2,8 @@ const serverRequest = require('../middleware/serverRequest');
 
 // Add username to the options object
 function addUsername(req, res, options) {
+    options.loggedIn = false;
+
     if (!req.cookies.JWT || !req.cookies.username) {
         res.clearCookie('JWT');
         res.clearCookie('username');

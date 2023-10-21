@@ -127,6 +127,7 @@ module.exports = function (app) {
 
     // this happens when you add a comment (you make a post request on a post page)
     app.post('/board/:boardName/posts/:postID/addComment', async (req, res) => {
+        let statusSent = false;
         try {
             if (!req.body || !req.body.postID) {
                 throw new Error("Post not found.");
@@ -139,6 +140,7 @@ module.exports = function (app) {
             console.log("Adding comment to post: " + req.body.comment);
 
             res.status(201).send({success: true});
+            statusSent = true;
 
             let result = await postController.handleWriteComment(options);
 
@@ -147,7 +149,7 @@ module.exports = function (app) {
             }
 
         } catch (error) {
-            res.status(500).send({error: "Error adding comment."});
+            if (!statusSent) res.status(500).send({error: "Error adding comment."});
         }
     });
 
