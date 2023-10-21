@@ -104,6 +104,14 @@ async function handleOAuthLogin(req, res) {
     }
 
     const response = await serverRequest.makeRequest(`/auth/oauth/login?code=${code}`, requestOptions);
+
+    if (response.status === 200 || response.status === 201) {
+        res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+        console.log("Logged in with OAuth.")
+        return {status: 200, message: "Logged in with OAuth."};
+    }
+
+    return {error: "Error logging in with OAuth.", status: response.status};
 }
 
 module.exports = {

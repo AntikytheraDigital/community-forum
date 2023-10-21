@@ -174,11 +174,15 @@ module.exports = function (app) {
     });
 
     app.get('/oauth/callback', async (req, res) => {
-        console.log("Callback received");
-        console.log("Code: " + req.query.code);
-
         let result = await authController.handleOAuthLogin(req, res);
 
-        res.redirect('/');
+        console.log(result);
+
+        if (result.status === 200) {
+            res.redirect('/');
+            return;
+        }
+
+        res.render('loginView', {error: result.error});
     });
 }
