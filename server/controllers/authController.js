@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const validator = require('validator');
 const jwt = require("jsonwebtoken");
+const {google} = require('googleapis');
 
 const jwtSecret = process.env.JWT_SECRET || 'secret';
 
@@ -124,4 +125,42 @@ exports.getGoogleAuthURL = async (req, res) => {
 
     const url = `${rootUrl}?${new URLSearchParams(options)}`;
     return res.status(200).json({url: url});
+}
+
+exports.handleOAuth = async (req, res) => {
+    const oauth2Client = new google.auth.OAuth2(
+        process.env.OAUTH_CLIENT_ID,
+        process.env.OAUTH_CLIENT_SECRET,
+        process.env.OAUTH_REDIRECT
+    );
+
+    const code = req.query.code;
+
+    oauth2Client.getToken(code, (err, token) => {
+        if (err) {
+            console.error('Error retrieving access token', err);
+            return res.status(400).json({message: 'Error retrieving access token'});
+        }
+
+        oauth2Client.setCredentials(token);
+
+        const oauth2 = google.oauth2({
+            auth: oauth2Client,
+            version: 'v2'
+        });
+
+        oauth2.userinfo.get((err, response) => {
+            if (err) {
+                console.error('Error retrieving user info', err);
+                return res.status(400).json({message: 'Error retrieving user info'});
+            }
+
+            console.log(response.data)
+            const {email} = response.data;
+            console.log("test: ", email);
+
+            // print access token
+            console.log(token.access_token);
+        });
+    });
 }
