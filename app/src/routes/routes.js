@@ -16,14 +16,12 @@ module.exports = function (app) {
     });
 
     app.get('/login', (req, res) => {
-        res.clearCookie('JWT');
-        res.clearCookie('username');
+        authentication.logoutUser(res);
         res.render('loginView');
     });
 
     app.get('/logout', (req, res) => {
-        res.clearCookie('JWT');
-        res.clearCookie('username');
+        authentication.logoutUser(res);
         res.redirect('/');
     });
 
@@ -48,8 +46,7 @@ module.exports = function (app) {
     });
 
     app.get('/register', (req, res) => {
-        res.clearCookie('JWT');
-        res.clearCookie('username');
+        authentication.logoutUser(res);
         res.render('registerView');
     });
 
@@ -65,31 +62,30 @@ module.exports = function (app) {
     app.post('/board/:boardName/addPost', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
-        await authentication.checkLoggedIn(req, res, options);
-    
-        let result = await postController.handleWritePost(req.params.boardName, req.body.title, req.body.content, options.username, req.cookies.JWT);
-    
+        authController.addUsername(req, res, options);
+
+        let result = await postController.handleWritePost(req.body.title, req.body.content, options);
+
         if (result.success) {
             res.redirect(`/board/${req.params.boardName}`);
             return;
         }
 
-        if(result.error && result.error === "jwt malformed"){
-            res.render('addPostView', { error: "you must be logged in to post", boardName: req.params.boardName });
-        }
-        else {
-            res.render('addPostView', { error: result.error, boardName: req.params.boardName });
+        if (result.error && result.error === "jwt malformed") {
+            res.render('addPostView', {error: "you must be logged in to post", boardName: req.params.boardName});
+        } else {
+            res.render('addPostView', {error: result.error, boardName: req.params.boardName});
         }
     });
 
     //delete post route 
     app.post('/board/:boardName/posts/:postID/delete', async (req, res) => {
-        options = {};
-        
-        await authentication.checkLoggedIn(req, res, options);
-        
-        let result = await postController.handleDeletePost(req.params.postID, req.cookies.JWT);
-    
+        let options = {postID: req.params.postID};
+
+        authController.addUsername(req, res, options);
+
+        let result = await postController.handleDeletePost(options);
+
         if (result.success) {
             res.redirect(`/board/${req.params.boardName}`);
         } else {
@@ -97,11 +93,9 @@ module.exports = function (app) {
             res.redirect(`/board/${req.params.boardName}/posts/${req.params.postID}`);
         }
     });
-    
 
     app.post('/register', async (req, res) => {
-        res.clearCookie('JWT');
-        res.clearCookie('username');
+        authentication.logoutUser(res);
         let result = await authController.handleSubmit(req.body);
 
         if (result[0] === 201) {
@@ -154,7 +148,7 @@ module.exports = function (app) {
         }
     });
 
-        // Route to show the edit post view
+    // Route to show the edit post view
     app.get('/board/:boardName/posts/:postID/edit', async (req, res) => {
         let result = await postController.handleGetPost(req.params.postID);
         let title = result.title ? result.title : "Invalid Post";
@@ -177,7 +171,7 @@ module.exports = function (app) {
         if (result.success) {
             res.redirect(`/board/${req.params.boardName}`);
         } else {
-            res.render('editPostView', { error: result.error, post: result.post });
+            res.render('editPostView', {error: result.error, post: result.post});
         }
     });
 

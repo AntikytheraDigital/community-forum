@@ -14,6 +14,12 @@ async function checkLoggedIn(req, res, options) {
     }
 }
 
+function logoutUser(res) {
+    res.clearCookie('JWT');
+    res.clearCookie('username');
+}
+
 module.exports = {
-    checkLoggedIn: checkLoggedIn
+    checkLoggedIn: checkLoggedIn,
+    logoutUser: logoutUser
 }

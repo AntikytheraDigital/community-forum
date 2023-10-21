@@ -26,8 +26,14 @@ async function handleGetPost(postID){
     }
 }
 
-async function handleDeletePost(postID, jwt){
+async function handleDeletePost(options){
     try {
+        if (!options.jwt || !options.username || !options.postID) {
+            return {error: "You must be logged in to delete a post."};
+        }
+
+        let {postID, jwt} = options;
+
         const requestOptions = {
             method: 'DELETE',
             headers: {
@@ -51,8 +57,14 @@ async function handleDeletePost(postID, jwt){
 }
 
 
-async function handleWritePost(boardName, title, content, username, jwt){
+async function handleWritePost(title, content, options){
     try {
+        if (!options.jwt || !options.username || !options.boardName) {
+            return {error: "You must be logged in to post."};
+        }
+
+        let {boardName, username, jwt} = options;
+
         const requestOptions = {
             method: 'POST',
             headers: {

@@ -10,6 +10,7 @@ function addUsername(req, res, options) {
 
     options.loggedIn = true;
     options.username = req.cookies.username;
+    options.jwt = req.cookies.JWT;
 }
 
 async function handleSubmit(req) {
