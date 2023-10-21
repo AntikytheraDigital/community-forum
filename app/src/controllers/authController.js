@@ -1,5 +1,15 @@
 const serverRequest = require('../middleware/serverRequest');
 
+function getUsername(req, res) {
+    if (!req.cookies.JWT || !req.cookies.username) {
+        res.clearCookie('JWT');
+        res.clearCookie('username');
+        return null;
+    }
+
+    return req.cookies.username;
+}
+
 async function handleSubmit(req) {
     let {username, email, password} = req;
 
@@ -41,6 +51,7 @@ async function handleLogin(req, res) {
         if (response.status === 200) {
             // Add JWT token to cookie
             res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+            res.cookie('username', username, {httpOnly: true, secure: true});
 
             return [200, `${username} logged in.`];
         }
@@ -107,6 +118,8 @@ async function handleOAuthLogin(req, res) {
 
     if (response.status === 200 || response.status === 201) {
         res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+        res.cookie('username', response['username'], {httpOnly: true, secure: true})
+
         console.log("Logged in with OAuth.")
         return {status: 200, message: "Logged in with OAuth."};
     }
@@ -119,5 +132,6 @@ module.exports = {
     handleLogin: handleLogin,
     checkLoggedIn: checkLoggedIn,
     getOAuthURL: getOAuthURL,
-    handleOAuthLogin: handleOAuthLogin
+    handleOAuthLogin: handleOAuthLogin,
+    getUsername: getUsername
 };

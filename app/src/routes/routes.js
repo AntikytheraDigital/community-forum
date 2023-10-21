@@ -10,18 +10,24 @@ module.exports = function (app) {
 
         let options = {posts: result, boards: boards};
 
-        await authentication.checkLoggedIn(req, res, options);
+        let username = authController.getUsername(req, res);
+        if(username) {
+            options.loggedIn = true;
+            options.username = username;
+        }
 
         res.render('homeView', options);
     });
 
     app.get('/login', (req, res) => {
         res.clearCookie('JWT');
+        res.clearCookie('username');
         res.render('loginView');
     });
 
     app.get('/logout', (req, res) => {
         res.clearCookie('JWT');
+        res.clearCookie('username');
         res.redirect('/');
     });
 
@@ -47,6 +53,7 @@ module.exports = function (app) {
 
     app.get('/register', (req, res) => {
         res.clearCookie('JWT');
+        res.clearCookie('username');
         res.render('registerView');
     });
 
