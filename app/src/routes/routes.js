@@ -64,8 +64,10 @@ module.exports = function (app) {
     
         if (result.success) {
             res.redirect(`/board/${req.params.boardName}`);
+            return;
         }
-        if(result.error= "jwt malformed"){
+
+        if(result.error && result.error === "jwt malformed"){
             res.render('addPostView', { error: "you must be logged in to post", boardName: req.params.boardName });
         }
         else {
@@ -158,5 +160,29 @@ module.exports = function (app) {
         } else {
             res.render('editPostView', { error: result.error, post: result.post });
         }
+    });
+
+    app.get('/oauth/login', async (req, res) => {
+        let result = await authController.getOAuthURL();
+
+        if (result.error) {
+            res.render('loginView', {error: result.error});
+            return;
+        }
+
+        res.redirect(result.url);
+    });
+
+    app.get('/oauth/callback', async (req, res) => {
+        let result = await authController.handleOAuthLogin(req, res);
+
+        console.log(result);
+
+        if (result.status === 200) {
+            res.redirect('/');
+            return;
+        }
+
+        res.render('loginView', {error: result.error});
     });
 }

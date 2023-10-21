@@ -76,8 +76,48 @@ async function checkLoggedIn(token, res) {
     }
 }
 
+async function getOAuthURL() {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    const response = await serverRequest.makeRequest('/auth/google/url', requestOptions);
+    // check response status
+    if (response.status === 200) {
+        return {url: response.url};
+    } else {
+        return {error: "Error retrieving OAuth URL"};
+    }
+}
+
+async function handleOAuthLogin(req, res) {
+    const code = req.query.code;
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const response = await serverRequest.makeRequest(`/auth/oauth/login?code=${code}`, requestOptions);
+
+    if (response.status === 200 || response.status === 201) {
+        res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+        console.log("Logged in with OAuth.")
+        return {status: 200, message: "Logged in with OAuth."};
+    }
+
+    return {error: "Error logging in with OAuth.", status: response.status};
+}
+
 module.exports = {
     handleSubmit: handleSubmit,
     handleLogin: handleLogin,
-    checkLoggedIn: checkLoggedIn
+    checkLoggedIn: checkLoggedIn,
+    getOAuthURL: getOAuthURL,
+    handleOAuthLogin: handleOAuthLogin
 };

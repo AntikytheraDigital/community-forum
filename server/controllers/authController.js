@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const validator = require('validator');
 const jwt = require("jsonwebtoken");
+const {google} = require('googleapis');
 
 const jwtSecret = process.env.JWT_SECRET || 'secret';
 
@@ -30,7 +31,7 @@ exports.register = async (req, res) => {
         }
         const newUser = new User({username, email, password});
 
-                // Save the user to the database using await to handle the promise returned by save()
+        // Save the user to the database using await to handle the promise returned by save()
         let savedUser= await newUser.save();
         console.log("Registered new user:" + savedUser);
 
@@ -41,6 +42,31 @@ exports.register = async (req, res) => {
         return res.status(400).json({message: 'Registration failed', error: error.message});
     }
 };
+
+async function addOAuthUser (email) {
+    try {
+        // if email already exists, return error
+        if (await User.exists({email: email})) {
+            return {error: "Email already in use", status: 400};
+        }
+
+        // Create username from email
+        let username = email.split('@')[0];
+
+        // if username already exists, append random number to username
+        if (await User.exists({username: username})) {
+            username = username + Math.floor(Math.random() * 10000);
+        }
+
+        // Create new user
+        const newUser = new User({username: username, email: email});
+        let savedUser = await newUser.save();
+        console.log("Registered new user:" + savedUser);
+        return {message: "Registration successful", status: 201, username: username};
+    } catch (error) {
+        return {error: "Registration failed", status: 400};
+    }
+}
 
 exports.login = async (req, res) => {
     let {username, password} = req.body;
@@ -77,4 +103,90 @@ exports.checkLoggedIn = async (req, res) => {
     } catch (e) {
         return res.status(401).json({message: 'User not logged in'});
     }
+}
+
+exports.getGoogleAuthURL = async (req, res) => {
+    // if any env vars are missing, return error
+    if (!process.env.OAUTH_CLIENT_ID || !process.env.OAUTH_CLIENT_SECRET || !process.env.OAUTH_REDIRECT) {
+        return res.status(400).json({error: 'OAuth env vars not set'});
+    }
+
+    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+    const options = {
+        redirect_uri: `${process.env.OAUTH_REDIRECT}`,
+        client_id: process.env.OAUTH_CLIENT_ID,
+        access_type: 'offline',
+        response_type: 'code',
+        prompt: 'consent',
+        scope: [
+            'https://www.googleapis.com/auth/userinfo.email',
+        ].join(' '),
+    };
+
+    const url = `${rootUrl}?${new URLSearchParams(options)}`;
+    return res.status(200).json({url: url});
+}
+
+async function getUserInfo(code) {
+    try {
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.OAUTH_CLIENT_ID,
+            process.env.OAUTH_CLIENT_SECRET,
+            process.env.OAUTH_REDIRECT
+        );
+
+        const {tokens} = await oauth2Client.getToken(code);
+        oauth2Client.setCredentials(tokens);
+
+        const oauth2 = google.oauth2({auth: oauth2Client, version: 'v2'});
+        const userInfo = await oauth2.userinfo.get();
+
+        if (!userInfo.data.email) {
+            return {error: "Error retrieving user email", status: 500};
+        }
+
+        return userInfo.data;
+    } catch (e) {
+        console.log(e);
+        return {error: "Error retrieving user info", status: 500};
+    }
+}
+
+exports.handleOAuthLogin = async (req, res) => {
+    const code = req.query.code;
+
+    const userInfo = await getUserInfo(code);
+
+    if (userInfo.error) {
+        return res.status(userInfo.status).json({message: userInfo.error});
+    }
+
+    const email = userInfo.email;
+    console.log("Logging in user with email: " + email);
+
+    // Find user with email
+    let user = await User.findOne({email: email});
+    let username;
+
+    if (!user) {
+        // Create new user
+        const oauthResponse = await addOAuthUser(email);
+        if (oauthResponse.error) {
+            return res.status(oauthResponse.status).json({message: oauthResponse.error});
+        }
+
+        username = oauthResponse.username;
+    } else {
+        // If user exists, check if user is oauth user
+        if (!user.isOAuth()) {
+            return res.status(400).json({message: "Email already in use"});
+        }
+
+        username = user.username;
+    }
+
+    // Generate JWT token TODO: Set up refresh tokens with short rotations
+    const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
+    console.log("Login successful for user: " + username);
+    return res.status(200).json({JWT: token});
 }
