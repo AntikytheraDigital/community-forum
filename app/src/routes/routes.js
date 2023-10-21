@@ -122,11 +122,23 @@ module.exports = function (app) {
     app.post('/board/:boardName/posts/:postID/addComment', async (req, res) => {
         console.log("Post request recieved to make a comment");
         let result;
+
+        if (!req.body || !req.body.post) {
+            res.render('postView', {error: "Post not found."})
+            return;
+        }
+
         if (typeof req.body.post === 'string') {
             result = JSON.parse(req.body.post);
         } else {
             result = req.body.post;
         }
+
+        if (!result || !result.title) {
+            res.render('postView', {error: "Post not found."})
+            return;
+        }
+
         let options = {post: result, title: result.title};
 
         await authentication.checkLoggedIn(req, res, options);
@@ -136,7 +148,6 @@ module.exports = function (app) {
 
         console.log("Adding comment to post: " + req.body.comment);
         let commentResult = await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
-    
     });
 
         // Route to show the edit post view
