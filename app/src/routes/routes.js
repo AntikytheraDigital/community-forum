@@ -51,7 +51,11 @@ module.exports = function (app) {
     });
 
     app.get('/board/:boardName/addPost', async (req, res) => {
-        res.render('addPostView', {boardName: req.params.boardName})
+        let options = {boardName: req.params.boardName};
+
+        await authentication.checkLoggedIn(req, res, options);
+
+        res.render('addPostView', options)
     });
 
 
@@ -116,23 +120,34 @@ module.exports = function (app) {
 
     // this happens when you add a comment (you make a post request on a post page)
     app.post('/board/:boardName/posts/:postID/addComment', async (req, res) => {
-        console.log("Post request recieved to make a comment");
-        let result;
-        if (typeof req.body.post === 'string') {
-            result = JSON.parse(req.body.post);
-        } else {
-            result = req.body.post;
+        try {
+            let result;
+
+            if (!req.body || !req.body.post) {
+                throw new Error("Post not found.");
+            }
+
+            if (typeof req.body.post === 'string') {
+                result = JSON.parse(req.body.post);
+            } else {
+                result = req.body.post;
+            }
+
+            if (!result || !result.title) {
+                throw new Error("Post not found.");
+            }
+
+            let options = {post: result, title: result.title};
+
+            await authentication.checkLoggedIn(req, res, options);
+
+            res.render('postView', options);
+
+            console.log("Adding comment to post: " + req.body.comment);
+            await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
+        } catch (error) {
+            res.render('postView', {error: "Error adding comment."});
         }
-        let options = {post: result, title: result.title};
-
-        await authentication.checkLoggedIn(req, res, options);
-        //add comment to local storage, so its rendered below, running the client side script and adding the comment to the page to be shown 
-
-        res.render('postView', options);
-
-        console.log("Adding comment to post: " + req.body.comment);
-        let commentResult = await postController.handleWriteComment(req.body.post._id, req.body.comment, options.username, req.cookies.JWT);
-    
     });
 
         // Route to show the edit post view

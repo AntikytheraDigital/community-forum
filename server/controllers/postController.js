@@ -87,6 +87,11 @@ exports.deletePost = async (req, res) => {
 exports.addComment = async (req, res) => {
     try {
         const {postID, username, content} = req.body;
+
+        if (!content || content === "") {
+            throw new Error("content is required")
+        }
+
         console.log("adding comment")
         let token = req.headers.jwt;
         validateRequest(token, username);
