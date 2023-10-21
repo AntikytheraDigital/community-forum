@@ -48,7 +48,7 @@ describe('/DELETE tests', () => {
                     if (err) {
                         done(err);
                     } else {
-                        res.should.have.status(400);
+                        res.should.have.status(401);
                         let post = await Post.findById("5e1a0651741b255ddda996c4");
                         post.should.have.property("comments");
                         done();

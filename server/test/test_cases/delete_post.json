@@ -9,7 +9,7 @@
     "description": "delete existing post with wrong author",
     "uri": "/posts/5e1a0651741b255ddda996c4",
     "jwt": "{\"username\": \"testauthor2\"}",
-    "expectedStatus": 400,
+    "expectedStatus": 401,
     "tryGet": {
       "expectedStatus": 200
     }

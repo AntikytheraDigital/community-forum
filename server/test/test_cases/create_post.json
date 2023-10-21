@@ -22,8 +22,8 @@
       "content": "contentTest 123",
       "title": "titleTest 123"
     },
-    "expectedStatus": 400,
-    "expectedMessage": "Post creation failed"
+    "expectedStatus": 401,
+    "expectedMessage": "username does not match token: author"
   },
   {
     "description": "empty boardName",
@@ -49,9 +49,8 @@
       "content": "contentTest 123",
       "title": "titleTest 123"
     },
-    "expectedStatus": 400,
-    "expectedMessage": "Post creation failed",
-    "expectedError": "username is required"
+    "expectedStatus": 401,
+    "expectedMessage": "username is required"
   },
   {
     "description": "empty content",

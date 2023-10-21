@@ -154,6 +154,11 @@ function validateRequest(token, username) {
     if (!token) {
         return {error: "token is required", status: 401}
     }
+
+    if (!username) {
+        return {error: "username is required", status: 401}
+    }
+
     let decoded
     if (process.env.NODE_ENV === 'test') {
         decoded = JSON.parse(token)
