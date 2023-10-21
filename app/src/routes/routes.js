@@ -154,9 +154,9 @@ module.exports = function (app) {
     app.post('/board/:boardName/posts/:postID/edit', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
-        await authentication.checkLoggedIn(req, res, options);
+        authController.addUsername(req, res, options);
 
-        let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, req.cookies.JWT);
+        let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, options);
 
         if (result.success) {
             res.redirect(`/board/${req.params.boardName}`);

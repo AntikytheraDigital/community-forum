@@ -122,8 +122,14 @@ async function handleWriteComment(options){
         return {error: "Error writing comment."};
     }
 }
-async function handleEditPost(postID, title, content, jwt){
+async function handleEditPost(postID, title, content, options){
     try {
+        if (!options.jwt || !options.username) {
+            return {error: "You must be logged in to edit a post."};
+        }
+
+        let {jwt} = options;
+
         const requestOptions = {
             method: 'PATCH',
             headers: {
