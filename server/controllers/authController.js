@@ -43,15 +43,15 @@ exports.register = async (req, res) => {
     }
 };
 
-exports.addOAuthUser = async (req, res) => {
+async function addOAuthUser (email) {
     try {
         // if email already exists, return error
-        if (await User.exists({email: req.body.email})) {
-            return res.status(400).json({message: 'Email already in use'});
+        if (await User.exists({email: email})) {
+            return {error: "Email already in use", status: 400};
         }
 
         // Create username from email
-        let username = req.body.email.split('@')[0];
+        let username = email.split('@')[0];
 
         // if username already exists, append random number to username
         if (await User.exists({username: username})) {
@@ -59,12 +59,12 @@ exports.addOAuthUser = async (req, res) => {
         }
 
         // Create new user
-        const newUser = new User({username: username, email: req.body.email});
+        const newUser = new User({username: username, email: email});
         let savedUser = await newUser.save();
         console.log("Registered new user:" + savedUser);
-        return res.status(201).json({message: 'Registration successful'});
+        return {message: "Registration successful", status: 201, username: username};
     } catch (error) {
-        return res.status(400).json({message: 'Registration failed', error: error.message});
+        return {error: "Registration failed", status: 400};
     }
 }
 
@@ -127,40 +127,66 @@ exports.getGoogleAuthURL = async (req, res) => {
     return res.status(200).json({url: url});
 }
 
-exports.handleOAuth = async (req, res) => {
-    const oauth2Client = new google.auth.OAuth2(
-        process.env.OAUTH_CLIENT_ID,
-        process.env.OAUTH_CLIENT_SECRET,
-        process.env.OAUTH_REDIRECT
-    );
+async function getUserInfo(code) {
+    try {
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.OAUTH_CLIENT_ID,
+            process.env.OAUTH_CLIENT_SECRET,
+            process.env.OAUTH_REDIRECT
+        );
 
-    const code = req.query.code;
+        const {tokens} = await oauth2Client.getToken(code);
+        oauth2Client.setCredentials(tokens);
 
-    oauth2Client.getToken(code, (err, token) => {
-        if (err) {
-            console.error('Error retrieving access token', err);
-            return res.status(400).json({message: 'Error retrieving access token'});
+        const oauth2 = google.oauth2({auth: oauth2Client, version: 'v2'});
+        const userInfo = await oauth2.userinfo.get();
+
+        if (!userInfo.data.email) {
+            return {error: "Error retrieving user email", status: 500};
         }
 
-        oauth2Client.setCredentials(token);
+        return userInfo.data;
+    } catch (e) {
+        console.log(e);
+        return {error: "Error retrieving user info", status: 500};
+    }
+}
 
-        const oauth2 = google.oauth2({
-            auth: oauth2Client,
-            version: 'v2'
-        });
+exports.handleOAuthLogin = async (req, res) => {
+    const code = req.query.code;
 
-        oauth2.userinfo.get((err, response) => {
-            if (err) {
-                console.error('Error retrieving user info', err);
-                return res.status(400).json({message: 'Error retrieving user info'});
-            }
+    const userInfo = await getUserInfo(code);
 
-            console.log(response.data)
-            const {email} = response.data;
-            console.log("test: ", email);
+    if (userInfo.error) {
+        return res.status(userInfo.status).json({message: userInfo.error});
+    }
 
-            // print access token
-            console.log(token.access_token);
-        });
-    });
+    const email = userInfo.email;
+    console.log("Logging in user with email: " + email);
+
+    // Find user with email
+    let user = await User.findOne({email: email});
+    let username;
+
+    if (!user) {
+        // Create new user
+        const oauthResponse = await addOAuthUser(email);
+        if (oauthResponse.error) {
+            return res.status(oauthResponse.status).json({message: oauthResponse.error});
+        }
+
+        username = oauthResponse.username;
+    } else {
+        // If user exists, check if user is oauth user
+        if (!user.isOAuth()) {
+            return res.status(400).json({message: "Email already in use"});
+        }
+
+        username = user.username;
+    }
+
+    // Generate JWT token TODO: Set up refresh tokens with short rotations
+    const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
+    console.log("Login successful for user: " + username);
+    return res.status(200).json({JWT: token});
 }

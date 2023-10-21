@@ -93,9 +93,23 @@ async function getOAuthURL() {
     }
 }
 
+async function handleOAuthLogin(req, res) {
+    const code = req.query.code;
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const response = await serverRequest.makeRequest(`/auth/oauth/login?code=${code}`, requestOptions);
+}
+
 module.exports = {
     handleSubmit: handleSubmit,
     handleLogin: handleLogin,
     checkLoggedIn: checkLoggedIn,
-    getOAuthURL: getOAuthURL
+    getOAuthURL: getOAuthURL,
+    handleOAuthLogin: handleOAuthLogin
 };

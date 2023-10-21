@@ -23,7 +23,7 @@ router.get('/check', authController.checkLoggedIn);
 // Get the Google OAuth URL
 router.get('/google/url', authController.getGoogleAuthURL);
 
-// Handle the OAuth token request
-router.get('/oauth', authController.handleOAuth);
+// Handle the OAuth login request
+router.get('/oauth/login', authController.handleOAuthLogin);
 
 module.exports = router;
