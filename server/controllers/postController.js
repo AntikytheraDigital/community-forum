@@ -6,8 +6,7 @@ const jwtSecret = process.env.JWT_SECRET || 'secret';
 // will not edit timestamp, authorID, or boardID
 exports.editPost = async (req, res) => {
     try {
-        const postID = req.params["postID"];
-        let post = await Post.findById(postID);
+        let post = req.post;
         if (!post) {
             throw new Error("post not found");
         }
@@ -74,7 +73,7 @@ exports.findByBoard = async (req, res) => {
 exports.deletePost = async (req, res) => {
     try {
         const postID = req.params["postID"];
-        let post = await Post.findById(postID);
+        let post = req.post;
         if (!post) throw new Error("post not found");
 
         await Post.findByIdAndDelete(postID);
@@ -132,6 +131,7 @@ exports.getUsername = async (req, res, next) => {
     }
 
     req.username = post.username;
+    req.post = post;
     next();
 }
 
