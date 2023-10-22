@@ -3,14 +3,20 @@ const boardController = require('../controllers/boardController');
 const postController = require('../controllers/postController');
 
 module.exports = function (app) {
-    app.get('/', async (req, res) => {
+    async function checkAuth(req, res, next) {
+        await authController.getNewAccessToken(req, res);
+
+        let options = {};
+        authController.addUsername(req, res, options);
+        req.options = options;
+        next();
+    }
+
+    app.get('/', checkAuth, async (req, res) => {
         let result = await boardController.handleGetAllPosts();
         let boards = await boardController.handleGetBoards();
 
-        let options = {posts: result, boards: boards};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+        const options = {...req.options, posts: result, boards: boards};
 
         res.render('homeView', options);
     });
@@ -25,13 +31,10 @@ module.exports = function (app) {
         res.redirect('/');
     });
 
-    app.get('/board/:boardName', async (req, res) => {
+    app.get('/board/:boardName', checkAuth, async (req, res) => {
         let result = await boardController.handleGetBoardPosts(req.params.boardName);
 
-        let options = {posts: result, boardName: req.params.boardName};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+        const options = {...req.options, posts: result, boardName: req.params.boardName};
 
         res.render('boardView', options);
     });
@@ -51,21 +54,15 @@ module.exports = function (app) {
         res.render('registerView');
     });
 
-    app.get('/board/:boardName/addPost', async (req, res) => {
-        let options = {boardName: req.params.boardName};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+    app.get('/board/:boardName/addPost', checkAuth, async (req, res) => {
+        const options = {...req.options, boardName: req.params.boardName};
 
         res.render('addPostView', options)
     });
 
 
-    app.post('/board/:boardName/addPost', async (req, res) => {
-        let options = {boardName: req.params.boardName};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+    app.post('/board/:boardName/addPost', checkAuth, async (req, res) => {
+        const options = {...req.options, boardName: req.params.boardName};
 
         let result = await postController.handleWritePost(req.body.title, req.body.content, options);
 
@@ -85,12 +82,9 @@ module.exports = function (app) {
         }
     });
 
-    //delete post route 
-    app.post('/board/:boardName/posts/:postID/delete', async (req, res) => {
-        let options = {postID: req.params.postID};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+    //delete post route
+    app.post('/board/:boardName/posts/:postID/delete', checkAuth, async (req, res) => {
+        const options = {...req.options, postID: req.params.postID};
 
         let result = await postController.handleDeletePost(options);
 
@@ -118,32 +112,24 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/board/:boardName/posts/:postID', async (req, res) => {
+    app.get('/board/:boardName/posts/:postID', checkAuth, async (req, res) => {
         let result = await postController.handleGetPost(req.params.postID);
         let title = result.title ? result.title : "Invalid Post";
 
-        let options = {post: result, title: title};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+        const options = {...req.options, post: result, title: title};
 
         res.render('postView', options);
     });
 
     // this happens when you add a comment (you make a post request on a post page)
-    app.post('/board/:boardName/posts/:postID/addComment', async (req, res) => {
+    app.post('/board/:boardName/posts/:postID/addComment', checkAuth, async (req, res) => {
         let statusSent = false;
         try {
             if (!req.body || !req.body.postID) {
                 throw new Error("Post not found.");
             }
 
-            let options = {postID: req.body.postID, comment: req.body.comment};
-
-            await authController.getNewAccessToken(req, res);
-            authController.addUsername(req, res, options);
-
-            console.log("Adding comment to post: " + req.body.comment);
+            const options = {...req.options, postID: req.body.postID, comment: req.body.comment};
 
             res.status(201).send({success: true});
             statusSent = true;
@@ -160,24 +146,18 @@ module.exports = function (app) {
     });
 
     // Route to show the edit post view
-    app.get('/board/:boardName/posts/:postID/edit', async (req, res) => {
+    app.get('/board/:boardName/posts/:postID/edit', checkAuth, async (req, res) => {
         let result = await postController.handleGetPost(req.params.postID);
         let title = result.title ? result.title : "Invalid Post";
 
-        let options = {post: result, title: title};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+        const options = {...req.options, post: result, title: title};
 
         res.render('editPostView', options);
     });
 
     // Route to handle the edit post submission
-    app.post('/board/:boardName/posts/:postID/edit', async (req, res) => {
-        let options = {boardName: req.params.boardName};
-
-        await authController.getNewAccessToken(req, res);
-        authController.addUsername(req, res, options);
+    app.post('/board/:boardName/posts/:postID/edit', checkAuth, async (req, res) => {
+        const options = {...req.options, boardName: req.params.boardName};
 
         let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, options);
 
