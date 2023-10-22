@@ -1,7 +1,6 @@
 const authController = require('../controllers/authController');
 const boardController = require('../controllers/boardController');
 const postController = require('../controllers/postController');
-const authentication = require('../middleware/authentication');
 
 module.exports = function (app) {
     app.get('/', async (req, res) => {
@@ -10,18 +9,19 @@ module.exports = function (app) {
 
         let options = {posts: result, boards: boards};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         res.render('homeView', options);
     });
 
-    app.get('/login', (req, res) => {
-        authentication.logoutUser(res);
+    app.get('/login', async (req, res) => {
+        await authController.logoutUser(req, res);
         res.render('loginView');
     });
 
-    app.get('/logout', (req, res) => {
-        authentication.logoutUser(res);
+    app.get('/logout', async (req, res) => {
+        await authController.logoutUser(req, res);
         res.redirect('/');
     });
 
@@ -30,6 +30,7 @@ module.exports = function (app) {
 
         let options = {posts: result, boardName: req.params.boardName};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         res.render('boardView', options);
@@ -45,14 +46,15 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/register', (req, res) => {
-        authentication.logoutUser(res);
+    app.get('/register', async (req, res) => {
+        await authController.logoutUser(req, res);
         res.render('registerView');
     });
 
     app.get('/board/:boardName/addPost', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         res.render('addPostView', options)
@@ -62,6 +64,7 @@ module.exports = function (app) {
     app.post('/board/:boardName/addPost', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         let result = await postController.handleWritePost(req.body.title, req.body.content, options);
@@ -72,7 +75,7 @@ module.exports = function (app) {
         }
 
         if (result.status === 401) {
-            authentication.logoutUser(res);
+            await authController.logoutUser(req, res);
         }
 
         if (result.error && result.error === "jwt malformed") {
@@ -86,6 +89,7 @@ module.exports = function (app) {
     app.post('/board/:boardName/posts/:postID/delete', async (req, res) => {
         let options = {postID: req.params.postID};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         let result = await postController.handleDeletePost(options);
@@ -96,7 +100,7 @@ module.exports = function (app) {
         }
 
         if (result.status === 401) {
-            authentication.logoutUser(res);
+            await authController.logoutUser(req, res);
         }
 
         // Handle error (e.g., render an error page or redirect with an error message)
@@ -104,7 +108,7 @@ module.exports = function (app) {
     });
 
     app.post('/register', async (req, res) => {
-        authentication.logoutUser(res);
+        await authController.logoutUser(req, res);
         let result = await authController.handleSubmit(req.body);
 
         if (result[0] === 201) {
@@ -120,6 +124,7 @@ module.exports = function (app) {
 
         let options = {post: result, title: title};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         res.render('postView', options);
@@ -135,6 +140,7 @@ module.exports = function (app) {
 
             let options = {postID: req.body.postID, comment: req.body.comment};
 
+            await authController.getNewAccessToken(req, res);
             authController.addUsername(req, res, options);
 
             console.log("Adding comment to post: " + req.body.comment);
@@ -145,7 +151,7 @@ module.exports = function (app) {
             let result = await postController.handleWriteComment(options);
 
             if (result.status === 401) {
-                authentication.logoutUser(res);
+                await authController.logoutUser(req, res);
             }
 
         } catch (error) {
@@ -160,6 +166,7 @@ module.exports = function (app) {
 
         let options = {post: result, title: title};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         res.render('editPostView', options);
@@ -169,12 +176,13 @@ module.exports = function (app) {
     app.post('/board/:boardName/posts/:postID/edit', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
+        await authController.getNewAccessToken(req, res);
         authController.addUsername(req, res, options);
 
         let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, options);
 
         if (result.status === 401) {
-            authentication.logoutUser(res);
+            await authController.logoutUser(req, res);
         }
 
         if (result.success) {

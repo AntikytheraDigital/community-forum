@@ -1,4 +1,6 @@
 const serverRequest = require('../middleware/serverRequest');
+require('dotenv').config();
+const maxAge = process.env.MAX_AGE || 600000;
 
 // Add username to the options object
 function addUsername(req, res, options) {
@@ -7,6 +9,8 @@ function addUsername(req, res, options) {
     if (!req.cookies.JWT || !req.cookies.username) {
         res.clearCookie('JWT');
         res.clearCookie('username');
+        res.clearCookie('refreshToken');
+        res.clearCookie('expiry');
         return;
     }
 
@@ -57,36 +61,13 @@ async function handleLogin(req, res) {
             // Add JWT token to cookie
             res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
             res.cookie('username', username, {httpOnly: true, secure: true});
+            res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
+            res.cookie('expiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
 
             return [200, `${username} logged in.`];
         }
 
         return [response.status, "Invalid username or password."];
-    } catch {
-        return [500, "Server error."];
-    }
-}
-
-async function checkLoggedIn(token, res) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'JWT': token
-        }
-    };
-
-    try {
-        const response = await serverRequest.makeRequest('/auth/check', requestOptions);
-
-        if (response.status === 200) {
-            return [200, response['username']];
-        }
-
-        // remove JWT cookie if invalid
-        res.clearCookie('JWT');
-
-        return [response.status, "User not logged in."];
     } catch {
         return [500, "Server error."];
     }
@@ -122,8 +103,11 @@ async function handleOAuthLogin(req, res) {
     const response = await serverRequest.makeRequest(`/auth/oauth/login?code=${code}`, requestOptions);
 
     if (response.status === 200 || response.status === 201) {
+        // expires after 10 minutes
         res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
-        res.cookie('username', response['username'], {httpOnly: true, secure: true})
+        res.cookie('username', response['username'], {httpOnly: true, secure: true});
+        res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
+        res.cookie('expiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
 
         console.log("Logged in with OAuth.")
         return {status: 200, message: "Logged in with OAuth."};
@@ -132,11 +116,72 @@ async function handleOAuthLogin(req, res) {
     return {error: "Error logging in with OAuth.", status: response.status};
 }
 
+async function logoutUser(req, res) {
+    // Get refresh token from cookies
+    let refreshToken = req.cookies.refreshToken;
+
+    if (refreshToken) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'refreshToken': refreshToken
+            }
+        }
+
+        await serverRequest.makeRequest('/auth/logout', requestOptions);
+    }
+
+    res.clearCookie('JWT');
+    res.clearCookie('username');
+    res.clearCookie('refreshToken');
+    res.clearCookie('expiry');
+}
+
+async function getNewAccessToken(req, res) {
+    let refreshToken = req.cookies.refreshToken;
+    if (!req.cookies.JWT || !refreshToken || !req.cookies.username || !req.cookies.expiry) {
+        return;
+    }
+
+    let currentTime = new Date().getTime();
+    let jwtTime = req.cookies.expiry;
+
+    // if more than 20 minutes have passed since the JWT was issued, logout
+    if (currentTime - jwtTime > maxAge) {
+        await logoutUser(req, res);
+    }
+
+    // if less than 10 minutes have passed since the JWT was issued, return
+    if (currentTime - jwtTime < 0) {
+        return;
+    }
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'refreshToken': refreshToken
+        }
+    }
+
+    const response = await serverRequest.makeRequest('/auth/refresh', requestOptions);
+
+    if (response.status === 200) {
+        res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+        res.cookie('expiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
+        return;
+    }
+
+    await logoutUser(req, res);
+}
+
 module.exports = {
     handleSubmit: handleSubmit,
     handleLogin: handleLogin,
-    checkLoggedIn: checkLoggedIn,
     getOAuthURL: getOAuthURL,
     handleOAuthLogin: handleOAuthLogin,
-    addUsername: addUsername
+    addUsername: addUsername,
+    logoutUser: logoutUser,
+    getNewAccessToken: getNewAccessToken
 };

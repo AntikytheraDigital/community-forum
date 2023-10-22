@@ -17,13 +17,16 @@ router.post('/register', authController.register);
 // Login
 router.post('/login', authController.login);
 
-// check logged in
-router.get('/check', authController.checkLoggedIn);
-
 // Get the Google OAuth URL
 router.get('/google/url', authController.getGoogleAuthURL);
 
 // Handle the OAuth login request
 router.get('/oauth/login', authController.handleOAuthLogin);
+
+// Handle removing refresh token
+router.get('/logout', authController.logout);
+
+// Handle refreshing access token
+router.get('/refresh', authController.getNewToken);
 
 module.exports = router;
