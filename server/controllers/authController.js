@@ -126,7 +126,7 @@ exports.getNewToken = async (req, res) => {
         const decoded = jwt.verify(refreshToken, refreshSecret);
         const token = generateToken(decoded.username);
 
-        return res.status(200).json({JWT: token, username: decoded.username, });
+        return res.status(200).json({JWT: token, username: decoded.username });
     } catch (e) {
         return res.status(401).json({message: 'User not logged in'});
     }
@@ -245,6 +245,5 @@ exports.handleOAuthLogin = async (req, res) => {
 }
 
 function generateToken(username) {
-    // TODO: update expiresIn to 10m
-    return jwt.sign({username: username}, refreshSecret, {expiresIn: '15s'});
+    return jwt.sign({username: username}, refreshSecret, {expiresIn: '12m'});
 }
