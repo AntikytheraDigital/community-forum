@@ -1,6 +1,6 @@
 const serverRequest = require('../middleware/serverRequest');
 require('dotenv').config();
-const maxAge = process.env.MAX_AGE || 10 * 60 * 1000;
+const maxAge = process.env.MAX_AGE || 600000;
 
 // Add username to the options object
 function addUsername(req, res, options) {
@@ -9,6 +9,8 @@ function addUsername(req, res, options) {
     if (!req.cookies.JWT || !req.cookies.username) {
         res.clearCookie('JWT');
         res.clearCookie('username');
+        res.clearCookie('refreshToken');
+        res.clearCookie('expiry');
         return;
     }
 
@@ -60,7 +62,7 @@ async function handleLogin(req, res) {
             res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
             res.cookie('username', username, {httpOnly: true, secure: true});
             res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
-            res.cookie('jwtExpiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
+            res.cookie('expiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
 
             return [200, `${username} logged in.`];
         }
@@ -105,7 +107,7 @@ async function handleOAuthLogin(req, res) {
         res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
         res.cookie('username', response['username'], {httpOnly: true, secure: true});
         res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
-        res.cookie('jwtExpiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
+        res.cookie('expiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
 
         console.log("Logged in with OAuth.")
         return {status: 200, message: "Logged in with OAuth."};
@@ -133,17 +135,17 @@ async function logoutUser(req, res) {
     res.clearCookie('JWT');
     res.clearCookie('username');
     res.clearCookie('refreshToken');
-    res.clearCookie('jwtExpiry');
+    res.clearCookie('expiry');
 }
 
 async function getNewAccessToken(req, res) {
     let refreshToken = req.cookies.refreshToken;
-    if (!req.cookies.JWT || !refreshToken || !req.cookies.username || !req.cookies.jwtExpiry) {
+    if (!req.cookies.JWT || !refreshToken || !req.cookies.username || !req.cookies.expiry) {
         return;
     }
 
     let currentTime = new Date().getTime();
-    let jwtTime = req.cookies.jwtExpiry;
+    let jwtTime = req.cookies.expiry;
 
     // if more than 20 minutes have passed since the JWT was issued, logout
     if (currentTime - jwtTime > maxAge) {
@@ -167,7 +169,7 @@ async function getNewAccessToken(req, res) {
 
     if (response.status === 200) {
         res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
-        res.cookie('jwtExpiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
+        res.cookie('expiry', new Date().getTime() + maxAge, {httpOnly: true, secure: true});
         return;
     }
 

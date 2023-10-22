@@ -85,8 +85,8 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT token and refresh token
+    const refreshToken = jwt.sign({username: username}, refreshSecret);
     const token = generateToken(username);
-    const refreshToken = jwt.sign(username, refreshSecret);
 
     const newRefToken = new RefreshToken({username: username, refreshToken: refreshToken});
     await newRefToken.save();
@@ -94,22 +94,6 @@ exports.login = async (req, res) => {
     console.log("Login successful for user: " + username);
     return res.status(200).json({JWT: token, username: username, refreshToken: refreshToken});
 };
-
-exports.checkLoggedIn = async (req, res) => {
-    const token = req.headers.jwt;
-
-    if (!token) {
-        return res.status(401).json({message: 'User not logged in'});
-    }
-
-    try {
-        const decoded = jwt.verify(token, jwtSecret);
-
-        return res.status(200).json({username: decoded.username});
-    } catch (e) {
-        return res.status(401).json({message: 'User not logged in'});
-    }
-}
 
 exports.getNewToken = async (req, res) => {
     try {
@@ -135,8 +119,6 @@ exports.getNewToken = async (req, res) => {
 exports.logout = async (req, res) => {
     try {
         const refreshToken = req.headers.refreshtoken;
-
-        console.log("Logging out user with refresh token: " + refreshToken)
 
         if (!refreshToken) {
             return res.status(400).json({message: 'Logout failed'});
@@ -235,7 +217,7 @@ exports.handleOAuthLogin = async (req, res) => {
     }
 
     const token = generateToken(username);
-    const refreshToken = jwt.sign(username, refreshSecret);
+    const refreshToken = jwt.sign({username: username}, refreshSecret);
 
     const newRefToken = new RefreshToken({username: username, refreshToken: refreshToken});
     await newRefToken.save();
@@ -245,5 +227,5 @@ exports.handleOAuthLogin = async (req, res) => {
 }
 
 function generateToken(username) {
-    return jwt.sign({username: username}, refreshSecret, {expiresIn: '12m'});
+    return jwt.sign({username: username}, jwtSecret, {expiresIn: '12m'});
 }

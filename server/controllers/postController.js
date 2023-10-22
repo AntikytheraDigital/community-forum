@@ -108,7 +108,6 @@ exports.addComment = async (req, res) => {
             throw new Error("content is required")
         }
 
-        console.log("adding comment")
         let token = req.headers.jwt;
         let validation = validateRequest(token, username);
 
