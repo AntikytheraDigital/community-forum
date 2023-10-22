@@ -2,8 +2,10 @@ const User = require('../models/user');
 const validator = require('validator');
 const jwt = require("jsonwebtoken");
 const {google} = require('googleapis');
+const RefreshToken = require('../models/refreshToken');
 
 const jwtSecret = process.env.JWT_SECRET || 'secret';
+const refreshSecret = process.env.REFRESH_SECRET || 'refreshSecret';
 
 exports.register = async (req, res) => {
     console.log("Registering new user");
@@ -82,11 +84,15 @@ exports.login = async (req, res) => {
         return res.status(401).json({message: 'Incorrect password'});
     }
 
-    // Generate JWT token TODO: Set up refresh tokens with short rotations
-    const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
+    // Generate JWT token and refresh token
+    const token = generateToken(username);
+    const refreshToken = jwt.sign(username, refreshSecret);
+
+    const newRefToken = new RefreshToken({username: username, refreshToken: refreshToken});
+    await newRefToken.save();
 
     console.log("Login successful for user: " + username);
-    return res.status(200).json({JWT: token});
+    return res.status(200).json({JWT: token, username: username, refreshToken: refreshToken});
 };
 
 exports.checkLoggedIn = async (req, res) => {
@@ -102,6 +108,49 @@ exports.checkLoggedIn = async (req, res) => {
         return res.status(200).json({username: decoded.username});
     } catch (e) {
         return res.status(401).json({message: 'User not logged in'});
+    }
+}
+
+exports.getNewToken = async (req, res) => {
+    try {
+        const refreshToken = req.headers.refreshtoken;
+
+        if (!refreshToken) {
+            return res.status(401).json({message: 'User not logged in'});
+        }
+
+        if (!await RefreshToken.exists({refreshToken: refreshToken})) {
+            return res.status(401).json({message: 'User not logged in'});
+        }
+
+        const decoded = jwt.verify(refreshToken, refreshSecret);
+        const token = generateToken(decoded.username);
+
+        return res.status(200).json({JWT: token, username: decoded.username});
+    } catch (e) {
+        return res.status(401).json({message: 'User not logged in'});
+    }
+}
+
+exports.logout = async (req, res) => {
+    try {
+        const refreshToken = req.headers.refreshtoken;
+
+        console.log("Logging out user with refresh token: " + refreshToken)
+
+        if (!refreshToken) {
+            return res.status(400).json({message: 'Logout failed'});
+        }
+
+        if (!await RefreshToken.exists({refreshToken: refreshToken})) {
+            return res.status(400).json({message: 'Logout failed'});
+        }
+
+        await RefreshToken.deleteOne({refreshToken: refreshToken});
+
+        return res.status(200).json({message: 'User logged out'});
+    } catch (e) {
+        return res.status(400).json({message: 'Logout failed'});
     }
 }
 
@@ -185,8 +234,17 @@ exports.handleOAuthLogin = async (req, res) => {
         username = user.username;
     }
 
-    // Generate JWT token TODO: Set up refresh tokens with short rotations
-    const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
+    const token = generateToken(username);
+    const refreshToken = jwt.sign(username, refreshSecret);
+
+    const newRefToken = new RefreshToken({username: username, refreshToken: refreshToken});
+    await newRefToken.save();
+
     console.log("Login successful for user: " + username);
-    return res.status(200).json({JWT: token, username: username});
+    return res.status(200).json({JWT: token, username: username, refreshToken: refreshToken});
+}
+
+function generateToken(username) {
+    // TODO: update expiresIn to 10m
+    return jwt.sign({username: username}, refreshSecret, {expiresIn: '15s'});
 }

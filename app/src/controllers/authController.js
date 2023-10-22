@@ -57,6 +57,7 @@ async function handleLogin(req, res) {
             // Add JWT token to cookie
             res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
             res.cookie('username', username, {httpOnly: true, secure: true});
+            res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
 
             return [200, `${username} logged in.`];
         }
@@ -123,7 +124,8 @@ async function handleOAuthLogin(req, res) {
 
     if (response.status === 200 || response.status === 201) {
         res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
-        res.cookie('username', response['username'], {httpOnly: true, secure: true})
+        res.cookie('username', response['username'], {httpOnly: true, secure: true});
+        res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
 
         console.log("Logged in with OAuth.")
         return {status: 200, message: "Logged in with OAuth."};
@@ -132,11 +134,33 @@ async function handleOAuthLogin(req, res) {
     return {error: "Error logging in with OAuth.", status: response.status};
 }
 
+async function logoutUser(req, res) {
+    // Get refresh token from cookies
+    let refreshToken = req.cookies.refreshToken;
+
+    if (refreshToken) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'refreshToken': refreshToken
+            }
+        }
+
+        await serverRequest.makeRequest('/auth/logout', requestOptions);
+    }
+
+    res.clearCookie('JWT');
+    res.clearCookie('username');
+    res.clearCookie('refreshToken');
+}
+
 module.exports = {
     handleSubmit: handleSubmit,
     handleLogin: handleLogin,
     checkLoggedIn: checkLoggedIn,
     getOAuthURL: getOAuthURL,
     handleOAuthLogin: handleOAuthLogin,
-    addUsername: addUsername
+    addUsername: addUsername,
+    logoutUser: logoutUser
 };

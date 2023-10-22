@@ -15,13 +15,13 @@ module.exports = function (app) {
         res.render('homeView', options);
     });
 
-    app.get('/login', (req, res) => {
-        authentication.logoutUser(res);
+    app.get('/login', async (req, res) => {
+        await authController.logoutUser(req, res);
         res.render('loginView');
     });
 
-    app.get('/logout', (req, res) => {
-        authentication.logoutUser(res);
+    app.get('/logout', async (req, res) => {
+        await authController.logoutUser(req, res);
         res.redirect('/');
     });
 
@@ -45,8 +45,8 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/register', (req, res) => {
-        authentication.logoutUser(res);
+    app.get('/register', async (req, res) => {
+        await authController.logoutUser(req, res);
         res.render('registerView');
     });
 
@@ -72,7 +72,7 @@ module.exports = function (app) {
         }
 
         if (result.status === 401) {
-            authentication.logoutUser(res);
+            await authController.logoutUser(req, res);
         }
 
         if (result.error && result.error === "jwt malformed") {
@@ -96,7 +96,7 @@ module.exports = function (app) {
         }
 
         if (result.status === 401) {
-            authentication.logoutUser(res);
+            await authController.logoutUser(req, res);
         }
 
         // Handle error (e.g., render an error page or redirect with an error message)
@@ -104,7 +104,7 @@ module.exports = function (app) {
     });
 
     app.post('/register', async (req, res) => {
-        authentication.logoutUser(res);
+        await authController.logoutUser(req, res);
         let result = await authController.handleSubmit(req.body);
 
         if (result[0] === 201) {
@@ -145,7 +145,7 @@ module.exports = function (app) {
             let result = await postController.handleWriteComment(options);
 
             if (result.status === 401) {
-                authentication.logoutUser(res);
+                await authController.logoutUser(req, res);
             }
 
         } catch (error) {
@@ -174,7 +174,7 @@ module.exports = function (app) {
         let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, options);
 
         if (result.status === 401) {
-            authentication.logoutUser(res);
+            await authController.logoutUser(req, res);
         }
 
         if (result.success) {
