@@ -127,26 +127,17 @@ exports.addComment = async (req, res) => {
     }
 }
 
-exports.deleteComment = async (req, res) => {
-    try {
-        const {postID, commentID} = req.query;
-        let comment = await Post.findById(postID).select({comments: {$elemMatch: {_id: commentID}}});
-        let username = comment.comments[0].username;
+function authenticateRequest(req, res, next) {
+    let token = req.headers.jwt;
+    let username = req.username;
 
-        if (!comment) {
-            throw new Error("comment not found");
-        }
+    let validation = validateRequest(token, username);
 
-        let validation = validateRequest(req.headers.jwt, username);
-
-        if (validation.status !== 200) {
-            return (res.status(validation.status).json({message: validation.error}));
-        }
-
-        return (res.status(200).json({message: 'Comment deleted successfully'}));
-    } catch (error) {
-        return (res.status(400).json({message: "Comment deletion failed", error: error.message}));
+    if (validation.status !== 200) {
+        return (res.status(validation.status).json({message: validation.error}));
     }
+
+    next();
 }
 
 function validateRequest(token, username) {
