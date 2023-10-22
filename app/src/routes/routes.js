@@ -1,7 +1,7 @@
 const authController = require('../controllers/authController');
 const boardController = require('../controllers/boardController');
 const postController = require('../controllers/postController');
-const authentication = require('../middleware/authentication');
+const {checkMaxAge} = require('../middleware/authentication');
 
 module.exports = function (app) {
     app.get('/', async (req, res) => {
@@ -10,6 +10,7 @@ module.exports = function (app) {
 
         let options = {posts: result, boards: boards};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         res.render('homeView', options);
@@ -30,6 +31,7 @@ module.exports = function (app) {
 
         let options = {posts: result, boardName: req.params.boardName};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         res.render('boardView', options);
@@ -53,6 +55,7 @@ module.exports = function (app) {
     app.get('/board/:boardName/addPost', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         res.render('addPostView', options)
@@ -62,6 +65,7 @@ module.exports = function (app) {
     app.post('/board/:boardName/addPost', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         let result = await postController.handleWritePost(req.body.title, req.body.content, options);
@@ -86,6 +90,7 @@ module.exports = function (app) {
     app.post('/board/:boardName/posts/:postID/delete', async (req, res) => {
         let options = {postID: req.params.postID};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         let result = await postController.handleDeletePost(options);
@@ -120,6 +125,7 @@ module.exports = function (app) {
 
         let options = {post: result, title: title};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         res.render('postView', options);
@@ -135,6 +141,7 @@ module.exports = function (app) {
 
             let options = {postID: req.body.postID, comment: req.body.comment};
 
+            await checkMaxAge(req, res);
             authController.addUsername(req, res, options);
 
             console.log("Adding comment to post: " + req.body.comment);
@@ -160,6 +167,7 @@ module.exports = function (app) {
 
         let options = {post: result, title: title};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         res.render('editPostView', options);
@@ -169,6 +177,7 @@ module.exports = function (app) {
     app.post('/board/:boardName/posts/:postID/edit', async (req, res) => {
         let options = {boardName: req.params.boardName};
 
+        await checkMaxAge(req, res);
         authController.addUsername(req, res, options);
 
         let result = await postController.handleEditPost(req.params.postID, req.body.title, req.body.content, options);

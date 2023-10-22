@@ -1,4 +1,6 @@
 const serverRequest = require('../middleware/serverRequest');
+require('dotenv').config();
+const maxAge = process.env.MAX_AGE || 15000;
 
 // Add username to the options object
 function addUsername(req, res, options) {
@@ -55,7 +57,7 @@ async function handleLogin(req, res) {
 
         if (response.status === 200) {
             // Add JWT token to cookie
-            res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+            res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true, maxAge: maxAge});
             res.cookie('username', username, {httpOnly: true, secure: true});
             res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
 
@@ -123,7 +125,8 @@ async function handleOAuthLogin(req, res) {
     const response = await serverRequest.makeRequest(`/auth/oauth/login?code=${code}`, requestOptions);
 
     if (response.status === 200 || response.status === 201) {
-        res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+        // expires after 10 minutes
+        res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true, maxAge: maxAge});
         res.cookie('username', response['username'], {httpOnly: true, secure: true});
         res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
 
@@ -155,6 +158,33 @@ async function logoutUser(req, res) {
     res.clearCookie('refreshToken');
 }
 
+async function getNewAccessToken(req, res) {
+    // Get refresh token from cookies
+    let refreshToken = req.cookies.refreshToken;
+
+    if (refreshToken) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'refreshToken': refreshToken
+            }
+        }
+
+        const response = await serverRequest.makeRequest('/auth/refresh', requestOptions);
+
+        if (response.status === 200) {
+            // Add JWT token to cookie
+            res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true, maxAge: maxAge});
+            res.cookie('username', response['username'], {httpOnly: true, secure: true});
+            res.cookie('refreshToken', response['refreshToken'], {httpOnly: true, secure: true});
+            return;
+        }
+    }
+
+    await logoutUser(req, res);
+}
+
 module.exports = {
     handleSubmit: handleSubmit,
     handleLogin: handleLogin,
@@ -162,5 +192,6 @@ module.exports = {
     getOAuthURL: getOAuthURL,
     handleOAuthLogin: handleOAuthLogin,
     addUsername: addUsername,
-    logoutUser: logoutUser
+    logoutUser: logoutUser,
+    getNewAccessToken: getNewAccessToken
 };
