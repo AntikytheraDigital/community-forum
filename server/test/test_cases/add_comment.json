@@ -14,7 +14,7 @@
   {
     "description": "add comment to nonexisting post",
     "uri": "/posts/comments",
-    "jwt": {"username": "testauthor"},
+    "jwt": "{\"username\": \"testauthor\"}",
     "data": {
       "postID": "5e1a0651741b255ddda996c5",
       "username": "testauthor",
@@ -33,7 +33,7 @@
       "username": "testauthor",
       "content": "contentTest 123"
     },
-    "expectedStatus": 400,
-    "expectedMessage": "Comment creation failed"
+    "expectedStatus": 401,
+    "expectedMessage": "Invalid token format."
   }
 ]

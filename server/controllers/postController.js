@@ -12,12 +12,6 @@ exports.editPost = async (req, res) => {
             throw new Error("post not found");
         }
 
-        let validation = validateRequest(req.headers.jwt, post.username);
-
-        if (validation.status !== 200) {
-            return (res.status(validation.status).json({message: validation.error}));
-        }
-
         post.content = req.body.content;
         await post.save();
         return (res.status(200).json({message: 'Post edited successfully'}));
@@ -28,12 +22,6 @@ exports.editPost = async (req, res) => {
 exports.createPost = async (req, res) => {
     try {
         let {boardName, username, content, title} = req.body;
-
-        let validation = validateRequest(req.headers.jwt, username);
-
-        if (validation.status !== 200) {
-            return (res.status(validation.status).json({message: validation.error}));
-        }
 
         const newPost = new Post({boardName, username, content, title});
         await newPost.save();
@@ -65,6 +53,7 @@ exports.getAllPosts = async (req, res) => {
         return (res.status(500).json({message: 'Post retrieval failed', error: error.message}));
     }
 }
+
 exports.findByBoard = async (req, res) => {
     try {
         const boardName = req.query.boardName;
@@ -87,11 +76,6 @@ exports.deletePost = async (req, res) => {
         const postID = req.params["postID"];
         let post = await Post.findById(postID);
         if (!post) throw new Error("post not found");
-        let validation = validateRequest(req.headers.jwt, post.username);
-
-        if (validation.status !== 200) {
-            return (res.status(validation.status).json({message: validation.error}));
-        }
 
         await Post.findByIdAndDelete(postID);
         return (res.status(200).json({message: 'Post deleted successfully'}));
@@ -108,13 +92,6 @@ exports.addComment = async (req, res) => {
             throw new Error("content is required")
         }
 
-        let token = req.headers.jwt;
-        let validation = validateRequest(token, username);
-
-        if (validation.status !== 200) {
-            return (res.status(validation.status).json({message: validation.error}));
-        }
-
         let post = await Post.findById(postID).exec();
         if (!post) {
             throw new Error("post not found")
@@ -127,37 +104,64 @@ exports.addComment = async (req, res) => {
     }
 }
 
-function authenticateRequest(req, res, next) {
-    let token = req.headers.jwt;
-    let username = req.username;
-
-    let validation = validateRequest(token, username);
-
-    if (validation.status !== 200) {
-        return (res.status(validation.status).json({message: validation.error}));
+exports.getUsername = async (req, res, next) => {
+    if (req.body.username) {
+        req.username = req.body.username;
+        next();
+        return;
     }
 
+    if (req.body.username === "") {
+        return (res.status(400).json({message: "username is required"}));
+    }
+
+    if (!req.params["postID"]) {
+        return (res.status(400).json({message: "postID is required"}));
+    }
+
+    const postID = req.params["postID"];
+    let post;
+    try {
+        post = await Post.findById(postID);
+    } catch (error) {
+        return (res.status(400).json({message: "postID is invalid"}));
+    }
+
+    if (!post) {
+        return (res.status(400).json({message: "post not found"}));
+    }
+
+    req.username = post.username;
     next();
 }
 
-function validateRequest(token, username) {
-    if (!token) {
-        return {error: "token is required", status: 401}
+exports.authenticateRequest = (req, res, next) => {
+    const token = req.headers.jwt;
+    const username = req.username;
+
+    if (!token || !username) {
+        return res.status(401).json({ message: "Both token and username are required." });
     }
 
-    if (!username) {
-        return {error: "username is required", status: 401}
-    }
+    let decoded;
 
-    let decoded
     if (process.env.NODE_ENV === 'test') {
-        decoded = JSON.parse(token)
+        try {
+            decoded = JSON.parse(token);
+        } catch (error) {
+            return res.status(401).json({ message: "Invalid token format." });
+        }
     } else {
-        decoded = jwt.verify(token, jwtSecret);
-    }
-    if (username !== decoded.username) {
-        return {error: "username does not match token: " + decoded.username, status: 401}
+        try {
+            decoded = jwt.verify(token, jwtSecret);
+        } catch (error) {
+            return res.status(401).json({ message: "Invalid token." });
+        }
     }
 
-    return {status: 200}
+    if (username !== decoded.username) {
+        return res.status(401).json({ message: "Username does not match the token." });
+    }
+
+    next();
 }

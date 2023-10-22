@@ -17,6 +17,6 @@
       "content": "edited post"
     },
     "expectedStatus": 400,
-    "expectedMessage": "Post edit failed"
+    "expectedMessage": "post not found"
   }
 ]
