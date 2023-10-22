@@ -59,7 +59,7 @@ exports.getPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find({}).sort({timestamp: -1});
+        const posts = await Post.find({}).sort({timestamp: -1}).limit(50);
         return (res.status(200).json({posts}));
     } catch (error) {
         return (res.status(500).json({message: 'Post retrieval failed', error: error.message}));
@@ -74,7 +74,7 @@ exports.findByBoard = async (req, res) => {
         }
 
         // find all posts with the given boardID
-        const posts = await Post.find({boardName: boardName}).sort({timestamp: -1});
+        const posts = await Post.find({boardName: boardName}).sort({timestamp: -1}).limit(50);
 
         return (res.status(200).json({posts}));
     } catch (error) {
