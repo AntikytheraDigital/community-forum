@@ -1,5 +1,20 @@
 const serverRequest = require('../middleware/serverRequest');
 
+// Add username to the options object
+function addUsername(req, res, options) {
+    options.loggedIn = false;
+
+    if (!req.cookies.JWT || !req.cookies.username) {
+        res.clearCookie('JWT');
+        res.clearCookie('username');
+        return;
+    }
+
+    options.loggedIn = true;
+    options.username = req.cookies.username;
+    options.jwt = req.cookies.JWT;
+}
+
 async function handleSubmit(req) {
     let {username, email, password} = req;
 
@@ -41,6 +56,7 @@ async function handleLogin(req, res) {
         if (response.status === 200) {
             // Add JWT token to cookie
             res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+            res.cookie('username', username, {httpOnly: true, secure: true});
 
             return [200, `${username} logged in.`];
         }
@@ -107,6 +123,8 @@ async function handleOAuthLogin(req, res) {
 
     if (response.status === 200 || response.status === 201) {
         res.cookie('JWT', response['JWT'], {httpOnly: true, secure: true});
+        res.cookie('username', response['username'], {httpOnly: true, secure: true})
+
         console.log("Logged in with OAuth.")
         return {status: 200, message: "Logged in with OAuth."};
     }
@@ -119,5 +137,6 @@ module.exports = {
     handleLogin: handleLogin,
     checkLoggedIn: checkLoggedIn,
     getOAuthURL: getOAuthURL,
-    handleOAuthLogin: handleOAuthLogin
+    handleOAuthLogin: handleOAuthLogin,
+    addUsername: addUsername
 };

@@ -188,5 +188,5 @@ exports.handleOAuthLogin = async (req, res) => {
     // Generate JWT token TODO: Set up refresh tokens with short rotations
     const token = jwt.sign({username: username}, jwtSecret, {expiresIn: '1h'});
     console.log("Login successful for user: " + username);
-    return res.status(200).json({JWT: token});
+    return res.status(200).json({JWT: token, username: username});
 }
