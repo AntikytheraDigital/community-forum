@@ -57,8 +57,35 @@ Detailed in Server.postman_collection.json
 | GET | /posts/findByBoard?boardName={boardName} |
 | GET | /posts/{postID} |
 
-## Frontend functional testing
+### Frontend Testing with Postman  
 
+| Page | Request | URL | Example |
+| ------ | ------ | ------ | ------ |
+| Homepage | GET | https://app-pvh7knh4ea-ts.a.run.app/ | * |
+| Board Page | GET | https://app-pvh7knh4ea-ts.a.run.app/board/{BoardName} | https://app-pvh7knh4ea-ts.a.run.app/board/FunnyStuff |
+| Register Page | GET | https://app-pvh7knh4ea-ts.a.run.app/register | * |
+| Login Page | GET | https://app-pvh7knh4ea-ts.a.run.app/login | * |
+| Logout | GET | https://app-pvh7knh4ea-ts.a.run.app/logout | * |
+| Post Page | GET | https://app-pvh7knh4ea-ts.a.run.app/board/{BoardName}/posts/{PostID} | https://app-pvh7knh4ea-ts.a.run.app/board/FunnyStuff/posts/6535b374e8e451b32336050d |
+| Login | POST | https://app-pvh7knh4ea-ts.a.run.app/login | * |
+| Add Post | POST | https://app-pvh7knh4ea-ts.a.run.app/board/{BoardName}/addPost | https://app-pvh7knh4ea-ts.a.run.app/board/FunnyStuff/addPost |
+
+#### Login Body
+```
+{
+    "username": "{username}",
+    "password": "{password}"
+}
+```
+
+#### Add Post Body
+**Must have Cookie header set to JWT={token}**
+```
+{
+    "title": "{title}",
+    "content": "{content}"
+}
+```
 Detailed in UserTraffic.postman_collection.json
 
 ## Database Design
