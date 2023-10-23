@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "2764f0e2-4c11-48c2-b04d-95cb58c2df15",
+		"name": "User Traffic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29944404",
+		"_collection_link": "https://antikythera-digital.postman.co/workspace/Community-Forum~541de061-1a72-464f-836c-faa4a57a89f9/collection/29944404-2764f0e2-4c11-48c2-b04d-95cb58c2df15?action=share&source=collection_link&creator=29944404"
+	},
+	"item": [
+		{
+			"name": "Board Page",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var randomInt = Math.floor(Math.random() * 100);\r",
+							"var boards = [\"testBoard23\",\"FunnyStuff\",\"testBoard\",\"testBoard2\",\"testboard23\"]\r",
+							"pm.variables.set('boardName', boards[Math.floor(Math.random()*boards.length)]);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.text();\r",
+							"var postTitles = responseData.match(/<h3 class=\"post-card-title\">\\s*<a href=(.*?)>/g);\r",
+							"// Get a random post title\r",
+							"var randomPostTitle = postTitles[Math.floor(Math.random() * postTitles.length)];\r",
+							"// Extract the href value from the post title\r",
+							"var randomPost = randomPostTitle.match(/<a href=(.*?)>/)[1];\r",
+							"// Save the href value to a variable\r",
+							"pm.variables.set(\"randomPost\", randomPost);\r",
+							"pm.test(\"Response body contains the expected HTML elements\", function () {\r",
+							"    pm.expect(responseData).to.include('<div class=\"navbar\">');\r",
+							"    pm.expect(responseData).to.include('<h1 class=\"board-description\">');\r",
+							"    pm.expect(responseData).to.include('<div class=\"post-list\">');\r",
+							"});\r",
+							"pm.test(\"Response contains board name\", function(){\r",
+							"    pm.expect(responseData).to.include(pm.variables.get('boardName'));\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostName}}/board/{{boardName}}",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"board",
+						"{{boardName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "homepage",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{hostName}}",
+					"host": [
+						"{{hostName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response body contains the required fields - username, email, and password\", function () {\r",
+							"    const responseData = pm.response.text();\r",
+							"    pm.expect(responseData).to.include(\"Username:\");\r",
+							"    pm.expect(responseData).to.include(\"Email:\");\r",
+							"    pm.expect(responseData).to.include(\"Password:\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Username field is of type 'text' and is required\", function () {\r",
+							"    const responseData = pm.response.text();\r",
+							"    pm.expect(responseData).to.include('<input class=\"input-field\" type=\"text\" name=\"username\" required/>');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Email field is of type 'email' and is required\", function () {\r",
+							"    const responseData = pm.response.text();\r",
+							"    pm.expect(responseData).to.include('<input class=\"input-field\" type=\"email\" name=\"email\" required/>');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostName}}/register",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response body contains the required fields - username and password\", function () {\r",
+							"    const responseData = pm.response.text();\r",
+							"    pm.expect(responseData).to.include(\"Username:\");\r",
+							"    pm.expect(responseData).to.include(\"Password:\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostName}}/login",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response contains username\", function () {\r",
+							"    var responseBody = pm.response.text();\r",
+							"    var success = '<a id=\"currentUser\">'+pm.variables.get(\"username\") + '</a>';\r",
+							"    pm.expect(responseBody).to.include(success);\r",
+							"});\r",
+							"pm.test(\"JWT cookie is present\", function(){\r",
+							"    pm.expect(pm.cookies.has('JWT')).to.be.true;\r",
+							"});\r",
+							"pm.variables.set('JWT', pm.cookies.get('JWT'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var randomInt = Math.floor(Math.random() * 100);\r",
+							"pm.variables.set('username', 'pmtestuser'+ randomInt);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/login",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseBody = pm.response.text();\r",
+							"pm.test(\"response contains post title\", function(){\r",
+							"    pm.expect(responseBody).to.include(pm.variables.get('postTitle'))\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var randomInt = Math.floor(Math.random() * 100);\r",
+							"var boards = [\"testBoard23\",\"FunnyStuff\",\"testBoard\",\"testBoard2\",\"testboard23\"]\r",
+							"pm.variables.set('boardName', boards[Math.floor(Math.random()*boards.length)]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "JWT={{JWT}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"testpost\",\r\n    \"content\": \"testcontent\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/board/{{boardName}}/addPost",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"board",
+						"{{boardName}}",
+						"addPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"JWT cookie is cleared\", function(){\r",
+							"    pm.expect(pm.cookies.has('JWT')).to.be.false;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "JWT={{JWT}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/logout",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Random Post",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if(!pm.iterationData.has(\"randomPost\")) {\r",
+							"    pm.variables.set(\"randomPost\", \"/board/testBoard23/posts/6532fb2940fe672bb9ccf430\")\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostName}}{{randomPost}}",
+					"host": [
+						"{{hostName}}{{randomPost}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"pm.test(\"Response content type is HTML\", function () {",
+					"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+					"});",
+					"pm.test(\"Response time is less than maxResponseTime\", function () {",
+					"    var maxResponseTime = parseInt(pm.environment.get(\"maxResponseTime\"));",
+					"    pm.expect(pm.response.responseTime).to.be.below(maxResponseTime);",
+					"});"
+				]
+			}
+		}
+	]
+}

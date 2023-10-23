@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "299e3999-e5dc-40d1-954c-5b07ec987b5c",
+		"name": "Server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29944404",
+		"_collection_link": "https://antikythera-digital.postman.co/workspace/Community-Forum~541de061-1a72-464f-836c-faa4a57a89f9/collection/29944404-299e3999-e5dc-40d1-954c-5b07ec987b5c?action=share&source=collection_link&creator=29944404"
+	},
+	"item": [
+		{
+			"name": "All Boards",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://community-forum-db6lcg2u.ts.gateway.dev/boards/all",
+					"protocol": "https",
+					"host": [
+						"community-forum-db6lcg2u",
+						"ts",
+						"gateway",
+						"dev"
+					],
+					"path": [
+						"boards",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Posts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(!pm.collectionVariables.has(\"postIDs\")){\r",
+							"    var data = pm.response.json();\r",
+							"    var postIDs = []\r",
+							"    data[\"posts\"].forEach(function(post){\r",
+							"        postIDs.push(post[\"_id\"]);\r",
+							"    })\r",
+							"    pm.collectionVariables.set(\"postIDs\", postIDs);\r",
+							"    }"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://community-forum-db6lcg2u.ts.gateway.dev/posts/all",
+					"protocol": "https",
+					"host": [
+						"community-forum-db6lcg2u",
+						"ts",
+						"gateway",
+						"dev"
+					],
+					"path": [
+						"posts",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Posts by Board",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var randomInt = Math.floor(Math.random() * 100);\r",
+							"var boards = [\"testBoard23\",\"FunnyStuff\",\"testBoard\",\"testBoard2\",\"testboard23\"]\r",
+							"pm.variables.set('boardName', boards[Math.floor(Math.random()*boards.length)]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://community-forum-db6lcg2u.ts.gateway.dev/posts/findByBoard?boardName={{boardName}}",
+					"protocol": "https",
+					"host": [
+						"community-forum-db6lcg2u",
+						"ts",
+						"gateway",
+						"dev"
+					],
+					"path": [
+						"posts",
+						"findByBoard"
+					],
+					"query": [
+						{
+							"key": "boardName",
+							"value": "{{boardName}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post by ID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"    if(!pm.variables.has(\"postIDs\")){\r",
+							"        let postIDs = []\r",
+							"        const getPosts = {\r",
+							"            url: 'https://community-forum-db6lcg2u.ts.gateway.dev/posts/all',\r",
+							"            method: 'GET'\r",
+							"        }\r",
+							"        pm.sendRequest(getPosts, (err, res) => {\r",
+							"            res.json()[\"posts\"].forEach(function(post){\r",
+							"                postIDs.push(post[\"_id\"]);\r",
+							"            });\r",
+							"        });\r",
+							"        pm.collectionVariables.set(\"postIDs\", postIDs);\r",
+							"    }\r",
+							"\r",
+							"    let postIDs = pm.collectionVariables.get(\"postIDs\");\r",
+							"    pm.variables.set(\"postID\", postIDs[Math.floor(Math.random()*postIDs.length)])"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://community-forum-db6lcg2u.ts.gateway.dev/posts/{{postID}}",
+					"protocol": "https",
+					"host": [
+						"community-forum-db6lcg2u",
+						"ts",
+						"gateway",
+						"dev"
+					],
+					"path": [
+						"posts",
+						"{{postID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
