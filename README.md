@@ -1,4 +1,126 @@
 # Community Forum
+
+## Application URL
+https://app-pvh7knh4ea-ts.a.run.app/
+
+## API:
+https://community-forum-db6lcg2u.ts.gateway.dev/
+- /boards/all
+- /posts/all
+- /posts/findByBoard?boardName={boardName}
+- /posts/{postID}
+
+## Server Test Cases: Mocha & Chai
+Located in server/test
+### User Test Cases
+| Request | Test Case                           |
+|---------|-------------------------------------|
+| POST    | Register a valid user               |
+| POST    | email contains whitespace           |
+| POST    | username starts with number         |
+| POST    | username contains special character |
+| POST    | password does not contain symbol    |
+| POST    | password < 8 characters             |
+| POST    | password > 20 characters            |
+| POST    | duplicate user                      |
+| POST    | duplicate email                     |
+
+### Board Test Cases
+| Request | Test Case |
+| ------ | ------ |
+| GET | Get all boards |
+
+### Post Test Cases
+| Request | Test Case |
+| ------ | ------ |
+| POST | create valid post |
+| POST | invalid jwt |
+| POST | empty boardName |
+| POST | empty username |
+| POST | empty content |
+| POST | empty title |
+| POST | title too short |
+| PATCH | edit valid post |
+| PATCH | edit non-existing post |
+| DELETE | delete non-existing post |
+| DELETE | delete existing post with wrong author |
+| DELETE | delete existing post |
+
+## Exposed server endpoint test cases
+
+Detailed in Server.postman_collection.json
+
+| Request | Test Case |
+| ------ | ------ |
+| GET | /boards/all |
+| GET | /posts/all |
+| GET | /posts/findByBoard?boardName={boardName} |
+| GET | /posts/{postID} |
+
+### Frontend Testing with Postman  
+
+| Page | Request | URL | Example |
+| ------ | ------ | ------ | ------ |
+| Homepage | GET | https://app-pvh7knh4ea-ts.a.run.app/ | * |
+| Board Page | GET | https://app-pvh7knh4ea-ts.a.run.app/board/{BoardName} | https://app-pvh7knh4ea-ts.a.run.app/board/FunnyStuff |
+| Register Page | GET | https://app-pvh7knh4ea-ts.a.run.app/register | * |
+| Login Page | GET | https://app-pvh7knh4ea-ts.a.run.app/login | * |
+| Logout | GET | https://app-pvh7knh4ea-ts.a.run.app/logout | * |
+| Post Page | GET | https://app-pvh7knh4ea-ts.a.run.app/board/{BoardName}/posts/{PostID} | https://app-pvh7knh4ea-ts.a.run.app/board/FunnyStuff/posts/6535b374e8e451b32336050d |
+| Login | POST | https://app-pvh7knh4ea-ts.a.run.app/login | * |
+| Add Post | POST | https://app-pvh7knh4ea-ts.a.run.app/board/{BoardName}/addPost | https://app-pvh7knh4ea-ts.a.run.app/board/FunnyStuff/addPost |
+
+#### Login Body
+```
+{
+    "username": "{username}",
+    "password": "{password}"
+}
+```
+
+#### Add Post Body
+**Must have Cookie header set to JWT={token}**
+```
+{
+    "title": "{title}",
+    "content": "{content}"
+}
+```
+Detailed in UserTraffic.postman_collection.json
+
+## Database Design
+
+### Implementation
+- MongoDB Atlas
+- Mongoose API 
+
+### Board
+- **name:** String  
+- **description:** String  
+
+### Post
+- **_id:** ObjectId  
+- **title:** String  
+- **content:** String  
+- **boardName:** String (reference to Board)  
+- **username:** String (reference to User)  
+- **timestamp:** Date  
+- **comments:** [Comment] (nested subdocument array of Comment)  
+
+### Comment
+- **username:** String (reference to User)
+- **content:** String
+- **timestamp:** Date
+
+### User
+- **username:** String
+- **password:** String (hashed before storing in database)
+- **email:** String
+
+### RefreshToken
+- **token:** String
+- **username:** String (reference to User)
+
 ## Docker Usage
 The containers must be run in the same network, you can create a network by running:
 ```docker network create community-forum``` this network should then be used when
@@ -40,3 +162,4 @@ To run the container with env variables set individually (replace `<url>` and `<
 ```docker run -p 3000:3000 --net community-forum -e ATLAS_URI=<url> -e SESSION_KEY=<key> -e APP_URL="http://app:3005" --name server community-forum-server```
 
 note: APP_URL is set in the above examples above but you can change it to a different value as needed 
+
