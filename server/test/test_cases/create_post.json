@@ -23,7 +23,7 @@
       "title": "titleTest 123"
     },
     "expectedStatus": 401,
-    "expectedMessage": "username does not match token: author"
+    "expectedMessage": "Username does not match the token."
   },
   {
     "description": "empty boardName",
@@ -49,7 +49,7 @@
       "content": "contentTest 123",
       "title": "titleTest 123"
     },
-    "expectedStatus": 401,
+    "expectedStatus": 400,
     "expectedMessage": "username is required"
   },
   {

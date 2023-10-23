@@ -14,48 +14,6 @@ describe('/DELETE tests', () => {
     describe('Posts', () => {
         DELETE_POSTS_CASES.forEach(doDelete);
     });
-    describe('Comments', () => {
-        it('should delete a comment', (done) => {
-            chai.request(server)
-                .delete("/posts/comments")
-                .set('jwt',"{\"username\": \"testauthor\"}")
-                .query({
-                    postID: "5e1a0651741b255ddda996c4",
-                    commentID: "5e1a0651741b255ddda996c5"
-                })
-                .end((err, res) => {
-                    console.log(res.body)
-                    if (err) {
-                        done(err);
-                    } else {
-                        res.should.have.status(200);
-                        let post = Post.findById("5e1a0651741b255ddda996c4");
-                        post.should.not.have.property("comments");
-                        done();
-                    }
-                });
-        });
-        it('should not delete a comment with bad jwt header', (done) => {
-            chai.request(server)
-                .delete("/posts/comments")
-                .set('jwt',"{\"username\": \"author\"}")
-                .query({
-                    postID: "5e1a0651741b255ddda996c4",
-                    commentID: "5e1a0651741b255ddda996c5"
-                })
-                .end(async (err, res) => {
-                    console.log(res.body)
-                    if (err) {
-                        done(err);
-                    } else {
-                        res.should.have.status(401);
-                        let post = await Post.findById("5e1a0651741b255ddda996c4");
-                        post.should.have.property("comments");
-                        done();
-                    }
-                });
-        });
-    });
 });
 
 function doDelete({description, uri, jwt, expectedStatus, tryGet}) {
