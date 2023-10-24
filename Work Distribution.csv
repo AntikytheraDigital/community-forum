@@ -1,0 +1,157 @@
+Branch,Assignee,Work Type,Summary,Description
+KAN-76,Billy Komene,Code,Switch authentication to middleware,Move the authentication logic to middleware
+KAN-75,Peter W,Code,Limit number of posts returned by server,
+KAN-74,Billy Komene,Code,Use refresh tokens,"With a short expiry time for tokens, use refresh tokens to keep the user logged in.
+
+Because we don’t have a way to invalidate tokens using a short expiry time and refresh tokens is a way to mitigate the security risk."
+KAN-72,Peter W,Code,Create readme for submission,"* URL of your application
+
+* List of exposed API
+* Fault tolerance/error handling features implemented in your system
+* The test cases for frontend and the test scripts (e.g. a list of CURL commands / POSTMAN Requests) for the server end of your web application / service.
+* The test cases for verifying the correct use of caching related HTTP headers and the corresponding test results.
+* A summary of your database design"
+KAN-71,Billy Komene,Code,Bug fixes for comment and state,"Prevent empty comment body requests as they cause a crash.
+
+On the create post page:
+
+!image-20231020-221302.png|width=179,height=65!
+
+When it should be:
+
+!image-20231020-221330.png|width=214,height=52!"
+KAN-68,Peter W,Code,Fix addComment in server,
+KAN-67,serafina.slevin,Code,"fix comment functionality, clean up board and author IDs",
+KAN-66,Peter W,Code,Ensure uniform interface for server API,
+KAN-65,serafina.slevin,Code,way to edit a post for authed user,
+KAN-64,serafina.slevin,Code,way to delete a post,
+KAN-63,Peter W,Code,Implement server delete comment,
+KAN-62,Billy Komene,Code,Set up OAuth as a valid login method,Implement OAuth as a login method and allow authentication over user credentials.
+KAN-61,Billy Komene,Workflow,API Gateway in google cloud,Set up an API gateway in google cloud
+KAN-60,Peter W,Code,Add JWT validation to relevant controller methods,"* editPost - done
+* createPost - done
+* deletePost - done
+* deleteComment - unimplemented, own issue"
+KAN-59,Peter W,discovery,Research Performance Testing,
+KAN-58,Peter W,Code,Create comments on server,"With authentication in place you should implement a post comment handler where you attach the header JWT with the jwt token from cookies (see how authentication checkLoggedIn() gets it) to make a POST comment request.
+
+
+On the server side you should set up the endpoint to decode the token with jwt.verify(token, secret) (see authController checkLoggedIn for example) and use the decoded data check the username matches that of the comment POST body request. Make sure the post id also exists.
+
+You can now construct the comment with content and username (timestamp is set automatically). Add that comment to the post."
+KAN-56,Billy Komene,Code,Improve app authentication efficiency,"Currently the logged in status is checked everytime a page is loaded. This isn’t ideal as we should be performing this check only on requests that require the user and periodically to see if their token has expired. 
+
+This check can be performed before making a protected request such as posting a post or comment and removal. 
+
+To keep the username and loggedIn status you can save the username as a cookie and use whether there is a JWT token to set loggedIn true/false. These should also be cleared when logging out or visiting login or register pages. 
+
+We can also use the cookie to fetch the username in handlePostComment.js rather than using an element."
+KAN-55,Peter W,Code,Refactor validation to Model,
+KAN-54,serafina.slevin,Code,finish comment functionality,will use a placeholder for uid/username until the login/logout cookie thing that billy is doing has been done - so we can retrieve the correct information to display regarding the author of the comment → Serafina todo
+KAN-53,serafina.slevin,Code,way to create posts,"copy write comment code in the post page, but instead to in the board page → serafina todo "
+KAN-52,Peter W,Code,Implement server boards/all,
+KAN-50,serafina.slevin,Code,Enable comment posting for auth users,"When you can login, you should enable posting a comment creating a request with the username from the JWT token.
+
+
+This should be done after the render so the client side script can process the comment immediately while the database adds it. Refreshing should show the newly added comment."
+KAN-49,Billy Komene,Code,Deploy containers to cloud,Deploy containers to gcp with cloud run. The requests will have to be modified to use IAM tokens to the server. The deployment pipeline will have to be updated to deploy containers to GCP and run them.
+KAN-48,Billy Komene,Code,Add post view,"Add post view which will be accessable via community-forum/board/boardname/posts/postid
+
+You should display the post contents. A section to add a comment and a list of comments."
+KAN-47,Peter W,Code,Restructure Schema,"Comments should be nested in posts.  
+
+GET /posts should include an optional parameter to include comments or not
+
+Users should have a list of posts they’ve written and a  list of posts they’ve commented on"
+KAN-45,Billy Komene,Code,Make board links clickable,Make the {{board/<board>}} links clickable and take to the board page.
+KAN-44,Peter W,Code,Tidy up server API docs,
+KAN-43,serafina.slevin,Code,make buttons to boards on homepage,"implement according to the API (the yaml file, server endpoints.yaml) "
+KAN-42,Peter W,Code,Cleanup Server URIS according to API docs,
+KAN-38,Peter W,Code,API documentation with SWAGGER,
+KAN-37,serafina.slevin,Code,Add board page with dynamic url,"Add dynamic urls for boards, these boards will use the get posts from board (might need to update endpoint to sort by date like getallposts). Add buttons for boards to home page."
+KAN-36,serafina.slevin,Code,Remove APP_URL and SERVER_URL from dockerfiles,"Currently the Dockerfile’s define {{APP_URL}} and {{SERVER_URL}} environment variables in them. These should be removed, so they can be manually set for hosting.
+
+You should also update the documentation in the README to suggest setting these through the {{-e}} parameters. The docs also have a mistake where it says {{ATLAS_URL}} when it should be {{ATLAS_URI}}"
+KAN-35,Billy Komene,Code,Update server endpoints for testing,"Currently some endpoints are using the id as the entire parameter so, /board/delete/:postID this makes it hard to write tests.
+
+We should update the following endpoints:
+
+* board/deletepost
+* board/getposts
+* post/getpost
+* post/editcomment
+* post/deletecomment
+* post/edit
+
+We should use params such as board/deletepost?id={postID}"
+KAN-33,Billy Komene,discovery,Discovery: Handle 2 auth tokens,"to do parts b, g, and j of core 
+
+find resources on session id stuff that we can reference, perhaps code examples or other explanation articles. Will put on resources channel of discord. Look for best practice/industry standard ways to store session info. "
+KAN-32,Billy Komene,Code,BoardView with posts,"* Create card for posts
+** Take json post format and use to compile card
+* Create home page that displays posts as cards
+* Get all posts and display on home page"
+KAN-30,Billy Komene,Code,Login page and JWT authentication,"Remove passport and replace with JWT. It should then be implemented so information would be able to be displayed only to a logged in user. The login page will have to be made functional to test this.
+
+You should include the username in the JWT token to allow for identification for user specific tasks such as editing and deleting 
+
+To demonstrate this works, remove the register / login buttons when logged in and show the username and a logout button."
+KAN-29,Billy Komene,Code,Set up automated test runner,"Create a GitHub runner that will run the tests that will run automatically.
+
+Decide what option(s) is best:
+
+* Whenever trying to merge into main (Do this always)
+* Whenever a merge request is open 
+** Also whenever a commit is added to a merge request
+* Everytime something is pushed to a branch"
+KAN-28,Billy Komene,Code,Setup Docker container,Set up docker container to run app and server. It should expose endpoints for both.
+KAN-27,Billy Komene,Code,Basic navigation bar and placeholder pages,"* Set up a basic navigation header bar, with title (clickable to take to home), login button and sign up button.
+* Create placeholder pages for home and sign-in"
+KAN-26,Peter W,Code,Refactor test framework,"Change the way tests are dynamically generated to be more generic. 
+
+Add example “assumption” to test/user.js which skips test if API is not implemented"
+KAN-25,serafina.slevin,Code,re-organise code base as per jyoti's example (react -> ejs),
+KAN-24,Peter W,Code,User registration test code,"Test cases:
+
+* invalid email
+* invalid username
+* invalid password
+* duplicate email
+* duplicate username"
+KAN-23,serafina.slevin,Code,post controller and endpoints,"* create postController.js in /controllers 
+* editPost endpoint 
+* edit, add, and delete comments (will try to have a go, may not work) "
+KAN-22,serafina.slevin,Code,Board Controller and Endpoints,"Create a board controller, it should have the functionality to add a post and remove a post. There should be endpoints for the corresponding functions."
+KAN-21,serafina.slevin,Code,create models for db,"define schemas for 
+
+* comment 
+* post
+* board "
+KAN-20,Billy Komene,Code,Validate username and email already exists,Check if the username already exists or the email already exists in the database when registering a user.
+KAN-18,serafina.slevin,Planning,Create mock-ups of app pages,"create wireframes for the following pages:
+
+* Home Page (no auth & auth)
+* Board page
+* Post Page
+* Sign up
+* Login
+* Account Settings
+
+*Diagram for an idea of functionality:*
+
+!image-20230922-230534.png|width=83.33333333333334%!"
+KAN-14,Peter W,Code,Configure test environment & structure,"* configure package with test environment & script
+* implement MongoMemoryServer for test environment
+* Write tests for /auth/register with Mocha & Chai"
+KAN-13,Billy Komene,Code,Server-side rendered registration page,"Using React for server-side rendering, add a basic registration page with fields for email, username and password. There will be a register button that will call the server /register endpoint to store the user in the database.
+
+Server will handle validation, check status code to report successful registration."
+KAN-12,serafina.slevin,Code,Validate User Registration Format,"server/controllers/authControllers
+check for duplicates, email is valid, password is strong enough etc"
+KAN-11,Peter W,Code,Encrypt Password before sending to database,server/controllers/authControllers
+KAN-10,Peter W,Workflow,Enable Jira Automations,
+KAN-9,Billy Komene,discovery,Investigate server-side rendering with react,Beginners Guide to React Server-side rendering:   [Video|https://www.youtube.com/watch?v=F-v1IXvFd_4]  |   [Source code|https://github.com/monsterlessonsacademy/monsterlessonsacademy/tree/256-react-server-side-rendering]
+KAN-8,Peter W,Code,Create & Connect MongoDB,
+KAN-6,serafina.slevin,discovery,first draft of the different pages,
+KAN-5,serafina.slevin,discovery,find examples using our tech stack,
+KAN-4,Billy Komene,Code,setup skeleton,
